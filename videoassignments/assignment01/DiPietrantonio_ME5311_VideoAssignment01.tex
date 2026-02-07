@@ -20,9 +20,41 @@ Video Assignment 01 \\
 
 \vspace{.5em}
 
-First, we must start with the momentum equations as mentioned above.
+\noindent We must start this derivation with the momentum equations as mentioned above. First, we have the x-momentum equation:
 
+\begin{equation}
+\rho\frac{Du}{Dt} = -\frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial_y} + \frac{\partial \tau_{zx}}{\partial z} + S_{Mx}
+\end{equation}
 
+\noindent Next, we have the y-momentum equation:
+
+\begin{equation}
+\rho\frac{Dv}{Dt} = -\frac{\partial p}{\partial y} + \frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z} + S_{My}
+\end{equation}
+
+\noindent Finally, we have the z-momentum equation:
+
+\begin{equation}
+\rho\frac{Dw}{Dt} = -\frac{\partial p}{\partial z} + \frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z} + S_{Mz}
+\end{equation}
+
+\noindent We can now multiply each equation by its respective velocity component, doing so yields the following for x-momentum:
+
+\begin{equation}
+\rho u \frac{Du}{Dt} = -u\frac{\partial p}{\partial x} + u\left(\frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial_y} + \frac{\partial \tau_{zx}}{\partial z}\right) + uS_{Mx}
+\end{equation}
+
+\noindent For y-momentum:
+
+\begin{equation}
+\rho u \frac{Dv}{Dt} = -u\frac{\partial p}{\partial y} + u\left(\frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right) + uS_{My}
+\end{equation}
+
+\noindent And for z-momentum:
+
+\begin{equation}
+\rho u \frac{Dw}{Dt} = -u\frac{\partial p}{\partial z} + u\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z}\right) + uS_{Mz}
+\end{equation}
 
 
 

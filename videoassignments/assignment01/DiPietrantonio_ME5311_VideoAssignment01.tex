@@ -47,16 +47,54 @@ Video Assignment 01 \\
 \noindent For y-momentum:
 
 \begin{equation}
-\rho u \frac{Dv}{Dt} = -u\frac{\partial p}{\partial y} + u\left(\frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right) + uS_{My}
+\rho v \frac{Dv}{Dt} = -v\frac{\partial p}{\partial y} + v\left(\frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right) + vS_{My}
 \end{equation}
 
 \noindent And for z-momentum:
 
 \begin{equation}
-\rho u \frac{Dw}{Dt} = -u\frac{\partial p}{\partial z} + u\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z}\right) + uS_{Mz}
+\rho w \frac{Dw}{Dt} = -w\frac{\partial p}{\partial z} + w\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z}\right) + wS_{Mz}
 \end{equation}
 
+\noindent We can now add the three equations. Starting with the left hand side, we get:
 
+\begin{equation}
+    \rho \left(u\frac{Du}{Dt} + v\frac{Dv}{Dt} + w\frac{Dw}{Dt}\right) 
+\end{equation}
+
+\noindent Now, we have already defined kinetic energy, $k = \frac{1}{2}\left(u^2 + v^2 + w^2\right)$. If we take the material derrivative of k, we are left with:
+
+\begin{equation}
+\frac{Dk}{Dt} = \frac{D}{Dt}\left(\frac{1}{2}u^2\right) + \frac{D}{Dt}\left(\frac{1}{2}v^2\right) + \frac{D}{Dt}\left(\frac{1}{2}w^2\right)
+\end{equation}
+
+\noindent Applying the chain rule to each term leaves us with the following three equations:
+
+\begin{equation}
+\frac{D}{Dt}\left(\frac{1}{2}u^2\right) = u\frac{Du}{Dt}
+\end{equation}
+
+\begin{equation}
+\frac{D}{Dt}\left(\frac{1}{2}v^2\right) = v\frac{Dv}{Dt}
+\end{equation}
+
+\begin{equation}
+\frac{D}{Dt}\left(\frac{1}{2}w^2\right) = u\frac{Dw}{Dt}
+\end{equation}
+
+\noindent Therefore, we have:
+
+\begin{equation}
+\frac{Dk}{Dt} = u\frac{Du}{Dt} + v\frac{Dv}{Dt} + u\frac{Dw}{Dt}
+\end{equation}
+
+\noindent And we can re-write the left hand side of our equation as:
+
+\begin{equation}
+\rho\frac{Dk}{Dt}
+\end{equation}
+
+\noindent Now, we can turn our attention to the right hand side of our equation.
 
 
 

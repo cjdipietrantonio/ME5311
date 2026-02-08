@@ -91,7 +91,7 @@ Video Assignment 01 \\
 \noindent And we can re-write the left hand side of our equation as:
 
 \begin{equation}
-\rho\frac{Dk}{Dt}
+\rho \left(u\frac{Du}{Dt} + v\frac{Dv}{Dt} + w\frac{Dw}{Dt}\right) = \rho\frac{Dk}{Dt}
 \end{equation}
 
 \noindent Now, we can turn our attention to the right hand side of our equation. Combining all of the pressure terms yields:
@@ -156,6 +156,6 @@ uS_{Mx} + vS_{My} + wS_{Mz} = \vec{u} \cdot \vec{S}_M
 
 \vspace{6pt}
 
-\noindent As mentioned in ``An Introduction to Computational Fluid Dynamics: The Finite Volume Method'' by H.K. Versteeg and W. Malalasekera, deriving the governing equation for the kinetic energy allows us to separate the kinetic/mechanical (effects of pressure forces, viscous stresses, and subsequent source terms) contributions to the total energy of the fluid from the contributions of internal energy, heat transfer, viscous dissipation, or other thermal sources. Doing so also allows us to obtain expressions for quantities such as internal energy, $i$ or temperature, $T$.
+\noindent As mentioned in ``An Introduction to Computational Fluid Dynamics: The Finite Volume Method'' by H.K. Versteeg and W. Malalasekera, deriving the governing equation for the kinetic energy allows us to separate the kinetic/mechanical contributions (effects of pressure forces, viscous stresses, and related source terms) to the total energy of the fluid from the contributions of internal energy, heat transfer, viscous dissipation, and other sources. Doing so also allows us to obtain expressions for quantities such as internal energy, $i$ or temperature, $T$.
 
 \end{document}

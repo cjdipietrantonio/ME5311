@@ -6,13 +6,13 @@
 %INFO
 \noindent
 Christian DiPietrantonio \\
-ME M311: Computational Methods to Viscious FLows \\
+ME M311: Computational Methods to Viscous Flows \\
 Video Assignment 01 \\
 \today
 
 \vspace{6pt}
 
-\noindent\textbf{Problem Statement:} Watch all the video lectures, and derive the governing equation for the kinetic energy, defined as k = 1/2(u2 + v2 + w2). The technique involves multiplying the x-momentum equation by the u velocity, y-momentum by the v velocity, and z-momentum equation by the w velocity, and eventually add all three equations up. Show your derivation process.
+\noindent\textbf{Problem Statement:} Watch all the video lectures, and derive the governing equation for the kinetic energy, defined as $k = \frac{1}{2}\left(u^2 + v^2 + w^2\right)$. The technique involves multiplying the x-momentum equation by the u velocity, y-momentum by the v velocity, and z-momentum equation by the w velocity, and eventually add all three equations up. Show your derivation process.
 
 \vspace{6pt}
 
@@ -62,7 +62,7 @@ Video Assignment 01 \\
     \rho \left(u\frac{Du}{Dt} + v\frac{Dv}{Dt} + w\frac{Dw}{Dt}\right) 
 \end{equation}
 
-\noindent Now, we have already defined kinetic energy, $k = \frac{1}{2}\left(u^2 + v^2 + w^2\right)$. If we take the material derrivative of k, we are left with:
+\noindent Now, we have already defined kinetic energy, $k = \frac{1}{2}\left(u^2 + v^2 + w^2\right)$. If we take the material derivative of k, we are left with:
 
 \begin{equation}
 \frac{Dk}{Dt} = \frac{D}{Dt}\left(\frac{1}{2}u^2\right) + \frac{D}{Dt}\left(\frac{1}{2}v^2\right) + \frac{D}{Dt}\left(\frac{1}{2}w^2\right)
@@ -79,13 +79,13 @@ Video Assignment 01 \\
 \end{equation}
 
 \begin{equation}
-\frac{D}{Dt}\left(\frac{1}{2}w^2\right) = u\frac{Dw}{Dt}
+\frac{D}{Dt}\left(\frac{1}{2}w^2\right) = w\frac{Dw}{Dt}
 \end{equation}
 
 \noindent Therefore, we have:
 
 \begin{equation}
-\frac{Dk}{Dt} = u\frac{Du}{Dt} + v\frac{Dv}{Dt} + u\frac{Dw}{Dt}
+\frac{Dk}{Dt} = u\frac{Du}{Dt} + v\frac{Dv}{Dt} + w\frac{Dw}{Dt}
 \end{equation}
 
 \noindent And we can re-write the left hand side of our equation as:
@@ -94,7 +94,7 @@ Video Assignment 01 \\
 \rho\frac{Dk}{Dt}
 \end{equation}
 
-\noindent Now, we can turn our attention to the right hand side of our equation. Combining all of the pressure terms yeilds:
+\noindent Now, we can turn our attention to the right hand side of our equation. Combining all of the pressure terms yields:
 
 \begin{equation}
 -u\frac{\partial p}{\partial x} - v\frac{\partial p}{\partial y} -w\frac{\partial p}{\partial z}
@@ -106,7 +106,7 @@ Video Assignment 01 \\
 -\left(u\frac{\partial p}{\partial x} + v\frac{\partial p}{\partial y} +w\frac{\partial p}{\partial z}\right) = -\vec{u} \cdot \nabla p
 \end{equation}
 
-\noindent We can now combine all of the viscious stress terms. Recalling that from x-momentum we have:
+\noindent We can now combine all of the viscous stress terms. Recalling that from x-momentum we have:
 
 \begin{equation}
 u\left(\frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial y} + \frac{\partial \tau_{zx}}{\partial z}\right)
@@ -131,10 +131,10 @@ uS_{Mx} + vS_{My} + wS_{Mz}
 \noindent We can recognize this as the dot product of the velocity vector and the source term vector, therefore we can write:
 
 \begin{equation}
-uS_{Mx} + vS_{My} + wS_{Mz} = \vec{u} \cdot \vec{S_M}
+uS_{Mx} + vS_{My} + wS_{Mz} = \vec{u} \cdot \vec{S}_M
 \end{equation}
 
-\noindent Finally, we can combine all aformentioned terms to get the governing equation for kinetic energy:
+\noindent Finally, we can combine all aforementioned terms to get the governing equation for the kinetic energy:
 
 \begin{equation}
 \boxed{
@@ -149,7 +149,7 @@ uS_{Mx} + vS_{My} + wS_{Mz} = \vec{u} \cdot \vec{S_M}
 &+ w\left(\frac{\partial \tau_{xz}}{\partial x} 
     + \frac{\partial \tau_{yz}}{\partial y} 
     + \frac{\partial \tau_{zz}}{\partial z}\right) \\[6pt]
-&+ \vec{u} \cdot \vec{S_M}
+&+ \vec{u} \cdot \vec{S}_M
 \end{aligned}
 }
 \end{equation}

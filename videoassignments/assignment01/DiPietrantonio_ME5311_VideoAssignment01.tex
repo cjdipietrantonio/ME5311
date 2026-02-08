@@ -10,50 +10,50 @@ ME M311: Computational Methods to Viscious FLows \\
 Video Assignment 01 \\
 \today
 
-\vspace{1em}
+\vspace{6pt}
 
 \noindent\textbf{Problem Statement:} Watch all the video lectures, and derive the governing equation for the kinetic energy, defined as k = 1/2(u2 + v2 + w2). The technique involves multiplying the x-momentum equation by the u velocity, y-momentum by the v velocity, and z-momentum equation by the w velocity, and eventually add all three equations up. Show your derivation process.
 
-\vspace{1em}
+\vspace{6pt}
 
 \noindent\textbf{Solution:}
 
-\vspace{.5em}
+\vspace{6pt}
 
 \noindent We must start this derivation with the momentum equations as mentioned above. First, we have the x-momentum equation:
 
 \begin{equation}
-\rho\frac{Du}{Dt} = -\frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial_y} + \frac{\partial \tau_{zx}}{\partial z} + S_{Mx}
+\rho\frac{Du}{Dt} = -\frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial y} + \frac{\partial \tau_{zx}}{\partial z} + S_{Mx}
 \end{equation}
 
 \noindent Next, we have the y-momentum equation:
 
 \begin{equation}
-\rho\frac{Dv}{Dt} = -\frac{\partial p}{\partial y} + \frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z} + S_{My}
+\rho\frac{Dv}{Dt} = -\frac{\partial p}{\partial y} + \frac{\partial \tau_{xy}}{\partial x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z} + S_{My}
 \end{equation}
 
 \noindent Finally, we have the z-momentum equation:
 
 \begin{equation}
-\rho\frac{Dw}{Dt} = -\frac{\partial p}{\partial z} + \frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z} + S_{Mz}
+\rho\frac{Dw}{Dt} = -\frac{\partial p}{\partial z} + \frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial y} + \frac{\partial \tau_{zz}}{\partial z} + S_{Mz}
 \end{equation}
 
 \noindent We can now multiply each equation by its respective velocity component, doing so yields the following for x-momentum:
 
 \begin{equation}
-\rho u \frac{Du}{Dt} = -u\frac{\partial p}{\partial x} + u\left(\frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial_y} + \frac{\partial \tau_{zx}}{\partial z}\right) + uS_{Mx}
+\rho u \frac{Du}{Dt} = -u\frac{\partial p}{\partial x} + u\left(\frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial y} + \frac{\partial \tau_{zx}}{\partial z}\right) + uS_{Mx}
 \end{equation}
 
 \noindent For y-momentum:
 
 \begin{equation}
-\rho v \frac{Dv}{Dt} = -v\frac{\partial p}{\partial y} + v\left(\frac{\partial \tau_{xy}}{\partial_x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right) + vS_{My}
+\rho v \frac{Dv}{Dt} = -v\frac{\partial p}{\partial y} + v\left(\frac{\partial \tau_{xy}}{\partial x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right) + vS_{My}
 \end{equation}
 
 \noindent And for z-momentum:
 
 \begin{equation}
-\rho w \frac{Dw}{Dt} = -w\frac{\partial p}{\partial z} + w\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial_y} + \frac{\partial \tau_{zz}}{\partial z}\right) + wS_{Mz}
+\rho w \frac{Dw}{Dt} = -w\frac{\partial p}{\partial z} + w\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial y} + \frac{\partial \tau_{zz}}{\partial z}\right) + wS_{Mz}
 \end{equation}
 
 \noindent We can now add the three equations. Starting with the left hand side, we get:
@@ -103,13 +103,55 @@ Video Assignment 01 \\
 \noindent This can also be expressed as:
 
 \begin{equation}
--\left(\frac{\partial p}{\partial x} - v\frac{\partial p}{\partial y} -w\frac{\partial p}{\partial z}\right) = -\vec{u} \cdot \nabla p
+-\left(u\frac{\partial p}{\partial x} + v\frac{\partial p}{\partial y} +w\frac{\partial p}{\partial z}\right) = -\vec{u} \cdot \nabla p
 \end{equation}
 
-\noindent We can now combine all of the viscious stress terms.
+\noindent We can now combine all of the viscious stress terms. Recalling that from x-momentum we have:
 
+\begin{equation}
+u\left(\frac{\partial \tau_{xx}}{\partial x} + \frac{\partial \tau_{yx}}{\partial y} + \frac{\partial \tau_{zx}}{\partial z}\right)
+\end{equation}
 
+\noindent From y-momentum we have:
+\begin{equation}
+v\left(\frac{\partial \tau_{xy}}{\partial x} + \frac{\partial \tau_{yy}}{\partial y}  + \frac{\partial \tau_{zy}}{\partial z}\right)
+\end{equation}
 
+\noindent And from z-momentum we have:
+\begin{equation}
+w\left(\frac{\partial \tau_{xz}}{\partial x} + \frac{\partial \tau_{yz}}{\partial y} + \frac{\partial \tau_{zz}}{\partial z}\right)
+\end{equation}
 
+\noindent Finally, we can combine the source terms to get:
+
+\begin{equation}
+uS_{Mx} + vS_{My} + wS_{Mz} 
+\end{equation}
+
+\noindent We can recognize this as the dot product of the velocity vector and the source term vector, therefore we can write:
+
+\begin{equation}
+uS_{Mx} + vS_{My} + wS_{Mz} = \vec{u} \cdot \vec{S_M}
+\end{equation}
+
+\noindent Finally, we can combine all aformentioned terms to get the governing equation for kinetic energy:
+
+\begin{equation}
+\boxed{
+\begin{aligned}
+\rho\frac{Dk}{Dt} ={}& -\vec{u} \cdot \nabla p \\[6pt]
+&+ u\left(\frac{\partial \tau_{xx}}{\partial x} 
+    + \frac{\partial \tau_{yx}}{\partial y} 
+    + \frac{\partial \tau_{zx}}{\partial z}\right) \\[6pt]
+&+ v\left(\frac{\partial \tau_{xy}}{\partial x} 
+    + \frac{\partial \tau_{yy}}{\partial y}  
+    + \frac{\partial \tau_{zy}}{\partial z}\right) \\[6pt]
+&+ w\left(\frac{\partial \tau_{xz}}{\partial x} 
+    + \frac{\partial \tau_{yz}}{\partial y} 
+    + \frac{\partial \tau_{zz}}{\partial z}\right) \\[6pt]
+&+ \vec{u} \cdot \vec{S_M}
+\end{aligned}
+}
+\end{equation}
 
 \end{document}

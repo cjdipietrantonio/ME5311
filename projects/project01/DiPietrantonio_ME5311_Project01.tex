@@ -1,31 +1,112 @@
 \documentclass[letterpaper,12pt]{article}
-\usepackage{amsmath, amssymb, geometry}
+\usepackage{amsmath, amssymb, geometry, titlesec}
 \geometry{margin=1in}
+
+%Make section titles smaller
+\titleformat{\section}
+    {\large\bfseries}
+    {\thesection.}{0.5em}{}
+
+\titleformat{\subsection}
+    {\normalsize\bfseries}
+    {\thesubsection.}{0.5em}{}
+
+%Customize vertical spacing
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+
+
 \begin{document}
+
+%---------------------------------------------------------------------------------------------------------------
 
 %INFO
 \noindent
 Christian DiPietrantonio \\
-ME M311: Computational Methods to Viscious FLows \\
+ME M311: Computational Methods to Viscous Flows \\
 \today
 
-\vspace{1em}
+\vspace{10pt}
+
+%---------------------------------------------------------------------------------------------------------------
 
 %TITLE
-\begin{center}
-    {\Large\underline{\textbf{Computer Assignment 01:}}} \\[1em]
-    {\normalsize\textbf{Numerical and Analytical Solutions to Parabolic Partial Differential Equations: \\
-    prerequisite for solving boundary layer problems}} \\
-\end{center}
+\noindent {\large \textbf{Computer Assignment 01:} \normalsize Numerical and Analytical Solutions to Parabolic Partial Differential Equations: prerequisite for solving boundary layer problems}
 
-%DESCRIPTION
-\begin{center}
-    \section*{\underline{\textbf{Description of the problem}}}
-\end{center}
-The goal of this assignment is to derive the analytical solution of the parabolic equation with given initial and boundary
-conditions. Then, a numerical solution will be obtained using the explicit finite difference method. Finally, the numerical
-solution will be compared to the analytical solution to verify the accuracy of the numerical method.
+%---------------------------------------------------------------------------------------------------------------
 
-%MAKE SECTIONS
+%DESCRIPTION OF THE PROBLEM
+\section{Description of the Problem:}
+
+Given the following second order linear parabolic partial differential equation (PDE):
+
+\begin{equation}
+\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2
+\end{equation}
+
+\noindent
+with boundary conditions: $u\left(x,0\right) = 0$, $u\left(x,1\right) = 0$, and initial condition: $u(0,y) = 0$, our objectives were to:
+\begin{enumerate}
+    \item Derive the analytical solution of the parabolic equation with its given initial and boundary conditions.
+    \item Use the Crank-Nicolson scheme and central difference scheme to discretize the equation (using either a finite-volume or a finite-difference based method).
+    \item Find the numerical solution of the parabolic equation and compare it with the analytical solution using LU decomposition as the linear system solver.
+\end{enumerate}
+\noindent 
+The results of these objectives will be of use for further projects, as parabolic partial differential equations like the one above can be used to describe heat conduction and viscous boundary layers.
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DERIVATION OF THE ANALYTICAL SOLUTION
+\section{Derivation of the Analytical Solution:}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+%DESCRIPTION OF THE NUMERICAL METHOD
+\section{Description of the Numerical Method:}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%PRESENTATION OF RESULTS
+\section{Presentation of Results:}
+
+\subsection{Profiles at different x locations from numerical solution}
+
+TBD
+
+\subsection{Profiles at different x locations from analytical solution}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DISCUSSION OF RESULTS
+\section{Discussion of Results:}
+
+\subsection{General description}
+
+TBD
+
+\subsection{Accuracy and stability}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX - copy of program listing
+\section{Appendix - Copy of Program Listing:}
+
+\subsection{Structure}
+
+TBD
+
+\subsection{Documentation}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
 
 \end{document}

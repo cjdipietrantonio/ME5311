@@ -1,5 +1,5 @@
 \documentclass[letterpaper,12pt]{article}
-\usepackage{amsmath, amssymb, geometry, titlesec}
+\usepackage{amsmath, amssymb, geometry, titlesec, esint}
 \geometry{margin=1in}
 
 %Make section titles smaller
@@ -59,7 +59,7 @@ The results of these objectives will be of use for further projects, as paraboli
 %DERIVATION OF THE ANALYTICAL SOLUTION
 \section{Derivation of the Analytical Solution:}
 
-As mentioned in the supplemental materials, the equation $\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2$ is inhomogenous, therefore to solve it one must use superposition in addition to the conventional separation of variables technique. The solution, $u$ is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is rewritten as:
+As mentioned in the supplemental materials, the equation $\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2$ is inhomogenous, therefore to solve it one must use superposition in addition to the conventional separation of variables technique. The solution, $u$ is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is re-written as:
 
 \begin{equation}
 \frac{\partial v}{\partial x} - 2 \frac{\partial^2 v}{\partial y^2} - 2 \frac{\partial^2 f}{\partial y^2} = 2
@@ -166,12 +166,60 @@ u(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin
 }
 \end{equation}
 
-
 %---------------------------------------------------------------------------------------------------------------
 %DESCRIPTION OF THE NUMERICAL METHOD
 \section{Description of the Numerical Method:}
 
-TBD
+To discretize Equation 1, the entire equation is integrated over the specified $x$ interval, $\Delta x$, and the control volume, $V$:
+
+\begin{equation}
+\iiint\limits_{V} \left(\int_{x}^{x+\Delta x} \frac {\partial u}{\partial x}\, dx\right)\, dV = \int_{x}^{x+\Delta x} \left(\iiint\limits_{V} \left(2 \frac{\partial^2 u}{\partial y^2} + 2\right)\, dV\right)\, dx
+\end{equation}
+
+For the left-hand side, integrating over x gives:
+
+\begin{equation}
+\iiint\limits_{V} \left(u(x + \Delta x) - u(x)\right)\, dV = \left(u(x + \Delta x) - u(x)\right) \Delta y = \Delta y \left({u_{i}}^{n+1} - {u_{i}}^{n}\right)
+\end{equation}
+
+On the right-hand side, the divergence theorem is used to convert the integral over the control volume into a surface integral:
+
+\begin{equation}
+\oiint\limits_{A}\left(2 \frac{\partial u}{\partial y} \hat{n}_{y}\right)\, dA + 2 \Delta y 
+\end{equation}
+
+After evaluating the surface integral, the derivative is discretized using a central-difference scheme:
+
+\begin{equation}
+2\left( \frac{u_{i+1} - u_{i}}{\Delta y}\right) - 2 \left(\frac{u_{i} - u_{i-1}}{\Delta y}\right) + 2 \Delta y 
+\end{equation}
+
+Thus, the right-hand side reduces to:
+
+\begin{equation}
+\int_{x}^{x + \Delta x} \left(2\left( \frac{u_{i+1} - u_{i}}{\Delta y}\right) - 2 \left(\frac{u_{i} - u_{i-1}}{\Delta y}\right) + 2 \Delta y\right)\, dx
+\end{equation}
+
+Next, the integration $\int_x^{x + \Delta x} u\, dx$ is approximated using:
+
+\begin{equation}
+\int_x^{x + \Delta x} u dx = \left(\theta u^n + (1 - \theta) u^{n+1}\right) \Delta x
+\end{equation}
+
+For the Crank-Nicholson scheme ($\theta = 0.5$), Equation 24 becomes:
+
+\begin{equation}
+\frac{\Delta x}{\Delta y} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta y \Delta x
+\end{equation}
+
+Finally, by equating the left and right-hand sides and dividing both by $\Delta y$, the following discretized governing equation is obtained:
+\begin{equation}
+\boxed{ 
+{u_{i}}^{n+1} - {u_{i}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta x
+}
+\end{equation}
+
+We can now program a numerical solver (using LU decomposition as the linear system solver) to solve the discretized governing equation above, and compare the results with the analytical solution derived in the previous section. 
 
 %---------------------------------------------------------------------------------------------------------------
 

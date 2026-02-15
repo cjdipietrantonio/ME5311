@@ -15,14 +15,14 @@
 \titlespacing*{\section}{0pt}{12pt}{6pt}
 \titlespacing*{\subsection}{0pt}{10pt}{4pt}
 
-
+\setlength{\parindent}{0pt} % no indentation
 
 \begin{document}
 
 %---------------------------------------------------------------------------------------------------------------
 
 %INFO
-\noindent
+
 Christian DiPietrantonio \\
 ME M311: Computational Methods to Viscous Flows \\
 \today
@@ -32,7 +32,7 @@ ME M311: Computational Methods to Viscous Flows \\
 %---------------------------------------------------------------------------------------------------------------
 
 %TITLE
-\noindent {\large \textbf{Computer Assignment 01:} \normalsize Numerical and Analytical Solutions to Parabolic Partial Differential Equations: prerequisite for solving boundary layer problems}
+{\large \textbf{Computer Assignment 01:} \normalsize Numerical and Analytical Solutions to Parabolic Partial Differential Equations: prerequisite for solving boundary layer problems}
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -45,14 +45,13 @@ Given the following second order linear parabolic partial differential equation 
 \frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2
 \end{equation}
 
-\noindent
-with boundary conditions: $u\left(x,0\right) = 0$, $u\left(x,1\right) = 0$, and initial condition: $u(0,y) = 0$, our objectives were to:
+With boundary conditions: $u\left(x,0\right) = 0$, $u\left(x,1\right) = 0$, and initial condition: $u(0,y) = 0$, our objectives were to:
 \begin{enumerate}
     \item Derive the analytical solution of the parabolic equation with its given initial and boundary conditions.
     \item Use the Crank-Nicolson scheme and central difference scheme to discretize the equation (using either a finite-volume or a finite-difference based method).
     \item Find the numerical solution of the parabolic equation and compare it with the analytical solution using LU decomposition as the linear system solver.
 \end{enumerate}
-\noindent 
+
 The results of these objectives will be of use for further projects, as parabolic partial differential equations like the one above can be used to describe heat conduction and viscous boundary layers.
 
 %---------------------------------------------------------------------------------------------------------------
@@ -60,7 +59,113 @@ The results of these objectives will be of use for further projects, as paraboli
 %DERIVATION OF THE ANALYTICAL SOLUTION
 \section{Derivation of the Analytical Solution:}
 
-TBD
+As mentioned in the supplemental materials, the equation $\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2$ is inhomogenous, therefore to solve it one must use superposition in addition to the conventional separation of variables technique. The solution, $u$ is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is rewritten as:
+
+\begin{equation}
+\frac{\partial v}{\partial x} - 2 \frac{\partial^2 v}{\partial y^2} - 2 \frac{\partial^2 f}{\partial y^2} = 2
+\end{equation}
+
+By setting $\frac{\partial^2 f}{\partial y^2} = -1 $, the equation above can be re-written as:
+
+\begin{equation}
+\frac{\partial v}{\partial x} - 2 \frac{\partial^2 v}{\partial y^2} = 0
+\end{equation}
+
+The separation of variables technique can now be used to solve the equation above. To start, one can assume that $v(x,y) = X(x)Y(y)$, therefore:
+
+\begin{equation}
+X'(x)Y(y) - 2X(x)Y''(y) = 0
+\end{equation}
+
+Dividing both sides by $X(x)Y(y)$, and rearranging gives:
+
+\begin{equation}
+\frac{X'(x)}{X(x)} = 2 \frac{Y''(y)}{Y(y)} = -\lambda
+\end{equation}
+
+The equation above can then be separated into two ordinary differential equations:
+
+\begin{equation}
+X'(x) + \lambda X(x) = 0
+\end{equation}
+\begin{equation}
+Y''(y) + \frac{\lambda}{2} Y(y) = 0
+\end{equation}
+
+From $u(x,0) = 0$, $f(0) = 0$ and $v(x,0) = 0$. From $u(x,1) = 0$, $f(1) = 0$ and $v(x,1) = 0$. Finally, from $u(0,y) = 0$, $v(0,y) = -f(y)$. Therefore, the boundary conditions for $Y(y)$ are $Y(0) = 0$ and $Y(1) = 0$. Now, define $ \alpha ^2 = \frac{\lambda}{2}$, therefore the equation for $Y(y)$ can be re-written as:
+
+\begin{equation}
+Y''(y) + \alpha^2 Y(y) = 0
+\end{equation}
+
+The general solution to which is:
+
+\begin{equation}
+Y(y) = A \cos(\alpha y) + B \sin(\alpha y) 
+\end{equation}
+
+Applying the boundary condition $Y(0) = 0$ gives $A = 0$. Therefore, $Y(y) = B \sin(\alpha y)$. Applying the boundary condition $Y(1) = 0$ gives $Y(1) = B \sin(\alpha) = 0$. For a non-trivial solution, we need:
+
+\begin{equation}
+\sin(\alpha) = 0 \implies \alpha = n \pi, \quad n = 1, 2, 3, ...
+\end{equation}
+
+Therefore:
+
+\begin{equation}
+Y_n(y) = B_n \sin(n \pi y)
+\end{equation}
+
+Recall that $\alpha^2 = \frac{\lambda}{2}$, therefore $\lambda_n = 2 (n \pi)^2$. Thus, we can write:
+
+\begin{equation}
+X'(x) + 2 (n \pi)^2 X(x) = 0
+\end{equation}
+
+The general solution to which is:
+
+\begin{equation}
+X_n(x) = A_n e^{-2 (n \pi)^2 x}
+\end{equation}
+
+Therefore, the solution to the homogenous equation is:
+
+\begin{equation}
+v(x,y) = \sum_{n=1}^{\infty} A_n e^{-2 (n \pi)^2 x} \sin(n \pi y)
+\end{equation}
+
+From $\frac{\partial^2 f}{\partial y^2} = -1 $ and the boundary conditions $f(0) = 0$ and $f(1) = 0$, $f(y) = \frac{y}{2} \left(1 - y\right)$. Again, at $u(0, y) = 0$, $v(0, y) = -f(y)$. Therefore:
+
+\begin{equation}
+\sum_{n=1}^{\infty} A_n \sin(n \pi y) = -\frac{y}{2} \left(1 - y\right)
+\end{equation}
+
+We can regonize this as a Fourier sine series on the interval $[0, 1]$, therefore:
+
+\begin{equation}
+A_n = -2 \int_0^1 \frac{y}{2} (1-y) \sin(n \pi y) dy = - \int_0^1 y (1-y) \sin(n \pi y) dy
+\end{equation}
+
+Evaluating this integral gives:
+
+\begin{equation}
+A_n = \frac{2 \left((-1)^n - 1\right)}{\left(n \pi\right)^3}
+\end{equation}
+
+For even values of $n$, $A_n = 0$. For odd values of $n$, $A_n = -\frac{4}{\left(n \pi\right)^3}$. Thus, we have:
+
+\begin{equation}
+v(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin(n \pi y)
+\end{equation}
+
+And finally, the the analytical solution of the parabolic equation can be expressed as:
+
+\begin{equation}
+\boxed{
+u(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin(n \pi y) + \frac{y}{2} \left(1 - y\right)
+}
+\end{equation}
+
 
 %---------------------------------------------------------------------------------------------------------------
 %DESCRIPTION OF THE NUMERICAL METHOD

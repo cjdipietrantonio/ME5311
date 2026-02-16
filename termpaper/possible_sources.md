@@ -1,3 +1,5 @@
+TOPIC: The Black–Scholes–Merton equation (financial derivative modeling) and connection to the transported probability density function method
+
 Essential, high‑leverage sources that give you the mathematical, economic, and conceptual tools to make the fluids–finance connection airtight.
 Here is the minimal, elite list.
 ⭐ 1. Shreve — Stochastic Calculus for Finance II: Continuous-Time Models

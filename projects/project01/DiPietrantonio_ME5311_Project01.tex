@@ -212,14 +212,28 @@ For the Crank-Nicholson scheme ($\theta = 0.5$), Equation 24 becomes:
 \frac{\Delta x}{\Delta y} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta y \Delta x
 \end{equation}
 
-Finally, by equating the left and right-hand sides and dividing both by $\Delta y$, the following discretized governing equation is obtained:
+Finally, by equating the left and right-hand sides and dividing both by $\Delta y$, the following discretized governing equation for any interior cell $i = 1,2,...,N-2$, is obtained:
 \begin{equation}
 \boxed{ 
 {u_{i}}^{n+1} - {u_{i}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta x
 }
 \end{equation}
 
-We can now program a numerical solver (using LU decomposition as the linear system solver) to solve the discretized governing equation above, and compare the results with the analytical solution derived in the previous section. 
+For the boundary at $y = 0$, where $u(x,0) = 0$, the discretized governing equation (using a ghost node and assuming the cell ID for the first cell is $i=0$) is:
+\begin{equation}
+\boxed{
+{u_{0}}^{n+1} - {u_{0}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{1}}^{n} + {u_{1}}^{n+1}\right) - 3 \left({u_{0}}^{n} + {u_{0}}^{n+1}\right) \right) + 2 \Delta x
+}
+\end{equation}
+
+For the boundary at $y = 1$, where $u(x,1) = 0$, the discretized governing equation (using a ghost node and assuming the cell ID for the last cell is $i=N-1$) is:
+\begin{equation}
+\boxed{
+{u_{N-1}}^{n+1} - {u_{N-1}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{N-2}}^{n} + {u_{N-2}}^{n+1}\right) - 3 \left({u_{N-1}}^{n} + {u_{N-1}}^{n+1}\right) \right) + 2 \Delta x
+}
+\end{equation}
+
+We can now program a numerical solver (using LU decomposition as the linear system solver) to solve the discretized governing equations above and compare the results with the analytical solution derived in the previous section. 
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -245,7 +259,7 @@ TBD
 
 \subsection{Accuracy and stability}
 
-TBD
+We include both error at the selected x-locations (for direct comparison with the plotted profiles) and the error at every x-step (to demonstrate stability of the Crank Nicholson scheme).
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -254,7 +268,24 @@ TBD
 
 \subsection{Structure}
 
-TBD
+MATRIX FORM OF GOVERNING EQUATIONS, $r = \frac{\Delta x}{\Delta y^2}$:
+
+BOTTOM BC:
+\begin{equation}
+( 1 + 3r) u_{0}^{n+1} - r u_{1}^{n+1} =  (1 -3r)u_{0}^{n} + r u_{1}^{n} + 2 \Delta x
+\end{equation}
+
+INTERIOR CELLS:
+\begin{equation}
+-r u_{i-1}^{n+1} + (1+2r) u_{i}^{n+1} - r u_{i+1}^{n+1} = r u_{i-1}^{n} + (1-2r) u_{i}^{n} + r u_{i+1}^{n} + 2 \Delta x
+\end{equation}
+
+TOP BC:
+\begin{equation}
+-r u_{N-2}^{n+1} + (1 + 3r) u_{N-1}^{n+1} = r u_{N-2}^{n} + (1-3r) u_{N-1}^{n} + 2 \Delta x
+\end{equation}
+
+
 
 \subsection{Documentation}
 

@@ -1,5 +1,5 @@
 \documentclass[letterpaper,12pt]{article}
-\usepackage{amsmath, amssymb, geometry, titlesec, esint}
+\usepackage{amsmath, amssymb, geometry, titlesec, esint, listings, xcolor, graphicx, float}
 \geometry{margin=1in}
 
 %Make section titles smaller
@@ -16,6 +16,21 @@
 \titlespacing*{\subsection}{0pt}{10pt}{4pt}
 
 \setlength{\parindent}{0pt} % no indentation
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!60!black},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{teal!60!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    frame=single,
+    tabsize=4,
+    showstringspaces=false
+}
 
 \begin{document}
 
@@ -37,7 +52,7 @@ ME M311: Computational Methods to Viscous Flows \\
 %---------------------------------------------------------------------------------------------------------------
 
 %DESCRIPTION OF THE PROBLEM
-\section{Description of the Problem:}
+\section{Description of the Problem}
 
 Given the following second order linear parabolic partial differential equation (PDE):
 
@@ -57,7 +72,7 @@ The results of these objectives will be of use for further projects, as paraboli
 %---------------------------------------------------------------------------------------------------------------
 
 %DERIVATION OF THE ANALYTICAL SOLUTION
-\section{Derivation of the Analytical Solution:}
+\section{Derivation of the Analytical Solution}
 
 As mentioned in the supplemental materials, the equation $\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2$ is inhomogenous, therefore to solve it one must use superposition in addition to the conventional separation of variables technique. The solution, $u$ is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is re-written as:
 
@@ -168,7 +183,7 @@ u(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin
 
 %---------------------------------------------------------------------------------------------------------------
 %DESCRIPTION OF THE NUMERICAL METHOD
-\section{Description of the Numerical Method:}
+\section{Description of the Numerical Method}
 
 To discretize Equation 1, the entire equation is integrated over the specified $x$ interval, $\Delta x$, and the control volume, $V$:
 
@@ -233,25 +248,46 @@ For the boundary at $y = 1$, where $u(x,1) = 0$, the discretized governing equat
 }
 \end{equation}
 
-We can now program a numerical solver (using LU decomposition as the linear system solver) to solve the discretized governing equations above and compare the results with the analytical solution derived in the previous section. 
+We can now program the numerical solver shown in Appendix~\ref{appendix-code} (using LU decomposition as the linear system solver) to solve the discretized governing equations above and compare the results with the analytical solution derived in the previous section. 
 
 %---------------------------------------------------------------------------------------------------------------
 
 %PRESENTATION OF RESULTS
-\section{Presentation of Results:}
+\section{Presentation of Results}
+\vspace{-12pt}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{profiles_comparison.png}
+    \vspace{-12pt}
+    \caption{Numerical and analytical solution profiles at selected $x$-locations.}
+    \label{fig:profiles_comparison}
+\end{figure}
 
-\subsection{Profiles at different x locations from numerical solution}
+\vspace{-12pt}
 
-TBD
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{error_vs_x.png}
+    \vspace{-12pt}
+    \caption{L2 error between numerical and analytical solutions at selected $x$-locations.}
+    \label{fig:error_vs_x}
+\end{figure}
 
-\subsection{Profiles at different x locations from analytical solution}
+\vspace{-12pt}
 
-TBD
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{error_vs_x_all.png}
+    \vspace{-12pt}
+    \caption{L2 error between numerical and analytical solutions at every $x$-location.}
+    \label{fig:error_vs_x_all}
+\end{figure}
+
 
 %---------------------------------------------------------------------------------------------------------------
 
 %DISCUSSION OF RESULTS
-\section{Discussion of Results:}
+\section{Discussion of Results}
 
 \subsection{General description}
 
@@ -259,14 +295,27 @@ TBD
 
 \subsection{Accuracy and stability}
 
-We include both error at the selected x-locations (for direct comparison with the plotted profiles) and the error at every x-step (to demonstrate stability of the Crank Nicholson scheme).
+We include both error at the selected x-locations (FIGURE 2) (for direct comparison with the plotted profiles) and the error at every x-step FIGURE 3 (to demonstrate stability of the Crank Nicholson scheme).
+
+Numerical and analytical profiles at different x locations lie directly on top of one another, making the two  nearly indistinguishable from the numerical curves. The error plots in figures 2 and 3 quantify this agreement and show that the numerical solution closely matches the analytical solution accross the entire domain.
 
 %---------------------------------------------------------------------------------------------------------------
 
-%APPENDIX - copy of program listing
-\section{Appendix - Copy of Program Listing:}
+%APPENDIX A - copy of program listing
+\newpage
+\appendix
+\section{Copy of Program Listing}
+\label{appendix-code}
 
-\subsection{Structure}
+\lstinputlisting[
+    language=Python
+]{DiPietrantonio_ME5311_Project01.py}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX B - Other Calculations
+\newpage
+\section{Other Calculations}
 
 MATRIX FORM OF GOVERNING EQUATIONS, $r = \frac{\Delta x}{\Delta y^2}$:
 
@@ -284,12 +333,6 @@ TOP BC:
 \begin{equation}
 -r u_{N-2}^{n+1} + (1 + 3r) u_{N-1}^{n+1} = r u_{N-2}^{n} + (1-3r) u_{N-1}^{n} + 2 \Delta x
 \end{equation}
-
-
-
-\subsection{Documentation}
-
-TBD
 
 %---------------------------------------------------------------------------------------------------------------
 

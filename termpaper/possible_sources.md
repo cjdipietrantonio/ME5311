@@ -73,3 +73,10 @@ You can access it through:
 	• JSTOR
 	• Wiley Online Library (publisher of the Bell Journal)
 University library databases
+
+See the following link for (Steven E. Shreve Stochastic Calculus for Finance II- Continuous-Time Model) download:
+https://sci-books.com/stochastic-calculus-for-finance-ii-continuous-time-models-springer-finance-144192311x/
+
+
+#GITHUB REPO WITH BOOKS (includes Steven E. Shreve Stochastic Calculus for Finance II- Continuous-Time Model)
+https://github.com/yc-liu/readings

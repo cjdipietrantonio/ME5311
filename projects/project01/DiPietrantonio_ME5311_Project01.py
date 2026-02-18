@@ -22,7 +22,7 @@ def set_parameters():
 
     # Stepping in x
     params["x_max"] = 1.0 # Final x
-    params["Nx"]    = 500 # Number of steps in x
+    params["Nx"]    = 1000 # Number of steps in x
     params["dx"]    = params["x_max"] / params["Nx"] # Step size in x
 
     # Source term

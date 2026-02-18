@@ -259,7 +259,7 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
     \centering
     \includegraphics[width=0.8\textwidth]{profiles_comparison.png}
     \vspace{-12pt}
-    \caption{Numerical and analytical solution profiles at selected $x$-locations.}
+    \caption{Comparison of numerical and analytical solution profiles at selected $x$-locations.}
     \label{fig:profiles_comparison}
 \end{figure}
 
@@ -267,10 +267,10 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{error_vs_x.png}
+    \includegraphics[width=0.8\textwidth]{residual_vs_x.png}
     \vspace{-12pt}
-    \caption{L2 error between numerical and analytical solutions at selected $x$-locations.}
-    \label{fig:error_vs_x}
+    \caption{L2 residual at each $x$-location.}
+    \label{fig:residual_vs_x}
 \end{figure}
 
 \vspace{-12pt}
@@ -279,7 +279,7 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
     \centering
     \includegraphics[width=0.8\textwidth]{error_vs_x_all.png}
     \vspace{-12pt}
-    \caption{L2 error between numerical and analytical solutions at every $x$-location.}
+    \caption{L2 error between numerical and analytical solutions at each $x$-location.}
     \label{fig:error_vs_x_all}
 \end{figure}
 
@@ -291,13 +291,15 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
 
 \subsection{General description}
 
-TBD
+The numerical solution of the parabolic equation found using the Crank-Nicholson and central difference schemes show excellent agreement with the analytical solution derived in Section 2. Figure~\ref{appendix-code} compares nunmerical and analytical profiles of $u$ at several $x$-locations, and for all values of $x$ the two curves lie nearly on top of one another. This demonstrates that the discritization accurately captures both the transient development in the $x$-direction and the parabolic shape in the $y$-direction. Tha analytical solution contains an exponentially decaying transient term proportional to $e^{-2 x \pi^2}$, the solution approaches the steady state profile
+\begin{equation}
+u(y) = \frac{y}{2} (1-y)
+\end{equation}
+as $x$ increases. At roughly $x = 0.25$, the transient component of the solution has decayed to about 1\% of its initial magnitude, and the solution is effectivly steady. This behavior is confirmed in the residual plot (Figure~\ref{fig:residual_vs_x}), as the L2 Residual inititally decreases rapidly initially, then remains inchanged at a value of roughly zero, indicating no change between successive steps in $x$. Finaly, the parabolic shape we see the solution approach as $x$ increases makes sense intuitively because each cell contributes a constant source term of $2 \Delta x$, while the boundary conditions enforce $u=0$ at $y=0$ and $y=1$.Therefore, the cells further from the boundaries will have larger values of $u$, as the flux with respect to $u$ has a greater distance in $y$ to diffuse through before reaching the boundaries.
 
 \subsection{Accuracy and stability}
 
-We include both error at the selected x-locations (FIGURE 2) (for direct comparison with the plotted profiles) and the error at every x-step FIGURE 3 (to demonstrate stability of the Crank Nicholson scheme).
-
-Numerical and analytical profiles at different x locations lie directly on top of one another, making the two  nearly indistinguishable from the numerical curves. The error plots in figures 2 and 3 quantify this agreement and show that the numerical solution closely matches the analytical solution accross the entire domain.
+Analytical profiles at different x-locations are nearly indistinguishable from their respective numerical curves. Figure~\ref{fig:error_vs_x_all} includes the eror at every x-step to demonstrate the accuracy and stability of the simulation/numerical scheme. From Figure~\ref{fig:error_vs_x_all}, one can observe that the error does not increase past 0.008 thus demonstrating the accuracy of the numerical solution across the entire domain. Apart from slight fluctuations in the error across teh first few time steps (LIKELY DUE TO?), one can also observe that there are no singificant oscilations, or unphysical values in both Figures \ref{fig:profiles_comparison} and \ref{fig:error_vs_x_all}, thus confirming the stability of the numerical scheme. This is to be expected, as the Crank-Nicholson scheme is unconditionally stable. 
 
 %---------------------------------------------------------------------------------------------------------------
 

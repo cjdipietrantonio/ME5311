@@ -22,7 +22,7 @@ def set_parameters():
 
     # Stepping in x
     params["x_max"] = 1.0 # Final x
-    params["Nx"]    = 200 # Number of steps in x
+    params["Nx"]    = 500 # Number of steps in x
     params["dx"]    = params["x_max"] / params["Nx"] # Step size in x
 
     # Source term
@@ -150,7 +150,7 @@ def analytical_solution(x, y, n_terms=100):
 def post_process(params, x_vals, u_store):
     y = params["y"]
 
-    x_targets = [0.0, 0.25, 0.5, 1.0]
+    x_targets = [0.0, 0.01, 0.05, 0.1, 0.25, 1.0]
 
     errors       =[]
     x_error_vals = []
@@ -158,7 +158,7 @@ def post_process(params, x_vals, u_store):
     # Plot 1: Numerical vs Analytical Solutions at selected x locations
     plt.figure(figsize=(10, 6))
 
-    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown']
 
     for i, x_target in enumerate(x_targets):
         idx = np.argmin(np.abs(x_vals - x_target))
@@ -170,7 +170,7 @@ def post_process(params, x_vals, u_store):
         errors.append(error)
         x_error_vals.append(x_now)
 
-        plt.plot(y, u_num, '-d', color=colors[i], alpha=0.5, label=f'Numerical at x={x_now:.2f}', linewidth=2, markersize=6)
+        plt.plot(y, u_num, '-d', color=colors[i], alpha=0.5, label=f'Numerical at x={x_now:.2f}', linewidth=2, markersize=4)
         plt.plot(y, u_exact, '--', color=colors[i], label=f'Analytical at x={x_now:.2f}', linewidth=1.5)
 
     plt.xlabel('y', fontsize=18)
@@ -182,29 +182,37 @@ def post_process(params, x_vals, u_store):
     plt.tight_layout()
     plt.savefig('profiles_comparison.png', dpi=300, bbox_inches='tight')
 
-    # Plot 2: Error vs x
-    plt.figure(figsize=(10, 6))
-    plt.plot(x_error_vals, errors, '-o', color = 'tab:blue', linewidth=2, markersize=6)
-    plt.xlabel('x', fontsize=18)
-    plt.ylabel('L2 Error', fontsize=18)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.tight_layout()
-    plt.savefig('error_vs_x.png', dpi=300, bbox_inches='tight')
-
-    # Plot 3: Error vs x for every step (to demonstrate stability)
+    # Plot 2/3: Residual, Error vs x
     all_errors = []
+    residuals = []
 
     for n in range(len(x_vals)):
+        # Error
         u_num = u_store[n, :]
         u_exact = analytical_solution(x_vals[n], y)
         all_errors.append(np.linalg.norm(u_num - u_exact, ord=2))
 
+        # Residual
+        if n < len(x_vals) - 1: # skip last point since we don't have u at x_{n+1}
+            u_next = u_store[n+1, :]
+            residuals.append(np.linalg.norm(u_next - u_num, ord=2))
+
+    # Plot 2: residual vs x
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_vals[1:], residuals, '-o', color = 'tab:blue', linewidth=2, markersize=4)
+    plt.xlabel('x', fontsize=18)
+    plt.ylabel(r'L2 Residual: $\|u^{n+1} - u^n\|_2$', fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
+
+    # Plot 3: error vs x
     plt.figure(figsize=(10, 6))
     plt.plot(x_vals, all_errors, '-o', color='tab:red', linewidth=2, markersize=4)
     plt.xlabel('x', fontsize=18)
-    plt.ylabel('L2 Error', fontsize=18)
+    plt.ylabel(r'L2 Error: $\|u_{num} - u_{exact}\|_2$', fontsize=18)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.5)
@@ -222,3 +230,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

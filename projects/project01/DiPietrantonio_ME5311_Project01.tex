@@ -1,5 +1,6 @@
 \documentclass[letterpaper,12pt]{article}
-\usepackage{amsmath, amssymb, geometry, titlesec, esint, listings, xcolor, graphicx, float}
+\usepackage{amsmath, amssymb, geometry, titlesec, esint, listings, xcolor, graphicx, float, caption}
+
 \geometry{margin=1in}
 
 %Make section titles smaller
@@ -16,6 +17,9 @@
 \titlespacing*{\subsection}{0pt}{10pt}{4pt}
 
 \setlength{\parindent}{0pt} % no indentation
+
+%Figure caption sizes
+\captionsetup[figure]{justification=raggedright, font=small, labelfont=bf}
 
 \lstset{
     language=Python,
@@ -267,22 +271,24 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{residual_vs_x.png}
-    \vspace{-12pt}
-    \caption{L2 residual at each $x$-location.}
-    \label{fig:residual_vs_x}
+    \begin{minipage}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{residual_vs_x.png}
+        \vspace{-24pt}
+        \caption{L2 residual vs. $x$}
+        \label{fig:residual_vs_x}
+    \end{minipage}
+    %\hfill
+    \hspace{30pt}
+    \begin{minipage}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{error_vs_x_all.png}
+        \vspace{-24pt}
+        \caption{L2 error between numerical and analytical solutions vs. $x$}
+        \label{fig:error_vs_x_all}
+    \end{minipage}
 \end{figure}
-
-\vspace{-12pt}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{error_vs_x_all.png}
-    \vspace{-12pt}
-    \caption{L2 error between numerical and analytical solutions at each $x$-location.}
-    \label{fig:error_vs_x_all}
-\end{figure}
-
+\vspace{-20pt}
 
 %---------------------------------------------------------------------------------------------------------------
 

@@ -21,7 +21,7 @@ def set_parameters():
     params["dy"]    = (params["y_max"] - params["y_min"]) / params["N"]  # Cell size in y
 
     # Stepping in x
-    params["x_max"] = 1.0 # Final x
+    params["x_max"] = 0.5 # Final x
     params["Nx"]    = 1000 # Number of steps in x
     params["dx"]    = params["x_max"] / params["Nx"] # Step size in x
 
@@ -198,7 +198,7 @@ def post_process(params, x_vals, u_store):
             residuals.append(np.linalg.norm(u_next - u_num, ord=2))
 
     # Plot 2: residual vs x
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(5, 5))
     plt.plot(x_vals[1:], residuals, '-o', color = 'tab:blue', linewidth=2, markersize=4)
     plt.xlabel('x', fontsize=18)
     plt.ylabel(r'L2 Residual: $\|u^{n+1} - u^n\|_2$', fontsize=18)
@@ -209,7 +209,7 @@ def post_process(params, x_vals, u_store):
     plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
 
     # Plot 3: error vs x
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(5, 5))
     plt.plot(x_vals, all_errors, '-o', color='tab:red', linewidth=2, markersize=4)
     plt.xlabel('x', fontsize=18)
     plt.ylabel(r'L2 Error: $\|u_{num} - u_{exact}\|_2$', fontsize=18)

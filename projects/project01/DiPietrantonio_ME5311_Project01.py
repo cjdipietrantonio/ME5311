@@ -1,7 +1,7 @@
 # Christian DiPietrantonio
-# ME M311: Computational Methods to Viscous Flows
+# ME 5311: Computational Methods to Viscous Flows
 # Computer Assignment 01
-# 02/16/2026
+# 02/19/2026
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -45,17 +45,17 @@ def build_matrices(params):
     dx = params["dx"]
     dy = params["dy"]
 
-    r = dx / dy**2
+    r = dx / dy**2 # Defined to simplify matrix coefficients
 
     A = np.zeros((N, N))
     B = np.zeros((N, N))
 
     # ----- Bottom Boundary: i = 0, u(x,0) = 0 ---------------------
-    #LHS
+    #LHS (coefficients from Crank-Nicholson discretization)
     A[0, 0] = 1 + 3*r
     A[0, 1] = -r
 
-    #RHS
+    #RHS (coefficients from Crank-Nicholson discretization)
     B[0, 0] = 1 - 3*r
     B[0, 1] = r
 
@@ -140,7 +140,7 @@ def analytical_solution(x, y, n_terms=100):
     u_exact = 0.5 * y * (1 - y)
 
     for k in range(n_terms):
-        n = 2*k + 1
+        n = 2*k + 1 # sum over odd integers only
         A_n = -4 / (n * np.pi)**3
         decay = np.exp(-2 * x * (n * np.pi)**2)
         u_exact += A_n * decay * np.sin(n * np.pi * y)

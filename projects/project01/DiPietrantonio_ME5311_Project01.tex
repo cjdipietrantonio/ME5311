@@ -13,13 +13,19 @@
     {\thesubsection.}{0.5em}{}
 
 %Customize vertical spacing
-\titlespacing*{\section}{0pt}{12pt}{6pt}
-\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+
+\setlength{\textfloatsep}{5pt}
+\setlength{\floatsep}{5pt}
+\setlength{\intextsep}{5pt}
+
+%\linespread{0.97}
 
 \setlength{\parindent}{0pt} % no indentation
 
 %Figure caption sizes
-\captionsetup[figure]{justification=raggedright, font=small, labelfont=bf}
+\captionsetup[figure]{justification=raggedright, font=small, labelfont=bf, skip=0pt}
 
 \lstset{
     language=Python,
@@ -36,6 +42,15 @@
     showstringspaces=false
 }
 
+\makeatletter
+\g@addto@macro\normalsize{%
+  \setlength\abovedisplayskip{6pt}%
+  \setlength\belowdisplayskip{6pt}%
+  \setlength\abovedisplayshortskip{6pt}%
+  \setlength\belowdisplayshortskip{6pt}%
+}
+\makeatother
+
 \begin{document}
 
 %---------------------------------------------------------------------------------------------------------------
@@ -46,7 +61,7 @@ Christian DiPietrantonio \\
 ME M311: Computational Methods to Viscous Flows \\
 \today
 
-\vspace{10pt}
+\vspace{6pt}
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -57,53 +72,46 @@ ME M311: Computational Methods to Viscous Flows \\
 
 %DESCRIPTION OF THE PROBLEM
 \section{Description of the Problem}
-
-Given the following second order linear parabolic partial differential equation (PDE):
-
+Given the following second-order linear parabolic partial differential equation (PDE):
 \begin{equation}
 \frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2
 \end{equation}
 
-With boundary conditions: $u\left(x,0\right) = 0$, $u\left(x,1\right) = 0$, and initial condition: $u(0,y) = 0$, our objectives were to:
+with boundary conditions: $u\left(x,0\right) = 0$, $u\left(x,1\right) = 0$, and initial condition: $u(0,y) = 0$, the objectives of this project are to:
 \begin{enumerate}
-    \item Derive the analytical solution of the parabolic equation with its given initial and boundary conditions.
-    \item Use the Crank-Nicolson scheme and central difference scheme to discretize the equation (using either a finite-volume or a finite-difference based method).
-    \item Find the numerical solution of the parabolic equation and compare it with the analytical solution using LU decomposition as the linear system solver.
+    \item Derive the analytical solution.
+    \item Use the Crank-Nicholson and central difference schemes to discretize the equation.
+    \item Find the numerical solution and compare it with the analytical solution using LU decomposition as the linear system solver.
 \end{enumerate}
 
-The results of these objectives will be of use for further projects, as parabolic partial differential equations like the one above can be used to describe heat conduction and viscous boundary layers.
+Parabolic PDEs, such as the one above, can be used to describe heat conduction and viscous boundary layers, making this problem a useful foundation for later work.
 
 %---------------------------------------------------------------------------------------------------------------
 
 %DERIVATION OF THE ANALYTICAL SOLUTION
 \section{Derivation of the Analytical Solution}
 
-As mentioned in the supplemental materials, the equation $\frac{\partial u}{\partial x} - 2 \frac{\partial^2 u}{\partial y^2} = 2$ is inhomogenous, therefore to solve it one must use superposition in addition to the conventional separation of variables technique. The solution, $u$ is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is re-written as:
-
+As mentioned in the supplemental materials, Equation 1 is inhomogeneous. To solve it, one must use the superposition and separation of variables techniques. First, the solution is expressed as $u(x,y) = v(x,y) + f(y)$, and the original equation is re-written as:
 \begin{equation}
 \frac{\partial v}{\partial x} - 2 \frac{\partial^2 v}{\partial y^2} - 2 \frac{\partial^2 f}{\partial y^2} = 2
 \end{equation}
 
 By setting $\frac{\partial^2 f}{\partial y^2} = -1 $, the equation above can be re-written as:
-
 \begin{equation}
 \frac{\partial v}{\partial x} - 2 \frac{\partial^2 v}{\partial y^2} = 0
 \end{equation}
 
 The separation of variables technique can now be used to solve the equation above. To start, one can assume that $v(x,y) = X(x)Y(y)$, therefore:
-
 \begin{equation}
 X'(x)Y(y) - 2X(x)Y''(y) = 0
 \end{equation}
 
 Dividing both sides by $X(x)Y(y)$, and rearranging gives:
-
 \begin{equation}
 \frac{X'(x)}{X(x)} = 2 \frac{Y''(y)}{Y(y)} = -\lambda
 \end{equation}
 
-The equation above can then be separated into two ordinary differential equations:
-
+Equation 5 can then be separated into two ordinary differential equations:
 \begin{equation}
 X'(x) + \lambda X(x) = 0
 \end{equation}
@@ -111,74 +119,63 @@ X'(x) + \lambda X(x) = 0
 Y''(y) + \frac{\lambda}{2} Y(y) = 0
 \end{equation}
 
-From $u(x,0) = 0$, $f(0) = 0$ and $v(x,0) = 0$. From $u(x,1) = 0$, $f(1) = 0$ and $v(x,1) = 0$. Finally, from $u(0,y) = 0$, $v(0,y) = -f(y)$. Therefore, the boundary conditions for $Y(y)$ are $Y(0) = 0$ and $Y(1) = 0$. Now, define $ \alpha ^2 = \frac{\lambda}{2}$, therefore the equation for $Y(y)$ can be re-written as:
-
+From $u(x,0) = 0$, $f(0) = 0$ and $v(x,0) = 0$. From $u(x,1) = 0$, $f(1) = 0$ and $v(x,1) = 0$. Finally, from $u(0,y) = 0$, $v(0,y) = -f(y)$. Therefore, the boundary conditions for $Y(y)$ are $Y(0) = 0$ and $Y(1) = 0$. Now, define $ \alpha ^2 = \frac{\lambda}{2}$, therefore Equation 7 can be re-written as:
 \begin{equation}
 Y''(y) + \alpha^2 Y(y) = 0
 \end{equation}
 
 The general solution to which is:
-
 \begin{equation}
 Y(y) = A \cos(\alpha y) + B \sin(\alpha y) 
 \end{equation}
 
-Applying the boundary condition $Y(0) = 0$ gives $A = 0$. Therefore, $Y(y) = B \sin(\alpha y)$. Applying the boundary condition $Y(1) = 0$ gives $Y(1) = B \sin(\alpha) = 0$. For a non-trivial solution, we need:
-
+Applying the boundary condition $Y(0) = 0$ gives $A = 0$. Therefore, $Y(y) = B \sin(\alpha y)$. Applying the boundary condition $Y(1) = 0$ gives $Y(1) = B \sin(\alpha) = 0$. A non-trivial solution requires:
 \begin{equation}
 \sin(\alpha) = 0 \implies \alpha = n \pi, \quad n = 1, 2, 3, ...
 \end{equation}
 
 Therefore:
-
 \begin{equation}
 Y_n(y) = B_n \sin(n \pi y)
 \end{equation}
 
-Recall that $\alpha^2 = \frac{\lambda}{2}$, therefore $\lambda_n = 2 (n \pi)^2$. Thus, we can write:
 
+Recall that $\alpha^2 = \frac{\lambda}{2}$, therefore $\lambda_n = 2 (n \pi)^2$. Thus, Equation 6 can be expressed as:
 \begin{equation}
 X'(x) + 2 (n \pi)^2 X(x) = 0
 \end{equation}
 
 The general solution to which is:
-
 \begin{equation}
 X_n(x) = A_n e^{-2 (n \pi)^2 x}
 \end{equation}
 
-Therefore, the solution to the homogenous equation is:
-
+Therefore, the solution to the homogeneous equation is:
 \begin{equation}
 v(x,y) = \sum_{n=1}^{\infty} A_n e^{-2 (n \pi)^2 x} \sin(n \pi y)
 \end{equation}
 
 From $\frac{\partial^2 f}{\partial y^2} = -1 $ and the boundary conditions $f(0) = 0$ and $f(1) = 0$, $f(y) = \frac{y}{2} \left(1 - y\right)$. Again, at $u(0, y) = 0$, $v(0, y) = -f(y)$. Therefore:
-
 \begin{equation}
 \sum_{n=1}^{\infty} A_n \sin(n \pi y) = -\frac{y}{2} \left(1 - y\right)
 \end{equation}
 
-We can regonize this as a Fourier sine series on the interval $[0, 1]$, therefore:
-
+Which can be recognized as a Fourier sine series on the interval $[0, 1]$, therefore:
 \begin{equation}
 A_n = -2 \int_0^1 \frac{y}{2} (1-y) \sin(n \pi y) dy = - \int_0^1 y (1-y) \sin(n \pi y) dy
 \end{equation}
 
 Evaluating this integral gives:
-
 \begin{equation}
 A_n = \frac{2 \left((-1)^n - 1\right)}{\left(n \pi\right)^3}
 \end{equation}
 
-For even values of $n$, $A_n = 0$. For odd values of $n$, $A_n = -\frac{4}{\left(n \pi\right)^3}$. Thus, we have:
-
+For even values of $n$, $A_n = 0$. For odd values of $n$, $A_n = -\frac{4}{\left(n \pi\right)^3}$. So Equation 15 becomes:
 \begin{equation}
 v(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin(n \pi y)
 \end{equation}
 
-And finally, the the analytical solution of the parabolic equation can be expressed as:
-
+And finally, the analytical solution of the parabolic equation can be expressed as:
 \begin{equation}
 \boxed{
 u(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin(n \pi y) + \frac{y}{2} \left(1 - y\right)
@@ -190,105 +187,98 @@ u(x,y) = \sum_{n=1,3,5,...}^{\infty} -\frac{4}{(n \pi)^3} e^{-2x (n \pi)^2} \sin
 \section{Description of the Numerical Method}
 
 To discretize Equation 1, the entire equation is integrated over the specified $x$ interval, $\Delta x$, and the control volume, $V$:
-
 \begin{equation}
 \iiint\limits_{V} \left(\int_{x}^{x+\Delta x} \frac {\partial u}{\partial x}\, dx\right)\, dV = \int_{x}^{x+\Delta x} \left(\iiint\limits_{V} \left(2 \frac{\partial^2 u}{\partial y^2} + 2\right)\, dV\right)\, dx
 \end{equation}
 
 For the left-hand side, integrating over x gives:
-
 \begin{equation}
 \iiint\limits_{V} \left(u(x + \Delta x) - u(x)\right)\, dV = \left(u(x + \Delta x) - u(x)\right) \Delta y = \Delta y \left({u_{i}}^{n+1} - {u_{i}}^{n}\right)
 \end{equation}
 
 On the right-hand side, the divergence theorem is used to convert the integral over the control volume into a surface integral:
-
 \begin{equation}
 \oiint\limits_{A}\left(2 \frac{\partial u}{\partial y} \hat{n}_{y}\right)\, dA + 2 \Delta y 
 \end{equation}
 
-After evaluating the surface integral, the derivative is discretized using a central-difference scheme:
-
+After evaluating the surface integral, resulting derivatives are discretized using a central-difference scheme:
 \begin{equation}
 2\left( \frac{u_{i+1} - u_{i}}{\Delta y}\right) - 2 \left(\frac{u_{i} - u_{i-1}}{\Delta y}\right) + 2 \Delta y 
 \end{equation}
 
 Thus, the right-hand side reduces to:
-
 \begin{equation}
 \int_{x}^{x + \Delta x} \left(2\left( \frac{u_{i+1} - u_{i}}{\Delta y}\right) - 2 \left(\frac{u_{i} - u_{i-1}}{\Delta y}\right) + 2 \Delta y\right)\, dx
 \end{equation}
 
 Next, the integration $\int_x^{x + \Delta x} u\, dx$ is approximated using:
-
 \begin{equation}
 \int_x^{x + \Delta x} u dx = \left(\theta u^n + (1 - \theta) u^{n+1}\right) \Delta x
 \end{equation}
 
 For the Crank-Nicholson scheme ($\theta = 0.5$), Equation 24 becomes:
-
 \begin{equation}
 \frac{\Delta x}{\Delta y} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta y \Delta x
 \end{equation}
 
-Finally, by equating the left and right-hand sides and dividing both by $\Delta y$, the following discretized governing equation for any interior cell $i = 1,2,...,N-2$, is obtained:
+Finally, by equating the left and right-hand sides and dividing both by $\Delta y$, the following discretized governing equation for any interior cell $(i = 1,2,...,N-2)$, is obtained:
 \begin{equation}
 \boxed{ 
 {u_{i}}^{n+1} - {u_{i}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{i+1}}^{n} + {u_{i+1}}^{n+1}\right) - 2\left({u_{i}}^{n} + {u_{i}}^{n+1}\right) + \left({u_{i-1}}^{n} + {u_{i-1}}^{n+1}\right)\right) + 2 \Delta x
 }
 \end{equation}
 
-For the boundary at $y = 0$, where $u(x,0) = 0$, the discretized governing equation (using a ghost node and assuming the cell ID for the first cell is $i=0$) is:
+For the boundary at $y = 0$, where $u(x,0) = 0$, the discretized governing equation (assuming the cell ID for the first cell is $i=0$) is:
 \begin{equation}
 \boxed{
 {u_{0}}^{n+1} - {u_{0}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{1}}^{n} + {u_{1}}^{n+1}\right) - 3 \left({u_{0}}^{n} + {u_{0}}^{n+1}\right) \right) + 2 \Delta x
 }
 \end{equation}
 
-For the boundary at $y = 1$, where $u(x,1) = 0$, the discretized governing equation (using a ghost node and assuming the cell ID for the last cell is $i=N-1$) is:
+For the boundary at $y = 1$, where $u(x,1) = 0$, the discretized governing equation (assuming the cell ID for the last cell is $i=N-1$) is:
 \begin{equation}
 \boxed{
 {u_{N-1}}^{n+1} - {u_{N-1}}^{n} = \frac{\Delta x}{\Delta y^2} \left( \left({u_{N-2}}^{n} + {u_{N-2}}^{n+1}\right) - 3 \left({u_{N-1}}^{n} + {u_{N-1}}^{n+1}\right) \right) + 2 \Delta x
 }
 \end{equation}
 
-We can now program the numerical solver shown in Appendix~\ref{appendix-code} (using LU decomposition as the linear system solver) to solve the discretized governing equations above and compare the results with the analytical solution derived in the previous section. 
+The numerical solver shown in Appendix~\ref{appendix-code} can now be programmed (using LU decomposition as the linear system solver) to solve the discretized governing equations above and compare the results with the analytical solution derived in the previous section. 
 
 %---------------------------------------------------------------------------------------------------------------
 
 %PRESENTATION OF RESULTS
 \section{Presentation of Results}
-\vspace{-12pt}
+\vspace{-6pt}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{profiles_comparison.png}
-    \vspace{-12pt}
+    \includegraphics[width=0.7\textwidth]{profiles_comparison.png}
+    %\vspace{-12pt}
     \caption{Comparison of numerical and analytical solution profiles at selected $x$-locations.}
     \label{fig:profiles_comparison}
 \end{figure}
 
-\vspace{-12pt}
+%\vspace{-12pt}
 
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.4\textwidth}
+        \vspace{0pt}
         \centering
         \includegraphics[width=\textwidth]{residual_vs_x.png}
-        \vspace{-24pt}
         \caption{L2 residual vs. $x$}
         \label{fig:residual_vs_x}
     \end{minipage}
     %\hfill
-    \hspace{30pt}
+    \hspace{45pt}
     \begin{minipage}[t]{0.4\textwidth}
+        \vspace{0pt}
         \centering
         \includegraphics[width=\textwidth]{error_vs_x_all.png}
-        \vspace{-24pt}
         \caption{L2 error between numerical and analytical solutions vs. $x$}
         \label{fig:error_vs_x_all}
     \end{minipage}
 \end{figure}
-\vspace{-20pt}
+%\vspace{-20pt}
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -297,15 +287,15 @@ We can now program the numerical solver shown in Appendix~\ref{appendix-code} (u
 
 \subsection{General description}
 
-The numerical solution of the parabolic equation found using the Crank-Nicholson and central difference schemes shows excellent agreement with the analytical solution derived in Section 2. Figure~\ref{appendix-code} compares nunmerical and analytical profiles of $u$ at several $x$-locations, and for all values of $x$ the two curves lie nearly on top of one another. This demonstrates that the discritization accurately captures both the transient development in the $x$-direction and the parabolic shape in the $y$-direction. The analytical solution contains an exponentially decaying transient term proportional to $e^{-2 x \pi^2}$, the solution approaches the steady state profile
+The numerical solution of the parabolic equation obtained using the Crank-Nicholson and central difference schemes exhibits excellent agreement with the analytical solution derived in Section 2. Figure~\ref{fig:profiles_comparison} compares numerical and analytical profiles of $u$ at several $x$-locations, and for all values of $x$, the two curves lie nearly on top of one another. This demonstrates that the discretization accurately captures both the transient development in the $x$-direction and the parabolic shape in the $y$-direction. The analytical solution contains an exponentially decaying transient term proportional to $e^{-2 x \pi^2}$, and the solution approaches the steady state profile
 \begin{equation}
 u(y) = \frac{y}{2} (1-y)
 \end{equation}
-as $x$ increases. At roughly $x = 0.25$, the transient component of the solution has decayed to about 1\% of its initial magnitude, and the solution is effectivly steady. This behavior is confirmed in the residual plot (Figure~\ref{fig:residual_vs_x}), as the L2 Residual inititally decreases rapidly, then remains unchanged at a value of roughly zero, indicating no meaningful change between successive steps in $x$. Finally, the parabolic shape the solution approaches as $x$ increases is physically intuitive, because each cell contributes a constant source term of $2 \Delta x$, while the boundary conditions enforce $u=0$ at $y=0$ and $y=1$. Therefore, the cells further from the boundaries will have larger values of $u$, because the diffusive flux in the $y$-direction must travel a greater distance before reaching the boundaries. As a result, the gradient of $u$ decreases as distance from the boundaries increases, so diffusion removes $u$ more slowly.
+as $x$ increases. At roughly $x = 0.25$, the transient component of the solution has decayed to about 1\% of its initial magnitude, and the solution is effectively steady. This behavior is confirmed in the residual plot (Figure~\ref{fig:residual_vs_x}), as the L2 residual initially decreases rapidly, then remains unchanged at a value of roughly zero, indicating no meaningful change between successive steps in $x$. Finally, the parabolic shape the solution approaches as $x$ increases is physically intuitive, because each cell contributes a constant source term of $2 \Delta x$, while the boundary conditions enforce $u=0$ at $y=0$ and $y=1$. Therefore, the cells further from the boundaries will have larger values of $u$, because the diffusive flux in the $y$-direction must travel a greater distance before reaching the boundaries. As a result, the gradient of $u$ decreases as the distance from the boundaries increases, so diffusion removes $u$ more slowly.
 
 \subsection{Accuracy and stability}
 
-The numerical and analytical profiles at each $x$-location are nearly indistinguishable, indicating high accuracy. Figure~\ref{fig:error_vs_x_all} shows the error at every x-step, from which one can observe that the error does not increase past $8 \times 10^{-3}$, thus demonstrating the accuracy of the numerical solution across the entire domain. It must be noted that initially, significant fluctuations in the error were observed in the first few time steps of the simulation. This occurred because the step size in $x$ was too large relative to the rapid evolution of the transient. Decreasing $\Delta x$ reduced these fluctuations at the cost of increasing the computational power required for the simulation. Nevertheless, one can now observe that there are no singificant oscilations, instabilities, or unphysical values in the solution profiles (Figure~\ref{fig:profiles_comparison}) or the error curve (Figure~\ref{fig:error_vs_x_all}). This is to be expected, as the Crank-Nicholson scheme is unconditionally stable. Finally, the combination of small errors and decaying residuals confirms numerical scheme is both accurate and stable for this problem.
+The numerical and analytical profiles at each $x$-location are nearly indistinguishable, indicating high accuracy. Figure~\ref{fig:error_vs_x_all} shows the error at every x-step, from which one can observe that the error does not increase past $8 \times 10^{-3}$, thus demonstrating the accuracy of the numerical solution across the entire domain. Initially, significant fluctuations in the error were observed in the first few time steps of the simulation. This occurred because the step size in $x$ was too large relative to the rapid evolution of the transient. Decreasing $\Delta x$ reduced these fluctuations at the cost of increasing the computational power required for the simulation. Nevertheless, one can now observe that there are no significant oscillations, instabilities, or unphysical values in the solution profiles (Figure~\ref{fig:profiles_comparison}) or the error curve (Figure~\ref{fig:error_vs_x_all}). This is to be expected, as the Crank-Nicholson scheme is unconditionally stable. Finally, the combination of small errors and decaying residuals confirms the numerical scheme is both accurate and stable for this problem.
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -318,29 +308,6 @@ The numerical and analytical profiles at each $x$-location are nearly indistingu
 \lstinputlisting[
     language=Python
 ]{DiPietrantonio_ME5311_Project01.py}
-
-%---------------------------------------------------------------------------------------------------------------
-
-%APPENDIX B - Other Calculations
-\newpage
-\section{Other Calculations}
-
-MATRIX FORM OF GOVERNING EQUATIONS, $r = \frac{\Delta x}{\Delta y^2}$:
-
-BOTTOM BC:
-\begin{equation}
-( 1 + 3r) u_{0}^{n+1} - r u_{1}^{n+1} =  (1 -3r)u_{0}^{n} + r u_{1}^{n} + 2 \Delta x
-\end{equation}
-
-INTERIOR CELLS:
-\begin{equation}
--r u_{i-1}^{n+1} + (1+2r) u_{i}^{n+1} - r u_{i+1}^{n+1} = r u_{i-1}^{n} + (1-2r) u_{i}^{n} + r u_{i+1}^{n} + 2 \Delta x
-\end{equation}
-
-TOP BC:
-\begin{equation}
--r u_{N-2}^{n+1} + (1 + 3r) u_{N-1}^{n+1} = r u_{N-2}^{n} + (1-3r) u_{N-1}^{n} + 2 \Delta x
-\end{equation}
 
 %---------------------------------------------------------------------------------------------------------------
 

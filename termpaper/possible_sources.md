@@ -80,3 +80,9 @@ https://sci-books.com/stochastic-calculus-for-finance-ii-continuous-time-models-
 
 #GITHUB REPO WITH BOOKS (includes Steven E. Shreve Stochastic Calculus for Finance II- Continuous-Time Model)
 https://github.com/yc-liu/readings
+
+
+[6] M. Haugh, “The Black–Scholes Model,” IEOR E4706: Foundations of Financial Engineering, Columbia University, 2016.
+https://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf?utm_source=copilot.com
+
+[7] 1. Options, Futures, and Other Derivatives — John C. Hull

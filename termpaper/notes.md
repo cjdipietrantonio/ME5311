@@ -260,3 +260,5 @@ We care about the Transported PDF Method because it is the only way to mathemati
 While standard finance models (like Black-Scholes) work for one stock, they break when you try to price a basket of 100 stocks because the math becomes too heavy for a grid. CFD researchers like Pope already solved this for jet engines (which have 100+ chemical variables) by inventing Lagrangian Particle Methods. By using these established CFD tools, we can stop trying to build impossible 100-dimensional grids and instead "simulate" the market as a collection of trillions of fluid-like particles. This allows banks to calculate the risk of a global market crash in seconds using the same High-Performance Computing (HPC) and Parallel Processing algorithms originally designed to simulate airflow over a Boeing 747.
 
 ![alt text](image-2.png)
+
+![alt text](image-3.png)

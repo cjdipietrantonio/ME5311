@@ -1,0 +1,119 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{amsmath, amssymb, geometry, titlesec, esint, listings, xcolor, graphicx, float, caption}
+
+\geometry{margin=1in}
+
+%Make section titles smaller
+\titleformat{\section}
+    {\large\bfseries}
+    {\thesection.}{0.5em}{}
+
+\titleformat{\subsection}
+    {\normalsize\bfseries}
+    {\thesubsection.}{0.5em}{}
+
+%Customize vertical spacing
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+
+\setlength{\textfloatsep}{5pt}
+\setlength{\floatsep}{5pt}
+\setlength{\intextsep}{5pt}
+
+%\linespread{0.97}
+
+\setlength{\parindent}{0pt} % no indentation
+
+%Figure caption sizes
+\captionsetup[figure]{justification=raggedright, font=small, labelfont=bf, skip=0pt}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!60!black},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{teal!60!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    frame=single,
+    tabsize=4,
+    showstringspaces=false
+}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+  \setlength\abovedisplayskip{6pt}%
+  \setlength\belowdisplayskip{6pt}%
+  \setlength\abovedisplayshortskip{6pt}%
+  \setlength\belowdisplayshortskip{6pt}%
+}
+\makeatother
+
+\begin{document}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%INFO
+
+Christian DiPietrantonio \\
+ME 5311: Computational Methods to Viscous Flows \\
+\today
+
+\vspace{6pt}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%TITLE
+{\large \textbf{Computer Assignment 02:} \normalsize Obtaining a Numerical Solution to the Zero Pressure Gradient Laminar Boundary Layer Equations}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DESCRIPTION OF THE PROBLEM
+\section{Description of the Problem}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DESCRIPTION OF THE NUMERICAL METHOD
+\section{Description of the Numerical Method}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%PRESENTATION OF RESULTS
+\section{Presentation of Results}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DISCUSSION OF RESULTS
+\section{Discussion of Results}
+
+\subsection{General description}
+
+TBD
+
+\subsection{Accuracy and stability}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX A - copy of program listing
+\newpage
+\appendix
+\section{Copy of Program Listing}
+\label{appendix-code}
+
+% \lstinputlisting[
+%     language=Python
+% ]{<insert python code>}
+
+%---------------------------------------------------------------------------------------------------------------
+
+\end{document}

@@ -80,7 +80,112 @@ TBD
 %DESCRIPTION OF THE NUMERICAL METHOD
 \section{Description of the Numerical Method}
 
-TBD
+Simplifications:
+
+\begin{equation}
+\boxed{
+    Re_L = \frac{U_{\infty} L}{\nu_{\infty}}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    C = \frac{1}{Re_L} \left( \frac{L}{\delta} \right)^2
+}
+\end{equation}
+
+Non-Dimensional system:
+
+\begin{equation}
+\boxed{
+    \frac{\partial u^*}{\partial x^*} + \frac{\partial v^*}{\partial y^*} = 0
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    u^* \frac{\partial u^*}{\partial x^*} + v^* \frac{\partial u^*}{\partial y^*} = C \frac{\partial}{\partial y^*} \left(\nu^* \frac{\partial u^*}{\partial y^*} \right)
+}
+\end{equation}
+
+Transformation from $y$ to $\eta$:
+\begin{equation}
+\boxed{
+    J = \frac{\partial y}{\partial \eta} = \frac{y_{max} s \cosh(s \eta)}{\sinh(s)}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    J_{\eta} = \frac{\partial J}{\partial \eta} = \frac{s^2 y_{max} \sinh(s \eta)}{\sinh(s)}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    \frac{\partial}{\partial y} = \frac{1}{J} \frac{\partial}{\partial \eta}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    \frac{\partial^2}{\partial y^2} = \frac{1}{J^2} \frac{\partial^2}{\partial \eta^2} - \frac{J_{\eta}}{J^3} \frac{\partial}{\partial \eta}
+}
+\end{equation}
+
+
+\begin{equation}
+\boxed{
+    J^* = \frac{\partial y^*}{\partial \eta} = \frac{J}{\delta} = \frac{y_{max} s \cosh(s \eta)}{\delta \sinh(s)}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    J_{\eta}^* = \frac{\partial J^*}{\partial \eta} = \frac{s^2 y_{max} \sinh(s \eta)}{\delta \sinh(s)}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    \frac{\partial}{\partial y^*} = \frac{1}{J^*} \frac{\partial}{\partial \eta}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+ \frac{\partial^2}{\partial {y^*}^2} = \frac{1}{{J^*}^2} \frac{\partial^2}{\partial \eta^2} - \frac{J_{\eta}^*}{{J^*}^3} \frac{\partial}{\partial \eta}
+}
+\end{equation}
+
+Final system:
+
+\begin{equation}
+\boxed{
+    \frac{\partial v^*}{\partial \eta} = -J^* \frac{\partial u^*}{\partial x^*}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    u^* \frac{\partial u^*}{\partial x^*} + A \frac{\partial u^*}{\partial \eta} + B \frac{\partial^2 u^*}{\partial \eta^2} = 0
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    A = \frac{v^*}{J^*} - \frac{C}{{J^*}^2} \frac{\partial \nu^*}{\partial \eta} + \frac{C \nu^* J_{\eta}^*}{{J^*}^3}
+}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    B = - \frac{C \nu^*}{{J^*}^2}
+}
+\end{equation}
+
+
+
 
 %---------------------------------------------------------------------------------------------------------------
 

@@ -73,14 +73,161 @@ ME 5311: Computational Methods to Viscous Flows \\
 %DESCRIPTION OF THE PROBLEM
 \section{Description of the Problem}
 
-TBD
+The objective of this project is to numerically zolve the zero pressure gradient laminar boundary layer equations:
+\begin{equation}
+    \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} = 0, \qquad u \frac{\partial u}{\partial x} + v \frac{\partial u}{\partial y} = \frac{\partial}{\partial y} \left( \nu \frac{\partial u}{\partial y} \right)
+\end{equation}
 
+using the Crank-Nicolson algorithm to march in the x-direction, a stretched grid in the y-direction (where $\eta$ is the stretched coordinate that is uniform in the computational domain), and a fourth-order central difference scheme for the discretization of $\eta$ (except at the first interior points where a second-order discretization is used). The following scales are considered: $\nu_\infty = 1.5 \times 10^{-6}$ m$^2$/s, $U_\infty = 30.0$ m/s, $L = 1.0$ m, $\delta = 0.005$ m. The initial velocity profile at $x = x_0$ is assumed to be:
+\begin{equation}
+    \frac{u}{U_\infty} = \begin{cases} \displaystyle \frac{y}{\delta} \left(\frac{3}{2} - \frac{1}{2} \left(\frac{y}{\delta} \right)^2 \right), & \text{for } \frac{y}{\delta} \leq 1 \\[4pt] 1, & \text{for } \frac{y}{\delta} > 1 \end{cases}
+\end{equation}
+
+Finally, the domain uses $N = 150$ grid points in the $y$-direction with $y_{\max} = 10\delta$, and the solution is marched up to $40L$ downstream from $x_0$. Further objectives of project are to: estimate the initial value of $x$ based on the growth of the boundary layer, compare the results with the Blasius similarity solutio, and to calculate the displacement thickness, momentum thickness, and the shape factor in the $y$-direction.
 %---------------------------------------------------------------------------------------------------------------
 
 %DESCRIPTION OF THE NUMERICAL METHOD
 \section{Description of the Numerical Method}
 
-Simplifications:
+To non-dimensionalize the system, one can define $u^* = u/U_\infty$, $v^* = v/(U_\infty \delta/L)$, $x^* = x/L$, $y^* = y/\delta$, and $\nu^* = \nu/\nu_\infty$. Substituting these non-dimensional variables into the original boundary layer equations yields:
+\begin{equation}
+    \frac{\partial u^*}{\partial x^*} + \frac{\partial v^*}{\partial y^*} = 0, \qquad
+    u^* \frac{\partial u^*}{\partial x^*} + v^* \frac{\partial u^*}{\partial y^*} = C \frac{\partial}{\partial y^*}\!\left(\nu^* \frac{\partial u^*}{\partial y^*}\right) \label{eq:nd_eqs}
+\end{equation}
+
+Where $C = (1/Re_L)(L/\delta)^2 = 0.002$ and $Re_L = U_\infty L/\nu_\infty = 2 \times 10^7$. A $\sinh$-based stretched grid clusters points near the wall. The physical coordinate $y$ is related to the numerical domain coordinate $\eta$ as follows:
+\begin{equation}
+    y = \frac{y_{max} \sinh(s \eta)}{\sinh(s)}
+\end{equation}
+
+Where $s = 10$ is a stretching factor and $\eta \in [0,1]$. The Jacobian and its derivative can be defined as:
+\begin{equation}
+    J^* = \frac{dy^*}{d\eta} = \frac{y_{\max}}{\delta} \cdot \frac{s \cosh(s\eta)}{\sinh(s)}, \qquad
+    J^*_\eta = \frac{dJ^*}{d\eta} = \frac{y_{\max}}{\delta} \cdot \frac{s^2 \sinh(s\eta)}{\sinh(s)}
+\end{equation}
+
+Using the chain rule, the derivatives with respect to $y^*$ can now be expressed in terms of derivatives with respect to $\eta$:
+\begin{equation}
+    \frac{\partial}{\partial y^*} = \frac{1}{J^*} \frac{\partial}{\partial \eta}, \qquad
+    \frac{\partial^2}{\partial y^{*2}} = \frac{1}{J^{*2}} \frac{\partial^2}{\partial \eta^2} - \frac{J^*_\eta}{J^{*3}} \frac{\partial}{\partial \eta} \label{eq:chain_rule}
+\end{equation}
+
+Therefore, expanding $\frac{\partial}{\partial y^*}\left(\nu^* \frac{\partial u^*}{\partial y^*}\right)$ in terms of $\eta$ and substituting the definitions above into the non-dimensionalized system yields the final non-dimensionalsystem of equations in terms of  $\eta$:
+\begin{equation}
+    \frac{\partial v^*}{\partial \eta} = -J^* \frac{\partial u^*}{\partial x^*}, \qquad u^* \frac{\partial u^*}{\partial x^*} + A_j \frac{\partial u^*}{\partial \eta} + B_j \frac{\partial^2 u^*}{\partial \eta^2}
+\end{equation}
+
+where the coefficients $A_j$ and $B_j$ are defined as:
+\begin{equation}
+A_j = \frac{v^*_j}{J^*_j} - \frac{C}{J^{*2}_j}\frac{\partial \nu^*}{\partial \eta}\bigg|_j + \frac{C\,\nu^*_j\, J^*_{\eta,j}}{J^{*3}_j}, \qquad B_j = \frac{-C\,\nu^*_j}{J^{*2}_j}
+\end{equation}
+
+It is important to note that for laminar flow ($\nu^* = 1$, $\partial\nu^*/\partial\eta = 0$), $A_j$ and $B_j$ so reduce to $A_j = v^*_j/J^*_j + C\,J^*_{\eta,j}/J^{*3}_j$ and $B_j = -C/J^{*2}_j$. To discretize the continuity equation, the following 4th-order approximation for $\frac{\partial v^*}{\partial \eta}$ and 2nd-order approximation for $\frac{\partial u^*}{\partial x^*}$ are considered for the interior domain ($j=2$ to $j=N-3$):
+\begin{equation}
+    \left( \frac{\partial u^*}{\partial x^*} \right)^{i+1}_{j-\frac{1}{2}} = 0.5 \left( \frac{3 u_{j}^{*,i+1} - 4 u_{j}^{*,i} + u_{j}^{*,i-1}}{2 \Delta x^*} + \frac{3 u_{j-1}^{*,i+1} - 4 u_{j-1}^{*,i} + u_{j-1}^{*,i-1}}{2 \Delta x^*}  \right)
+\end{equation}
+\begin{equation}
+    \left( \frac{\partial v^*}{\partial \eta} \right)^{i+1}_{j-\frac{1}{2}} = \frac{}{}\frac{v_{j-2}^{*,i+1} -27 v_{j-1}^{*,i+1} + 27 v_{j}^{*,i+1} - v_{j+1}^{*,i+1}}{24 \Delta \eta}
+\end{equation}
+
+Substituting these approximations into the continuity equation and rearranging yields:
+\begin{equation}
+\begin{aligned}
+    &\frac{1}{24 \Delta \eta} v_{j-2}^{*,i+1} - \frac{27}{24 \Delta \eta} v_{j-1}^{*,i+1} + \frac{27}{24 \Delta \eta} v_{j}^{*,i+1} - \frac{1}{24 \Delta \eta} v_{j+1}^{*,i+1} = \\
+    & - \left(J^* \right)^{i+1}_{j-\frac{1}{2}} \left[ \frac{0.5}{2 \Delta x^*} \left( 3u_{j}^{*,i+1} - 4 u_{j}^{*,i} + u_{j}^{*,i-1} + 3 u_{j-1}^{*,i+1} - 4 u_{j-1}^{*,i} + u_{j-1}^{*,i-1} \right) \right]
+\end{aligned}
+\end{equation}
+
+Near the boundary and at the initial step in $x$ ($i=1$, $j=1$ and $j=N-2$), a 4th-order approximation is used for $\frac{\partial v^*}{\partial \eta}$ and 1st-order approximation is used for $\frac{\partial u^*}{\partial x^*}$:
+\begin{equation}
+\begin{aligned}
+    &\frac{1}{24 \Delta \eta} v_{j-2}^{*,i+1} - \frac{27}{24 \Delta \eta} v_{j-1}^{*,i+1} + \frac{27}{24 \Delta \eta} v_{j}^{*,i+1} - \frac{1}{24 \Delta \eta} v_{j+1}^{*,i+1} = \\
+    & - \left(J^* \right)^{i+1}_{j-\frac{1}{2}} \left[ \frac{0.5}{\Delta x*} \left( u_{j}^{*,i+1} - u_{j}^{*,i} + u_{j-1}^{*,i+1} - u_{j-1}^{*,i} \right) \right]
+\end{aligned}
+\end{equation}
+
+Applying the Crank-Nicolson scheme and lagging non-linear term $u^* \frac{\partial u^*}{\partial x^*}$ yields the following expression for the momentum equation:
+\begin{equation}
+    u_{j}^{*,i} \left( \frac{u_{j}^{*, i+1} - u_{j}^{*, i}}{\Delta x} \right) + \frac{A_j}{2} \left[ \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i,j} + \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i+1,j} \right] + \frac{B_j}{2} \left[ \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i,j} + \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i+1,j} \right] = 0
+\end{equation}
+
+The following 4th-order approximations are then considered for the interior domain:
+\begin{equation}
+    \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i,j} = \frac{u_{j-2}^{*,i} - 8 u_{j-1}^{*,i} + 8 u_{j+1}^{*,i} - u_{j+2}^{*,i}}{12 \Delta \eta}
+\end{equation}
+\begin{equation}
+    \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i,j} = \frac{-u_{j-2}^{*,i} + 16 u_{j-1}^{*,i} - 30 u_{j}^{*,i} + 16 u_{j+1}^{*,i} - u_{j+2}^{*,i}}{12 \Delta \eta^2}
+\end{equation}
+
+Substituting these approximations into Equation 13 and rearranging yields:
+\begin{equation}
+\begin{aligned}
+    &(\phi_1 - \phi_2)u_{j-2}^{*,i+1} + (-8\phi_1 + 16 \phi_2)u_{j-1}^{*,i+1} + (u_{j}^{*,i} / \Delta x^* - 30 \phi_2)u_{j}^{*,i+1} \\
+    & + (8\phi_1 + 16 \phi_2)u_{j+1}^{*,i+1} + (-\phi_1 - \phi_2)u_{j+2}^{*,i+1} = (-\phi_1 + \phi_2)u_{j-2}^{*,i} + (8\phi_1 - 16 \phi_2)u_{j-1}^{*,i} \\
+    & + (u_{j}^{*,i} / \Delta x^* + 30 \phi_2)u_{j}^{*,i} + (-8\phi_1 - 16 \phi_2)u_{j+1}^{*,i} + (\phi_1 + \phi_2)u_{j+2}^{*,i}
+\end{aligned}
+\end{equation}
+
+Where $\phi_1 = A_j/(24 \Delta \eta)$ and $\phi_2 = B_j/(24 \Delta \eta^2)$. Near the wall, the follwoing 2nd-order approximations are used:
+\begin{equation}
+    \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i,j} = \frac{u_{j+1}^{*,i} -  u_{j-1}^{*,i}}{2 \Delta \eta}
+\end{equation}
+\begin{equation}
+    \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i,j} = \frac{u_{j+1}^{*,i} - 2 u_{j}^{*,i} + u_{j-1}^{*,i}}{\Delta \eta^2}
+\end{equation}
+
+Substituting these approximations into Equation 13 and rearranging yields:
+\begin{equation}
+\begin{aligned}
+    &(-\psi_1 + \psi_2)u_{j-1}^{*,i+1} + (u_{j}^{*,i} / \Delta x^* - 2 \psi_2)u_{j}^{*,i+1} + (\psi_1 + \psi_2)u_{j+1}^{*,i+1} = \\
+    &(\psi_1 - \psi_2)u_{j-1}^{*,i} + (u_{j}^{*,i} / \Delta x^* + 2 \psi_2)u_{j}^{*,i} + (-\psi_1 - \psi_2)u_{j+1}^{*,i}
+\end{aligned}
+\end{equation}
+
+Where $\psi_1 = A_j/(4 \Delta \eta)$ and $\psi_2 = B_j/(2 \Delta \eta^2)$. The boundary conditions are known to be $u^{*}_0=0$ at the wall and $u^{*}_{N-1}=1$ at the freestream. Therefore for the 2nd-order stencil, at $j=1$, the $u_{j-1}^{*,i,i+1}$ terms vanish and at $j=N-2$, the $u_{j+1}^{*,i,i+1}$ terms become $(\psi_1 + \psi_2)$ and $(-\psi_1 - \psi_2)$.The former of the two is moved to the right-hand side, and they collectively become $-2(\psi_1 + \psi_2)$. For the 4th-order stencil, at $j=2$, the $u_{j-2}^{*,i,i+1}$ terms vanish and at $j=N-3$, the $u_{j+2}^{*,i,i+1}$ terms become $(-\phi_1 - \phi_2)$ and $(\phi_1 + \phi_2)$. Again, the former of the two is moved to the right-hand side, and they collectively become $2(\phi_1 + \phi_2)$. The numerical solver shown in Appendix~\ref{appendix-code} can now be programmed to solve the discretized system above and complete the aformentioned objectives of the project.
+
+%---------------------------------------------------------------------------------------------------------------
+
+%PRESENTATION OF RESULTS
+\section{Presentation of Results}
+
+The initial value of $x$ can be estimated from the Blausius relation for boundary layer thickness $\delta = c \sqrt{x + x_0}$, where $c = 4.91 \sqrt{\nu_\infty/U_\infty}$. Assuming that the leading edge of the wall/plate is located at $x=0$, the initial value of $x$ can be expressed as $x_0 = \delta^2/c^2$. Therefore:
+\begin{equation}
+    x_0 = \frac{0.005^2}{\left(4.91 \sqrt{\frac{1.5 \times 10^{-6}}{30}}\right)^2} \approx 20.74 \text{ m}
+\end{equation}
+
+This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x/L$, the non-dimensionalized initial value of $x$ is found as $x_0^* = 20.74$.  The solution is then marched $40L$ downstream from $x_0$ to $x^*_{max} = 60.74$. 
+
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DISCUSSION OF RESULTS
+\section{Discussion of Results}
+
+\subsection{General description}
+
+TBD
+
+\subsection{Accuracy and stability}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX A - copy of program listing
+\newpage
+\appendix
+\section{Copy of Program Listing}
+\label{appendix-code}
+
+% \lstinputlisting[
+%     language=Python
+% ]{<insert python code>}
+
+%---------------------------------------------------------------------------------------------------------------
+
+
+%TRANSFORMED/NON-DIMENSIONALIZED SYSTEM
 
 \begin{equation}
 \boxed{
@@ -184,41 +331,75 @@ Final system:
 }
 \end{equation}
 
+%OTHER USEFUL EQUATIONS
 
+%MOMENTUM EQUATION STENCILS
+4th order derivative for $\frac{\partial v}{\partial \eta}$ and 2nd order for $\frac{\partial u}{\partial x}$ interior domain (J=3 ~NY) are as follows:
+\begin{equation}
+    \left( \frac{\partial u}{\partial x} \right)^{1+1}_{j-\frac{1}{2}} = 0.5 \left( \frac{3 u_{j}^{i+1} - 4 u_{j}^{i} + u_{j}^{i-1}}{2 \Delta x} + \frac{3 u_{j-1}^{i+1} - 4 u_{j-1}^{i} + u_{j-1}^{i-1}}{2 \Delta x}  \right)
+\end{equation}
+\begin{equation}
+    \left( \frac{\partial v}{\partial \eta} \right)^{1+1}_{j-\frac{1}{2}} = \frac{}{}\frac{v_{j-2}^{i+1} -27 v_{j-1}^{i+1} + 27 v_{j}^{i+1} - v_{j+1}^{i+1}}{24 \Delta \eta}
+\end{equation}
 
+Final form:
+\begin{equation}
+\begin{aligned}
+    &\frac{1}{24 \Delta \eta} v_{j-2}^{i+1} - \frac{27}{24 \Delta \eta} v_{j-1}^{i+1} + \frac{27}{24 \Delta \eta} v_{j}^{i+1} - \frac{1}{24 \Delta \eta} v_{j+1}^{i+1} = \\
+    & - \left(\frac{1}{\frac{\partial \eta}{\partial y}} \right)^{i+1}_{j-\frac{1}{2}} \frac{0.5}{2 \Delta x} \left[ 3u_{j}^{i+1} - 4 u_{j}^{i} + u_{j}^{i-1} + 3 u_{j-1}^{i+1} - 4 u_{j-1}^{i} + u_{j-1}^{i-1} \right]
+\end{aligned}
+\end{equation}
 
-%---------------------------------------------------------------------------------------------------------------
+4th order derivative for $\frac{\partial v}{\partial \eta}$ and 1st order for $\frac{\partial u}{\partial x}$ near the boundary (i=1 and j=2 and j=NY + 1). Final form:
+\begin{equation}
+\begin{aligned}
+    &\frac{1}{24 \Delta \eta} v_{j-2}^{i+1} - \frac{27}{24 \Delta \eta} v_{j-1}^{i+1} + \frac{27}{24 \Delta \eta} v_{j}^{i+1} - \frac{1}{24 \Delta \eta} v_{j+1}^{i+1} = \\
+    & - \left(\frac{1}{\frac{\partial \eta}{\partial y}} \right)^{i+1}_{j-\frac{1}{2}} \frac{0.5}{\Delta x} \left[ u_{j}^{i+1} - u_{j}^{i} + u_{j-1}^{i+1} - u_{j-1}^{i} \right]
+\end{aligned}
+\end{equation}
 
-%PRESENTATION OF RESULTS
-\section{Presentation of Results}
+%BLAUSIUS SOLUTION
+For the Blasius solution, solve for f using 4th order Runga-Kutta scheme. Convert to system of ODEs:
+\begin{equation}
+    \frac{f}{2} \frac{d^2 f}{d \eta^2} + \frac{d^3 f}{d \eta^3} = 0
+\end{equation}
+Define:
+\begin{equation}
+    F = \frac{d f}{d \eta}
+\end{equation}
+\begin{equation}
+    H = \frac{d F}{d \eta} = \frac{d^2 f}{d \eta^2}
+\end{equation}
+Then we have:
+\begin{equation}
+    \frac{d H}{d \eta} = - \frac{f}{2} H
+\end{equation}
+\begin{equation}
+    \frac{d F}{d \eta} = H
+\end{equation}
+\begin{equation}
+    \frac{d f}{d \eta} = F
+\end{equation}
+Subject to the conditions:
+\begin{equation}
+    f(0) = 0
+\end{equation}
+\begin{equation}
+    F(0) = 0
+\end{equation}
+\begin{equation}
+    F(\infty) = 1
+\end{equation}
 
-TBD
+%CALCULTION OF INITIAL VALUE OF X
+To obtain the intial value of X where our initial velocity is given, use the following relationship:
+\begin{equation}
+    \delta = c \sqrt{x + x_0}
+\end{equation}
+\begin{equation}
+    \delta^2 = c^2(x_0) + c^2(x)
+\end{equation}
 
-%---------------------------------------------------------------------------------------------------------------
-
-%DISCUSSION OF RESULTS
-\section{Discussion of Results}
-
-\subsection{General description}
-
-TBD
-
-\subsection{Accuracy and stability}
-
-TBD
-
-%---------------------------------------------------------------------------------------------------------------
-
-%APPENDIX A - copy of program listing
-\newpage
-\appendix
-\section{Copy of Program Listing}
-\label{appendix-code}
-
-% \lstinputlisting[
-%     language=Python
-% ]{<insert python code>}
-
-%---------------------------------------------------------------------------------------------------------------
+Where $\delta$ is boundary layer thickness, and the target is to find $x_0$ that gives you the correct profile.
 
 \end{document}

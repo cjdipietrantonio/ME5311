@@ -62,17 +62,17 @@ def compute_initial_condition(params, y_star):
     """Compute the initial velocity profile at x0."""
 
     N = params["N"]
-    u_star = np.ones(N)
+    u_star_0 = np.ones(N)
 
     for j in range(N):
         y_j = y_star[j]
 
         if y_j <= 1.0:
-            u_star[j] = y_j * (1.5 - 0.5 * y_j**2)
+            u_star_0[j] = y_j * (1.5 - 0.5 * y_j**2)
         else:
-            u_star[j] = 1.0
+            u_star_0[j] = 1.0
     
-    return u_star
+    return u_star_0
 
 # ------------------------------------------------------------------
 # 4.  COMPUTE nu* and dnu*/deta 
@@ -125,7 +125,7 @@ def compute_v_star(u_star_new, u_star_old, u_star_prev, params, J_star):
 
     # ---------- Compute midpoint RHS values -----------------------
     f_mid = np.zeros(N)
-    for j in range(1, N): #WHY 1 to N? Because we handle intex 0 with BC?
+    for j in range(1, N): 
         J_mid               = 0.5 * (J_star[j] + J_star[j-1])
         du_dx_star_mid      = 0.5 * (du_dx_star[j] + du_dx_star[j-1])
         f_mid[j]            = -J_mid * du_dx_star_mid
@@ -271,13 +271,13 @@ def build_system(params, u_old, A_j, B_j):
     # include contributions from u^{*,i+1}_{N-1} and u^{*,i}_{N-1} = 1.0 (Freestream BC) in RHS
     rhs[k]     = (psi_1 - psi_2) * u_old[j-1] + (u_old[j]**2 / dx_star) + (2.0 * psi_2 * u_old[j]) + (-psi_1 - psi_2) * 1.0 - (psi_1 + psi_2) * 1.0                              # rhs
 
-    return ab, rhs 
+    return ab, rhs, l_diag, u_diag 
 
 # ------------------------------------------------------------------
 # 8.  STEP IN X*
 # ------------------------------------------------------------------
 
-def step_in_x(params, u0, J_star, J_star_eta):
+def step_in_x(params, u_star_0, J_star, J_star_eta):
     """March from x0_star to x_max_star"""
 
     N         = params["N"]
@@ -285,6 +285,59 @@ def step_in_x(params, u0, J_star, J_star_eta):
     dx_star   = params["dx_star"]
     x0_star   = params["x0_star"]
 
-    u = u0.copy()
-    v = np.zeros(N)
-    u_prev = None      # No prevbious step initially -> use 1st order du/dx in compute_v_star
+    u_star = u_star_0.copy()
+    v_star = np.zeros(N)
+    u_star_prev = None                                # No prevbious step initially -> use 1st order du/dx in compute_v_star
+
+    stride = max(1, Nx // 1000)                       # store solution every stride steps
+
+    store_indices = set(range(0, Nx + 1, stride))     # indices/step numbers at which to store solution
+
+    for x_out in params["x_output"]:
+        idx = int(round((x_out - x0_star) / dx_star)) # find step number corresponding to x_out
+        idx = max(0, min(idx, Nx))                    # ensure idx is within bounds
+        store_indices.add(idx)                        # add idx to set store_indices (if not already present)
+
+    store_indices = sorted(store_indices)             # sort indices for ordered storage
+    x_vals = np.zeros(len(store_indices))             # initialize array to store solution x-values
+    u_store = np.zeros((len(store_indices), N))       # initialize array to store solution profiles
+
+    store_map = {idx: pos for pos, idx in enumerate(store_indices)} # map from step number to storage index
+
+    if 0 in store_map:
+        x_vals[store_map[0]] = x0_star                # store initial condition at x0_star if it's in the output list
+        u_store[store_map[0], :] = u_star.copy()
+
+    for n in range(Nx):
+        nu_star, dnu_star_deta = compute_nu(params, u_star, J_star)
+        A_j, B_j = compute_coefficients(params, v_star, J_star, J_star_eta, nu_star, dnu_star_deta)
+        ab, rhs_vec, l_diag, u_diag = build_system(params, u_star, A_j, B_j)
+        u_interior = solve_banded((l_diag, u_diag), ab, rhs_vec)
+
+        u_star_new            = np.zeros(N)
+        u_star_new[0]         = 0.0           # wall BC
+        u_star_new[1:N-1]     = u_interior    # interior points
+        u_star_new[N-1]       = 1.0           # freestream BC
+
+        # Compute v_star using continuity equation
+        v_star = compute_v_star(u_star_new, u_star, u_star_prev, params, J_star)
+
+        u_star_prev = u_star.copy()   # store current u_star before updating for next iteration
+        u_star = u_star_new.copy()    # update u_star for next iteration
+
+        step = n + 1
+        if step in store_map:
+            pos = store_map[step]                   # find storage index for current step
+            x_vals[pos] = x0_star + step * dx_star  # compute and store x-value for current step
+            u_store[pos, :] = u_star.copy()         # store solution profile for current step
+        
+        # if step % stride == 0:
+        if (n + 1) % 1000 == 0:
+            # print(f" Step {step}/{Nx}, x* = {x0_star + (step) * dx_star:.2f}")
+            print(f" Step {n+1}/{Nx}, x* = {x0_star + (n+1) * dx_star:.2f}")
+
+    return x_vals, u_store
+
+# ------------------------------------------------------------------
+# 9.  COMPUTE BLASIUS SOLUTION
+# ------------------------------------------------------------------

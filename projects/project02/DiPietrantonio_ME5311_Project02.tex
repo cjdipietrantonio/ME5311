@@ -112,7 +112,7 @@ Using the chain rule, the derivatives with respect to $y^*$ can now be expressed
     \frac{\partial^2}{\partial y^{*2}} = \frac{1}{J^{*2}} \frac{\partial^2}{\partial \eta^2} - \frac{J^*_\eta}{J^{*3}} \frac{\partial}{\partial \eta} \label{eq:chain_rule}
 \end{equation}
 
-Therefore, expanding $\frac{\partial}{\partial y^*}\left(\nu^* \frac{\partial u^*}{\partial y^*}\right)$ in terms of $\eta$ and substituting the definitions above into the non-dimensionalized system yields the final non-dimensionalsystem of equations in terms of  $\eta$:
+Therefore, expanding $\frac{\partial}{\partial y^*}\left(\nu^* \frac{\partial u^*}{\partial y^*}\right)$ in terms of $\eta$ and substituting the definitions above into the non-dimensionalized system yields the final non-dimensional system of equations in terms of  $\eta$:
 \begin{equation}
     \frac{\partial v^*}{\partial \eta} = -J^* \frac{\partial u^*}{\partial x^*}, \qquad u^* \frac{\partial u^*}{\partial x^*} + A_j \frac{\partial u^*}{\partial \eta} + B_j \frac{\partial^2 u^*}{\partial \eta^2}
 \end{equation}
@@ -184,7 +184,7 @@ Substituting these approximations into Equation 13 and rearranging yields:
 \end{aligned}
 \end{equation}
 
-Where $\psi_1 = A_j/(4 \Delta \eta)$ and $\psi_2 = B_j/(2 \Delta \eta^2)$. The boundary conditions are known to be $u^{*}_0=0$ at the wall and $u^{*}_{N-1}=1$ at the freestream. Therefore for the 2nd-order stencil, at $j=1$, the $u_{j-1}^{*,i,i+1}$ terms vanish and at $j=N-2$, the $u_{j+1}^{*,i,i+1}$ terms become $(\psi_1 + \psi_2)$ and $(-\psi_1 - \psi_2)$.The former of the two is moved to the right-hand side, and they collectively become $-2(\psi_1 + \psi_2)$. For the 4th-order stencil, at $j=2$, the $u_{j-2}^{*,i,i+1}$ terms vanish and at $j=N-3$, the $u_{j+2}^{*,i,i+1}$ terms become $(-\phi_1 - \phi_2)$ and $(\phi_1 + \phi_2)$. Again, the former of the two is moved to the right-hand side, and they collectively become $2(\phi_1 + \phi_2)$. The numerical solver shown in Appendix~\ref{appendix-code} can now be programmed to solve the discretized system above and complete the aformentioned objectives of the project.
+Where $\psi_1 = A_j/(4 \Delta \eta)$ and $\psi_2 = B_j/(2 \Delta \eta^2)$. The boundary conditions are known to be $u^{*}_0=0$ at the wall and $u^{*}_{N-1}=1$ at the freestream. Therefore for the 2nd-order stencil, at $j=1$, the $u_{j-1}^{*,i,i+1}$ terms vanish and at $j=N-2$, the $u_{j+1}^{*,i,i+1}$ terms become $(\psi_1 + \psi_2)$ and $(-\psi_1 - \psi_2)$. The former of the two is moved to the right-hand side, and they collectively become $-2(\psi_1 + \psi_2)$. For the 4th-order stencil, at $j=2$, the $u_{j-2}^{*,i,i+1}$ terms vanish and at $j=N-3$, the $u_{j+2}^{*,i,i+1}$ terms become $(-\phi_1 - \phi_2)$ and $(\phi_1 + \phi_2)$. Again, the former of the two is moved to the right-hand side, and they collectively become $2(\phi_1 + \phi_2)$. The numerical solver shown in Appendix~\ref{appendix-code} can now be programmed to solve the discretized system above and complete the aformentioned objectives of the project.
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -220,9 +220,9 @@ TBD
 \section{Copy of Program Listing}
 \label{appendix-code}
 
-% \lstinputlisting[
-%     language=Python
-% ]{<insert python code>}
+\lstinputlisting[
+    language=Python
+]{DiPietrantonio_ME5311_Project02.py}
 
 %---------------------------------------------------------------------------------------------------------------
 

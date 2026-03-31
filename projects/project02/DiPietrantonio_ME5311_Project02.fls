@@ -125,6 +125,12 @@ INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\public\esint\esint1
 OUTPUT DiPietrantonio_ME5311_Project02.pdf
 INPUT C:\Users\cjdip\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
+INPUT .\DiPietrantonio_ME5311_Project02.py
+INPUT .\DiPietrantonio_ME5311_Project02.py
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmtt12.tfm
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmtt10.tfm
+INPUT DiPietrantonio_ME5311_Project02.py
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmr10.tfm
 INPUT DiPietrantonio_ME5311_Project02.aux
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmbx12.pfb
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmbx12.pfb
@@ -146,3 +152,5 @@ INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\c
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy6.pfb
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy8.pfb
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy8.pfb
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmtt10.pfb
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmtt10.pfb

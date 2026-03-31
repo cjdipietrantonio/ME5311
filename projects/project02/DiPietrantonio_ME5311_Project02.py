@@ -341,3 +341,76 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
 # ------------------------------------------------------------------
 # 9.  COMPUTE BLASIUS SOLUTION
 # ------------------------------------------------------------------
+
+def compute_blausius(eta_max=10.0, n_points = 10000):
+    """Sovle Blasius via RK4."""
+
+    h = eta_max / n_points          # step size for RK4
+
+    eta_B = np.zeros(n_points + 1)          # values for eta
+    f_arr = np.zeros(n_points + 1)          # stream function at each eta
+    F_arr = np.zeros(n_points + 1)          # velocity profile u*/U_inf (WHY IS df/deta THE VELOCITY PROFILE??)
+    H_arr = np.zeros(n_points + 1)          # d2f/deta2
+
+    f_arr[0] = 0.0                          # f(0) = 0 at the wall
+    F_arr[0] = 0.0                          # F(0) = 0 at the wall
+    H_arr[0] = 0.332                        # H(0) that results in F(n->infty) = 1
+
+    def rhs(f_val, F_val, H_val):
+        
+        df = F_val                          # df/deta = F
+        dF = H_val                          # df/deta = H
+        dH = -0.5 * f_val * H_val           # dH/deta = -(f/2)*H
+
+        return df, dF, dH
+
+    for i in range(n_points):
+        eta_B[i] = i * h
+        fi, Fi, Hi = f_arr[i], F_arr[i], H_arr[i]
+
+        k1f, k1F, k1H = rhs(fi, Fi, Hi)
+        k2f, k2F, k2H = rhs(fi + 0.5*h*k1f, Fi + 0.5*h*k1F, Hi + 0.5*k1H)
+        k3f, k3F, k3H = rhs(fi + 0.5*h*k2f, Fi + 0.5*h*k2F, Hi + 0.5*k2H)
+        k4f, k4F, k4H = rhs(fi + h*k3f, Fi + h*k3F, Hi + h*k3H)
+
+        f_arr[i+1] = fi + (h/6.0)*(k1f + 2*k2f + 2*k3f + k4f)
+        F_arr[i+1] = Fi + (h/6.0)*(k1F + 2*k2F + 2*k3F + k4F)
+        H_arr[i+1] = Hi + (h/6.0)*(k1H + 2*k2H + 2*k3H + k4H)
+
+    eta_B[-1] = n_points * h
+        
+    return eta_B, F_arr, f_arr # eta_B, u*/U_infty = F, stream function f
+
+
+# ------------------------------------------------------------------
+# 10.  COMPUTE THICKNESSES AND SHAPE FACTOR
+# ------------------------------------------------------------------
+
+def compute_thicknesses(u_star, J_star, deta):
+    """Compute displacement thickness, momentum thickness, and shape factor"""
+    integrand_disp    = (1.0 - u_star) * J_star
+    integrand_mom     = u_star * (1.0 - u_star) * J_star
+
+    delta_star        = np.trapezoid(integrand_disp, dx=deta)      #integrate for displacement thickness using trapezoidal rule
+    theta             = np.trapezoid(integrand_mom, dx=deta)       #integrate for momentum thickness using trapezoidal rule
+
+    H                 = delta_star / theta if theta > 1e-15 else 0.0
+
+    return delta_star, theta, H
+
+# ------------------------------------------------------------------
+# 11.  POST-PROCESSING
+# ------------------------------------------------------------------
+
+def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
+    N          = params["N"]
+    deta       = params["deta"]
+    nu_inf     = params["nu_inf"]
+    U_inf      = params["U_inf"]
+    L          = params["L"]
+    delta      = params["delta"]
+
+    print("Computing Blasius solution...")
+    eta_B, F_B, f_B = compute_blausius(eta_max=10.0, n_points = 10000)
+
+

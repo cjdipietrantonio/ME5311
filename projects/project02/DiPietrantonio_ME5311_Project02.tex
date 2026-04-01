@@ -198,6 +198,32 @@ The initial value of $x$ can be estimated from the Blausius relation for boundar
 
 This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x/L$, the non-dimensionalized initial value of $x$ is found as $x_0^* = 20.74$.  The solution is then marched $40L$ downstream from $x_0$ to $x^*_{max} = 60.74$. 
 
+INSERT PLOTS HERE
+
+In terms of $\eta$, the non-dimensional displacement thickness can be calculated as:
+\begin{equation}
+    \frac{\delta^*}{\delta} = \int_0^{1} \left( 1 - u^* \right) J^{*} d\eta
+\end{equation}
+
+and the non-dimensional momentum thickness can be calculated as:
+\begin{equation}
+    \frac{\theta}{\delta} = \int_0^{1} u^* \left( 1 - u^* \right) J^{*} d\eta
+\end{equation}
+
+The shape factor can then be calculated as:
+\begin{equation}
+    H = \frac{\delta^*}{\theta}
+\end{equation}
+
+For the Blausius solution, the displacement thickness, momentum thickness, and shape factor are known to be:
+\begin{align}
+\delta^*_{\text{Blas}} &= 1.72 \sqrt{\frac{\nu x}{U_\infty}} \\
+\theta_{\text{Blaus}} &= 0.664 \sqrt{\frac{\nu x}{U_\infty}} \\
+H_{\text{Blas}} &= \frac{1.72}{0.664} \approx 2.59
+\end{align}
+
+INSERT TABLE HERE
+
 
 %---------------------------------------------------------------------------------------------------------------
 

@@ -269,7 +269,7 @@ def build_system(params, u_old, A_j, B_j):
     ab[3, k-1] = -psi_1 + psi_2                        # [row=N-3, col=N-4] -> ab[2 + N-3 - N-4, N-4] = ab[3, N-4]
     ab[2, k]   = u_old[j] / dx_star - 2.0 * psi_2      # [row=N-3, col=N-3] -> ab[2 + N-3 - N-3, N-3] = ab[2, N-3]
     # include contributions from u^{*,i+1}_{N-1} and u^{*,i}_{N-1} = 1.0 (Freestream BC) in RHS
-    rhs[k]     = (psi_1 - psi_2) * u_old[j-1] + (u_old[j]**2 / dx_star) + (2.0 * psi_2 * u_old[j]) + (-psi_1 - psi_2) * 1.0 - (psi_1 + psi_2) * 1.0                              # rhs
+    rhs[k]     = (psi_1 - psi_2) * u_old[j-1] + (u_old[j]**2 / dx_star) + (2.0 * psi_2 * u_old[j]) + (-psi_1 - psi_2) * 1.0 - (psi_1 + psi_2) * 1.0
 
     return ab, rhs, l_diag, u_diag 
 
@@ -287,7 +287,7 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
 
     u_star = u_star_0.copy()
     v_star = np.zeros(N)
-    u_star_prev = None                                # No prevbious step initially -> use 1st order du/dx in compute_v_star
+    u_star_prev = None                                # No previous step initially -> use 1st order du/dx in compute_v_star
 
     stride = max(1, Nx // 1000)                       # store solution every stride steps
 
@@ -349,7 +349,7 @@ def compute_blausius(eta_max=10.0, n_points = 10000):
 
     eta_B = np.zeros(n_points + 1)          # values for eta
     f_arr = np.zeros(n_points + 1)          # stream function at each eta
-    F_arr = np.zeros(n_points + 1)          # velocity profile u*/U_inf (WHY IS df/deta THE VELOCITY PROFILE??)
+    F_arr = np.zeros(n_points + 1)          # velocity profile u/U_inf = u* (WHY IS df/deta THE VELOCITY PROFILE??)
     H_arr = np.zeros(n_points + 1)          # d2f/deta2
 
     f_arr[0] = 0.0                          # f(0) = 0 at the wall
@@ -381,7 +381,6 @@ def compute_blausius(eta_max=10.0, n_points = 10000):
         
     return eta_B, F_arr, f_arr # eta_B, u*/U_infty = F, stream function f
 
-
 # ------------------------------------------------------------------
 # 10.  COMPUTE THICKNESSES AND SHAPE FACTOR
 # ------------------------------------------------------------------
@@ -405,12 +404,144 @@ def compute_thicknesses(u_star, J_star, deta):
 def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     N          = params["N"]
     deta       = params["deta"]
-    nu_inf     = params["nu_inf"]
+    nu         = params["nu_inf"]
     U_inf      = params["U_inf"]
     L          = params["L"]
     delta      = params["delta"]
 
     print("Computing Blasius solution...")
     eta_B, F_B, f_B = compute_blausius(eta_max=10.0, n_points = 10000)
+
+    output_indices = []
+    for x_out in params["x_output"]:
+        idx = np.argmin(np.abs(x_vals - x_out))          #take difference between desired x and stored x and return index of lowest entry
+        output_indices.append(idx)
+
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
+
+    # Plot 1: u* vs. y/delta
+    plt.figure(figsize=(8,6))
+    for i, idx in enumerate(output_indices):
+        x_now = x_vals[idx]; x_dim = x_now * L
+        u_num = u_store[idx, :]
+
+        plt.plot(u_num, y_star, '-', color=colors[i], linewidth=1.5, label = fr"Numerical, $x^*={x_now:.0f}$")
+
+        if i > 0:
+            scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blausius Similarity Variable
+            eta_B_local = y_phys * scale                   # compute Blausius Similarity Variable for desired locations
+
+            u_blausius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blausius solution values using eta_b_local array
+
+            plt.plot(u_blausius, y_star, '--', color=colors[i], linewidth=1.5, label = fr"Blausius, $x^*={x_now:.0f}$")
+    
+    plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
+    plt.ylabel(fr'$y^* = y / \delta$', fontsize =14)
+    plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.legend(fontsize=9, loc='best')
+    plt.tight_layout()
+    plt.savefig('velocity_profiles.png', dpi=300, bbox_inches='tight')
+    print("...Saved velocity_profiles.png")
+
+    #Plot 2: Similarity Profiles
+    plt.figure(figsize=(8,6))
+    for i, idx in enumerate(output_indices):
+        x_now = x_vals[idx]; x_dim = x_now * L
+        u_num = u_store[idx, :]
+
+        scale = np.sqrt(U_inf / (nu * x_dim))
+        eta_B_local = y_phys * scale
+
+        plt.plot(u_num, eta_B_local, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.0f}$")
+    plt.plot(F_B, eta_B, 'k--', linewidth=2, label='Blausius')
+    plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
+    plt.ylabel(fr'$\eta_B$', fontsize =14)
+    plt.xlim([-0.05, 1.1]); plt.ylim([0, 8])
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.legend(fontsize=10, loc='best')
+    plt.tight_layout()
+    plt.savefig('similarity_profiles.png', dpi=300, bbox_inches='tight')
+    print("...Saved similarity_profiles.png")
+
+    #Plot 3: L2 Residual
+    residuals = []; x_res = []
+    for i in range(1, len(x_vals)):          # start from 1 so we can compare to previous step
+        dx_gap = x_vals[i] - x_vals[i-1]     # take difference between stored x-values
+        if dx_gap < 1e-15: continue          # skip loop if comparing data from same x-values
+
+        res = np.linalg.norm(u_store[i, :] - u_store[i-1,:], ord=2) / dx_gap    # normalize to step size in x between stored solutions
+        residuals.append(res); x_res.append(x_vals[i])
+    
+    plt.figure(figsize=(6,5))
+    plt.plot(x_res, residuals, '-', color='tab:blue', linewidth=1.5)
+    plt.xlabel(r'$x^*$', fontsize=14)
+    plt.ylabel(r'$L_2$ Residual: $\|u^{n+1} - u^n\|_2 / \Delta x^*$', fontsize=14)
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    #plt.legend(fontsize=10, loc='best')
+    plt.tight_layout()
+    plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
+    print("...Saved residual_vs_x.png")
+
+    #Plot 4: Boundary Layer Growth
+    plt.figure(figsize=(8,6))
+    for i, idx in enumerate(output_indices):
+        x_now = x_vals[idx]; u_num = u_store[idx, :]
+        plt.plot(y_star, u_num, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.0f}$")
+    plt.ylabel(fr'$u^* = u / U_\infty$', fontsize=14)
+    plt.xlabel(fr'$y^* = y / \delta$', fontsize =14)
+    plt.xlim([0,6])
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.legend(fontsize=10, loc='best')
+    plt.tight_layout()
+    plt.savefig('boundary_layer_growth.png', dpi=300, bbox_inches='tight')
+    print("...Saved boundary_layer_growth.png")
+
+    #Table: Thicknesses
+    print("\n" + "="*120)
+    print(f"{'x*':>10} {'x [m]':>13} {'d*/d':>12} {'th/d':>12} "
+          f"{'H':>9} {'d*_Blas/d':>17} {'th_Blas/d':>17} {'H_Blas':>14}")
+    print("="*120)
+
+
+
+
+
+    
+# ------------------------------------------------------------------
+# 12.  MAIN DRIVER
+# ------------------------------------------------------------------
+def main():
+    print("=" * 60)
+    print( "     ME 5311 - Project 02: Laminar Boundary Layer Solver")
+    print("=" * 60)
+
+    print("\n[1] Setting parameters...")
+    params = set_parameters()
+    print(f"     Re_L = {params['Re_L']:.2e}")
+    print(f"     x0*  = {params['x0_star']:.1f}")
+
+    print("\n[2] Computing stretched grid...")
+    eta, y_phys, y_star, J_star, J_star_eta = compute_grid(params)
+
+    #ADD PRINTOUTS
+
+    print("\n[3] Setting initial conditions...")
+    u_star_0 = compute_initial_condition(params, y_star)
+
+    print("\n[4] Marching in x...")
+    x_vals, u_store = step_in_x(params, u_star_0, J_star, J_star_eta)
+
+    print("\n[5] Post-processing...")
+    post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star)
+
+    print("\nDone!")
+
+if __name__ == "__main__":
+    main()
 
 

@@ -199,7 +199,7 @@ def build_system(params, u_old, A_j, B_j):
     l_diag     = 2 # number of lower diagonals in banded system
     u_diag     = 2 # number of upper diagonals in banded system
 
-    # Number of unknowns = N-2, u*_0 = 0 (Wall BC), u*_{N-1} = 0 (Freestream BC)
+    # Number of unknowns = N-2, u*_0 = 0 (Wall BC), u*_{N-1} = 1 (Freestream BC)
     # Unknowns: x[k] = u*_{k+1} for k = 0 to N-3
     n          = N - 2 # number of unknowns (u_star[1] to u_star[N-2])
 
@@ -369,8 +369,8 @@ def compute_blausius(eta_max=10.0, n_points = 10000):
         fi, Fi, Hi = f_arr[i], F_arr[i], H_arr[i]
 
         k1f, k1F, k1H = rhs(fi, Fi, Hi)
-        k2f, k2F, k2H = rhs(fi + 0.5*h*k1f, Fi + 0.5*h*k1F, Hi + 0.5*k1H)
-        k3f, k3F, k3H = rhs(fi + 0.5*h*k2f, Fi + 0.5*h*k2F, Hi + 0.5*k2H)
+        k2f, k2F, k2H = rhs(fi + 0.5*h*k1f, Fi + 0.5*h*k1F, Hi + 0.5*h*k1H)
+        k3f, k3F, k3H = rhs(fi + 0.5*h*k2f, Fi + 0.5*h*k2F, Hi + 0.5*h*k2H)
         k4f, k4F, k4H = rhs(fi + h*k3f, Fi + h*k3F, Hi + h*k3H)
 
         f_arr[i+1] = fi + (h/6.0)*(k1f + 2*k2f + 2*k3f + k4f)
@@ -419,7 +419,7 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
 
     colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
 
-    # Plot 1: u* vs. y/delta
+    # Plot 01: u* vs. y/delta
     plt.figure(figsize=(8,6))
     for i, idx in enumerate(output_indices):
         x_now = x_vals[idx]; x_dim = x_now * L
@@ -445,7 +445,7 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     plt.savefig('velocity_profiles.png', dpi=300, bbox_inches='tight')
     print("...Saved velocity_profiles.png")
 
-    #Plot 2: Similarity Profiles
+    #Plot 02: Similarity Profiles
     plt.figure(figsize=(8,6))
     for i, idx in enumerate(output_indices):
         x_now = x_vals[idx]; x_dim = x_now * L
@@ -466,7 +466,7 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     plt.savefig('similarity_profiles.png', dpi=300, bbox_inches='tight')
     print("...Saved similarity_profiles.png")
 
-    #Plot 3: L2 Residual
+    #Plot 03: L2 Residual
     residuals = []; x_res = []
     for i in range(1, len(x_vals)):          # start from 1 so we can compare to previous step
         dx_gap = x_vals[i] - x_vals[i-1]     # take difference between stored x-values
@@ -486,7 +486,38 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
     print("...Saved residual_vs_x.png")
 
-    #Plot 4: Boundary Layer Growth
+    #Plot 04: L2 Error
+    errors = []; x_errors = []; rms_vals = []
+    for i in range(1, len(x_vals)):
+        x_now = x_vals[i]; x_dim = x_now * L
+        u_num = u_store[i, :] 
+
+        if x_dim == 0: continue
+        
+        scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blausius Similarity Variable
+        eta_B_local = y_phys * scale                   # compute Blausius Similarity Variable for desired locations
+
+        u_blausius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blausius solution values using eta_b_local array
+
+        err = np.linalg.norm(u_num - u_blausius, ord=2)
+        rms = err / np.sqrt(len(u_num))
+
+        errors.append(err); x_errors.append(x_now); rms_vals.append(rms)
+
+    plt.figure(figsize=(6,5))        
+    plt.plot(x_errors, rms_vals, 'o-', color='tab:red', linewidth=1.5, markersize=2)
+    #plt.ylabel(r'L2 Error: $\|u_{num} - u_{Blas}\|_2$', fontsize=18)
+    plt.ylabel(r'RMS Error', fontsize=18)
+    plt.xlabel(fr'$x^* = x / L$', fontsize =14)
+    #plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    #plt.legend(fontsize=9, loc='best')
+    plt.tight_layout()
+    plt.savefig('error_vs_x.png', dpi=300, bbox_inches='tight')
+    print("...Saved error_vs_x.png")
+
+    #Plot 05: Boundary Layer Growth
     plt.figure(figsize=(8,6))
     for i, idx in enumerate(output_indices):
         x_now = x_vals[idx]; u_num = u_store[idx, :]
@@ -503,14 +534,31 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
 
     #Table: Thicknesses
     print("\n" + "="*120)
-    print(f"{'x*':>10} {'x [m]':>13} {'d*/d':>12} {'th/d':>12} "
-          f"{'H':>9} {'d*_Blas/d':>17} {'th_Blas/d':>17} {'H_Blas':>14}")
+    print(f"{'x*':>10} {'x [m]':>10} {'d*/d':>12} {'th/d':>12} "
+          f"{'H':>12} {'d*_Blas/d':>15} {'th_Blas/d':>15} {'H_Blas':>12}")
     print("="*120)
+    thickness_data = []
+    for i, idx in enumerate(output_indices):
+        x_now = x_vals[idx]; x_dim = x_now * L
+        u_num = u_store[idx, :]
+        delta_star, theta, H = compute_thicknesses(u_num, J_star, deta)
+        sqrt_nu_x_U = np.sqrt(nu * x_dim / U_inf)
+        delta_star_blas = 1.72 * sqrt_nu_x_U / delta 
+        theta_blas      = 0.664 * sqrt_nu_x_U / delta 
+        H_blas = delta_star_blas / theta_blas if theta_blas > 0 else 0.0
+        thickness_data.append((x_now, x_dim, delta_star, theta, H, delta_star_blas, theta_blas, H_blas))
+        print(f"{x_now:10.1f} {x_dim:10.1f} {delta_star:12.6f} {theta:12.6f} {H:12.4f} {delta_star_blas:15.6} {theta_blas:15.6} {H_blas:12.4f}")
+    print("="*120 )
 
+    #Print x0 calculation summary
+    print(f"\nInitial x-location calculation:")
+    print(f"     From Blausius: delta = c*sqrt(x0), c = 4.91*sqrt(nu/U)")
+    print(f"     c = 4.91*sqrt({nu}/{U_inf}) = {4.91*np.sqrt(nu/U_inf):.6e}")
+    print(f"     x0 = delta^2/c^2 = ({delta})^2 / ({4.91*np.sqrt(nu/U_inf):.6e})^2 = {params['x0']:.2f} m")
+    print(f"     xo* = x0/L = {params['x0_star']:.2f}")
+    print(f"     Re_x0 = U_inf*x0/nu = {U_inf*params['x0']/nu:.2e}")
 
-
-
-
+    return thickness_data
     
 # ------------------------------------------------------------------
 # 12.  MAIN DRIVER
@@ -527,8 +575,7 @@ def main():
 
     print("\n[2] Computing stretched grid...")
     eta, y_phys, y_star, J_star, J_star_eta = compute_grid(params)
-
-    #ADD PRINTOUTS
+    print(f"     dy_min = {y_phys[1]-y_phys[0]:.2e} m, dy_max = {y_phys[-1]-y_phys[-2]:.2e} m")
 
     print("\n[3] Setting initial conditions...")
     u_star_0 = compute_initial_condition(params, y_star)

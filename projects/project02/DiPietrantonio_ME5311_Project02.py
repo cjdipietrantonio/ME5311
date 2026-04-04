@@ -1,7 +1,7 @@
 # Christian DiPietrantonio
 # ME 5311: Computational Methods to Viscous Flows
 # Computer Assignment 02
-# 03/30/2026
+# 04/04/2026
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -117,7 +117,7 @@ def compute_v_star(u_star_new, u_star_old, u_star_prev, params, J_star):
     l_diag          = 2 # number of lower diagonals in banded system
     u_diag          = 1 # number of upper diagonals in banded system
 
-    # ---------- Compute du*/dx* at each grind point ---------------
+    # ---------- Compute du*/dx* at each grid point ---------------
     if u_star_prev is None:
         du_dx_star =  (u_star_new - u_star_old) / dx_star
     else:
@@ -190,7 +190,7 @@ def compute_v_star(u_star_new, u_star_old, u_star_prev, params, J_star):
 # ------------------------------------------------------------------
 
 def build_system(params, u_old, A_j, B_j):
-    """Build the banded matrix and RHS vector for the linear system resulting from the discritization
+    """Build the banded matrix and RHS vector for the linear system resulting from the discretization
        of the momentum equation."""
 
     N          = params["N"]
@@ -259,7 +259,7 @@ def build_system(params, u_old, A_j, B_j):
             rhs_val += r_jp2 * u_old[j+2]       # contribution from u^{*,i}_{j+2}
         else:
             rhs_val += r_jp2 * 1.0              # contribution from u^{*,i}_{N-1} = 1.0 (Freestream BC)
-            rhs_val += c_jp2 * 1.0              # contribution from u^{*,i+1}_{N-1} = 1.0 (Freestream BC)
+            rhs_val -= c_jp2 * 1.0              # contribution from u^{*,i+1}_{N-1} = 1.0 (Freestream BC)
         rhs[k] = rhs_val
 
     # Row N-3: j=N-2 (near freestream, 2nd order)
@@ -342,14 +342,14 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
 # 9.  COMPUTE BLASIUS SOLUTION
 # ------------------------------------------------------------------
 
-def compute_blausius(eta_max=10.0, n_points = 10000):
-    """Sovle Blasius via RK4."""
+def compute_blasius(eta_max=10.0, n_points = 10000):
+    """Solve Blasius via RK4."""
 
     h = eta_max / n_points          # step size for RK4
 
     eta_B = np.zeros(n_points + 1)          # values for eta
     f_arr = np.zeros(n_points + 1)          # stream function at each eta
-    F_arr = np.zeros(n_points + 1)          # velocity profile u/U_inf = u* (WHY IS df/deta THE VELOCITY PROFILE??)
+    F_arr = np.zeros(n_points + 1)          # velocity profile u/U_inf = u*
     H_arr = np.zeros(n_points + 1)          # d2f/deta2
 
     f_arr[0] = 0.0                          # f(0) = 0 at the wall
@@ -359,11 +359,12 @@ def compute_blausius(eta_max=10.0, n_points = 10000):
     def rhs(f_val, F_val, H_val):
         
         df = F_val                          # df/deta = F
-        dF = H_val                          # df/deta = H
+        dF = H_val                          # dF/deta = H
         dH = -0.5 * f_val * H_val           # dH/deta = -(f/2)*H
 
         return df, dF, dH
 
+    # Implement RK4 numerical method
     for i in range(n_points):
         eta_B[i] = i * h
         fi, Fi, Hi = f_arr[i], F_arr[i], H_arr[i]
@@ -410,7 +411,7 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     delta      = params["delta"]
 
     print("Computing Blasius solution...")
-    eta_B, F_B, f_B = compute_blausius(eta_max=10.0, n_points = 10000)
+    eta_B, F_B, f_B = compute_blasius(eta_max=10.0, n_points = 10000)
 
     output_indices = []
     for x_out in params["x_output"]:
@@ -420,33 +421,35 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
 
     # Plot 01: u* vs. y/delta
-    plt.figure(figsize=(8,6))
+    #plt.figure(figsize=(8,6))
+    plt.figure(figsize=(6,5)) 
     for i, idx in enumerate(output_indices):
         x_now = x_vals[idx]; x_dim = x_now * L
         u_num = u_store[idx, :]
 
-        plt.plot(u_num, y_star, '-', color=colors[i], linewidth=1.5, label = fr"Numerical, $x^*={x_now:.0f}$")
+        plt.plot(u_num, y_star, '-', color=colors[i], linewidth=1.5, label = fr"Numerical, $x^*={x_now:.2f}$")
 
         if i > 0:
-            scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blausius Similarity Variable
-            eta_B_local = y_phys * scale                   # compute Blausius Similarity Variable for desired locations
+            scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blasius Similarity Variable
+            eta_B_local = y_phys * scale                   # compute Blasius Similarity Variable for desired locations
 
-            u_blausius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blausius solution values using eta_b_local array
+            u_blasius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blasius solution values using eta_b_local array
 
-            plt.plot(u_blausius, y_star, '--', color=colors[i], linewidth=1.5, label = fr"Blausius, $x^*={x_now:.0f}$")
+            plt.plot(u_blasius, y_star, '--', color=colors[i], linewidth=1.5, label = fr"Blasius, $x^*={x_now:.2f}$")
     
     plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
     plt.ylabel(fr'$y^* = y / \delta$', fontsize =14)
     plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
     plt.grid(True, linestyle='--', alpha=0.5)
-    plt.legend(fontsize=9, loc='best')
+    plt.legend(fontsize=14, loc='best')
     plt.tight_layout()
     plt.savefig('velocity_profiles.png', dpi=300, bbox_inches='tight')
     print("...Saved velocity_profiles.png")
 
     #Plot 02: Similarity Profiles
-    plt.figure(figsize=(8,6))
+    #plt.figure(figsize=(8,6))
+    plt.figure(figsize=(6,5))
     for i, idx in enumerate(output_indices):
         x_now = x_vals[idx]; x_dim = x_now * L
         u_num = u_store[idx, :]
@@ -454,19 +457,20 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
         scale = np.sqrt(U_inf / (nu * x_dim))
         eta_B_local = y_phys * scale
 
-        plt.plot(u_num, eta_B_local, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.0f}$")
-    plt.plot(F_B, eta_B, 'k--', linewidth=2, label='Blausius')
+        plt.plot(u_num, eta_B_local, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.2f}$")
+    plt.plot(F_B, eta_B, 'k--', linewidth=2, label='Blasius')
     plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
     plt.ylabel(fr'$\eta_B$', fontsize =14)
     plt.xlim([-0.05, 1.1]); plt.ylim([0, 8])
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
     plt.grid(True, linestyle='--', alpha=0.5)
-    plt.legend(fontsize=10, loc='best')
+    plt.legend(fontsize=14, loc='best')
     plt.tight_layout()
     plt.savefig('similarity_profiles.png', dpi=300, bbox_inches='tight')
     print("...Saved similarity_profiles.png")
 
     #Plot 03: L2 Residual
+    plt.figure(figsize=(6,5))
     residuals = []; x_res = []
     for i in range(1, len(x_vals)):          # start from 1 so we can compare to previous step
         dx_gap = x_vals[i] - x_vals[i-1]     # take difference between stored x-values
@@ -475,8 +479,7 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
         res = np.linalg.norm(u_store[i, :] - u_store[i-1,:], ord=2) / dx_gap    # normalize to step size in x between stored solutions
         residuals.append(res); x_res.append(x_vals[i])
     
-    plt.figure(figsize=(6,5))
-    plt.plot(x_res, residuals, '-', color='tab:blue', linewidth=1.5)
+    plt.plot(x_res, residuals, 'o-', color='tab:blue', linewidth=1.5, markersize=2)
     plt.xlabel(r'$x^*$', fontsize=14)
     plt.ylabel(r'$L_2$ Residual: $\|u^{n+1} - u^n\|_2 / \Delta x^*$', fontsize=14)
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
@@ -486,7 +489,8 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
     plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
     print("...Saved residual_vs_x.png")
 
-    #Plot 04: L2 Error
+    #Plot 04: RMS Error
+    plt.figure(figsize=(6,5))
     errors = []; x_errors = []; rms_vals = []
     for i in range(1, len(x_vals)):
         x_now = x_vals[i]; x_dim = x_now * L
@@ -494,20 +498,19 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
 
         if x_dim == 0: continue
         
-        scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blausius Similarity Variable
-        eta_B_local = y_phys * scale                   # compute Blausius Similarity Variable for desired locations
+        scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blasius Similarity Variable
+        eta_B_local = y_phys * scale                   # compute Blasius Similarity Variable for desired locations
 
-        u_blausius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blausius solution values using eta_b_local array
+        u_blasius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blasius solution values using eta_b_local array
 
-        err = np.linalg.norm(u_num - u_blausius, ord=2)
+        err = np.linalg.norm(u_num - u_blasius, ord=2)
         rms = err / np.sqrt(len(u_num))
 
         errors.append(err); x_errors.append(x_now); rms_vals.append(rms)
-
-    plt.figure(figsize=(6,5))        
+        
     plt.plot(x_errors, rms_vals, 'o-', color='tab:red', linewidth=1.5, markersize=2)
     #plt.ylabel(r'L2 Error: $\|u_{num} - u_{Blas}\|_2$', fontsize=18)
-    plt.ylabel(r'RMS Error', fontsize=18)
+    plt.ylabel(r'RMS Error', fontsize=14)
     plt.xlabel(fr'$x^* = x / L$', fontsize =14)
     #plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
@@ -547,12 +550,12 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
         theta_blas      = 0.664 * sqrt_nu_x_U / delta 
         H_blas = delta_star_blas / theta_blas if theta_blas > 0 else 0.0
         thickness_data.append((x_now, x_dim, delta_star, theta, H, delta_star_blas, theta_blas, H_blas))
-        print(f"{x_now:10.1f} {x_dim:10.1f} {delta_star:12.6f} {theta:12.6f} {H:12.4f} {delta_star_blas:15.6} {theta_blas:15.6} {H_blas:12.4f}")
+        print(f"{x_now:10.2f} {x_dim:10.2f} {delta_star:12.6f} {theta:12.6f} {H:12.4f} {delta_star_blas:15.6} {theta_blas:15.6} {H_blas:12.4f}")
     print("="*120 )
 
     #Print x0 calculation summary
     print(f"\nInitial x-location calculation:")
-    print(f"     From Blausius: delta = c*sqrt(x0), c = 4.91*sqrt(nu/U)")
+    print(f"     From Blasius: delta = c*sqrt(x0), c = 4.91*sqrt(nu/U)")
     print(f"     c = 4.91*sqrt({nu}/{U_inf}) = {4.91*np.sqrt(nu/U_inf):.6e}")
     print(f"     x0 = delta^2/c^2 = ({delta})^2 / ({4.91*np.sqrt(nu/U_inf):.6e})^2 = {params['x0']:.2f} m")
     print(f"     xo* = x0/L = {params['x0_star']:.2f}")
@@ -564,14 +567,14 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
 # 12.  MAIN DRIVER
 # ------------------------------------------------------------------
 def main():
-    print("=" * 60)
+    print("=" * 120)
     print( "     ME 5311 - Project 02: Laminar Boundary Layer Solver")
-    print("=" * 60)
+    print("=" * 120)
 
     print("\n[1] Setting parameters...")
     params = set_parameters()
     print(f"     Re_L = {params['Re_L']:.2e}")
-    print(f"     x0*  = {params['x0_star']:.1f}")
+    print(f"     x0*  = {params['x0_star']:.2f}")
 
     print("\n[2] Computing stretched grid...")
     eta, y_phys, y_star, J_star, J_star_eta = compute_grid(params)

@@ -91,7 +91,7 @@ The objective of this project is to numerically solve the zero pressure gradient
     \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} = 0, \qquad u \frac{\partial u}{\partial x} + v \frac{\partial u}{\partial y} = \frac{\partial}{\partial y} \left( \nu \frac{\partial u}{\partial y} \right)
 \end{equation}
 
-using the Crank-Nicolson algorithm to march in the x-direction, a stretched grid in the y-direction (where $\eta$ is the stretched coordinate that is uniform in the computational domain), and a fourth-order central difference scheme for the discretization of $\eta$ (except at the first interior points where a second-order discretization is used). The following scales are considered: $\nu_\infty = 1.5 \times 10^{-6}$ m$^2$/s, $U_\infty = 30.0$ m/s, $L = 1.0$ m, $\delta = 0.005$ m. The initial velocity profile at $x = x_0$ is assumed to be:
+using the Crank-Nicolson algorithm to march in the x-direction, a stretched grid in the y-direction (where $\eta$ is the stretched coordinate that is uniform in the computational domain), and a fourth-order central difference scheme for the discretization of $\eta$ (except at the first interior points, where a second-order discretization is used). The following scales are considered: $\nu_\infty = 1.5 \times 10^{-6}$ m$^2$/s, $U_\infty = 30.0$ m/s, $L = 1.0$ m, $\delta = 0.005$ m. The initial velocity profile at $x = x_0$ is assumed to be:
 \begin{equation}
     \frac{u}{U_\infty} = \begin{cases} \displaystyle \frac{y}{\delta} \left(\frac{3}{2} - \frac{1}{2} \left(\frac{y}{\delta} \right)^2 \right), & \text{for } \frac{y}{\delta} \leq 1 \\[4pt] 1, & \text{for } \frac{y}{\delta} > 1 \end{cases}
 \end{equation}
@@ -119,7 +119,7 @@ Where $s = 10$ is a stretching factor and $\eta \in [0,1]$. The Jacobian and its
     J^*_\eta = \frac{dJ^*}{d\eta} = \frac{y_{\max}}{\delta} \cdot \frac{s^2 \sinh(s\eta)}{\sinh(s)}
 \end{equation}
 
-Using the chain rule, the derivatives with respect to $y^*$ can now be expressed in terms of derivatives with respect to $\eta$:
+Using the chain rule, the derivatives with respect to $y^*$ can now be expressed as derivatives with respect to $\eta$:
 \begin{equation}
     \frac{\partial}{\partial y^*} = \frac{1}{J^*} \frac{\partial}{\partial \eta}, \qquad
     \frac{\partial^2}{\partial y^{*2}} = \frac{1}{J^{*2}} \frac{\partial^2}{\partial \eta^2} - \frac{J^*_\eta}{J^{*3}} \frac{\partial}{\partial \eta} \label{eq:chain_rule}
@@ -159,7 +159,7 @@ Near the boundary and at the initial step in $x$ ($i=1$, $j=1$ and $j=N-2$), a 4
 \end{aligned}
 \end{equation}
 
-Applying the Crank-Nicolson scheme and lagging non-linear term $u^* \frac{\partial u^*}{\partial x^*}$ yields the following expression for the momentum equation:
+Applying the Crank-Nicolson scheme and lagging the non-linear term $u^* \frac{\partial u^*}{\partial x^*}$ yields the following expression for the momentum equation:
 \begin{equation}
     u_{j}^{*,i} \left( \frac{u_{j}^{*, i+1} - u_{j}^{*, i}}{\Delta x^*} \right) + \frac{A_j}{2} \left[ \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i,j} + \left( \frac{\partial u^{*}}{\partial \eta} \right)_{i+1,j} \right] + \frac{B_j}{2} \left[ \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i,j} + \left( \frac{\partial^2 u^{*}}{\partial \eta^2} \right)_{i+1,j} \right] = 0
 \end{equation}
@@ -209,7 +209,7 @@ The initial value of $x$ can be estimated from the Blasius relation for boundary
     x_0 = \frac{0.005^2}{\left(4.91 \sqrt{\frac{1.5 \times 10^{-6}}{30}}\right)^2} \approx 20.74 \text{ m}
 \end{equation}
 
-This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x/L$, the non-dimensionalized initial value of $x$ is found as $x_0^* = 20.74$.  The solution is then marched $40L$ downstream from $x_0$ to $x^*_{max} = 60.74$. 
+This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x/L$, the non-dimensionalized initial value of $x$ is found as $x_0^* = 20.74$.  The solution is then marched $40L$ downstream from $x_0^*$ to $x^*_{max} = 60.74$. 
 % \begin{figure}[H]
 %     \centering
 %     \includegraphics[width=0.72\textwidth]{velocity_profiles.png}
@@ -228,7 +228,7 @@ This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x
         \vspace{0pt}
         \centering
         \includegraphics[width=\textwidth]{velocity_profiles.png}
-        \caption{Velocity profiles $u^*$ vs.\ $y/\delta$ at five axial locations. Dashed lines show the Blasius solution at downstream locations.}
+        \caption{Velocity profiles $u^*$ vs.\ $y/\delta$ and Blasius solutions at four downstream locations.}
         \label{fig:velocity_profiles}
     \end{minipage}
     \hspace{16pt}
@@ -237,7 +237,7 @@ This results in $Re_{x_0} \approx 4.15 \times 10^8$. Furthermore, since $x^* = x
         \vspace{0pt}
         \centering
         \includegraphics[width=\textwidth]{similarity_profiles.png}
-        \caption{Similarity profiles: $u^*$ vs.\ $\eta_B = y\sqrt{U_\infty/(\nu x)}$. Profiles collapse towards Blasius (black dashed) as $x$ increases.}
+        \caption{Similarity profiles: $\eta_B = y\sqrt{U_\infty/(\nu x)}$ vs.\ $u^*$ at four downstream locations.}
         \label{fig:similarity_profiles}
     \end{minipage}
 \end{figure}
@@ -306,11 +306,11 @@ $x^*$ & $\delta^*/\delta$ & $\theta/\delta$ & $H$ & $\delta^*_{\text{Blas}}/\del
 \section{Discussion of Results}
 \subsection{General description}
 
-The numerical solution exhibits excellent agreement with the Blasius similarity solution at the downstream locations. Figure~\ref{fig:velocity_profiles} shows that the velocity profiles at $x^* = 25$, $30$, $40$, and $60.74$ closely match the corresponding Blasius profiles. From Figure~\ref{fig:velocity_profiles}, it can also be observed that the boundary layer grows as expected, and the velocity gradient at the wall decreases as $x^*$ increases. The similarity profiles in Figure~\ref{fig:similarity_profiles} highlight a key feature of a laminar boundary layer on a flat plate and self-similar solutions. When the velocity profiles at different $x^*$ locations are plotted against the Blasius similarity variable $\eta_B = y \sqrt{U_\infty/(\nu x)}$, they collapse onto a single curve (the Blasius solution). One can observe that the initial profile at $x^* = 20.74$ deviates the most from the Blasius solution. This is because the cubic approximation profile is not a solution to the governing equations, but rather an initial guess. However, subsequent velocity profiles converge to the Blasius solution as $x^*$ increases, and by $x^* = 60.74$, the numerical and Blasius solutions are nearly the same. It is important to note that accuracy improves further downstream in $x^*$ because the momentum equation is parabolic, therefore information is only propagated in the downstream direction and the impact of the initial disturbance (cubic profile) decreases as the solution marches forward. Table~\ref{tab:thicknesses} also demonstrates that the displacement thickness, momentum thickness, and shape factor all approach their corresponding Blasius values as $x^*$ increases. From the data, we can also observe that the initial cubic profile overestimates the displacement thickness, momentum thickness, and shape factor compared to the Blasius solution. Nevertheless, by $x^* = 60.74$, the numerical $\delta^*/\delta$, $\theta/\delta$, and $H$ are within 0.6\%, 0.04\%, and 0.7\% of their respective Blasius values.
+The numerical solution exhibits excellent agreement with the Blasius similarity solution at the downstream locations. Figure~\ref{fig:velocity_profiles} shows that the velocity profiles at $x^* = 25$, $30$, $40$, and $60.74$ closely match the corresponding Blasius profiles. From Figure~\ref{fig:velocity_profiles}, it can also be observed that the boundary layer grows as expected, and the velocity gradient at the wall decreases as $x^*$ increases. The similarity profiles in Figure~\ref{fig:similarity_profiles} highlight a key feature of a laminar boundary layer on a flat plate and self-similar solutions. When the velocity profiles at different $x^*$ locations are plotted against the Blasius similarity variable $\eta_B = y \sqrt{U_\infty/(\nu x)}$, they collapse onto a single curve (the Blasius solution). One can observe that the initial profile at $x^* = 20.74$ deviates the most from the Blasius solution. This is because the cubic approximation profile is not a solution to the governing equations, but rather an initial guess. However, subsequent velocity profiles converge to the Blasius solution as $x^*$ increases, and by $x^* = 60.74$, the numerical and Blasius solutions are nearly the same. It is important to note that accuracy improves further downstream in $x^*$ because the momentum equation is parabolic, therefore information is only propagated in the downstream direction and the impact of the initial disturbance (cubic profile) decreases as the solution marches forward. Table~\ref{tab:thicknesses} also demonstrates that the displacement thickness, momentum thickness, and shape factor all approach their corresponding Blasius values as $x^*$ increases. From the data, we can observe that the initial cubic profile overestimates the displacement thickness, momentum thickness, and shape factor compared to the Blasius solution. Nevertheless, by $x^* = 60.74$, the numerical $\delta^*/\delta$, $\theta/\delta$, and $H$ are within 0.6\%, 0.04\%, and 0.7\% of their respective Blasius values.
 
 \subsection{Accuracy and stability}
 
-The L2 residual shown in Figure~\ref{fig:residual_vs_x} decreases as $x^*$ increases, which indicates convergence of the solution. The initial residual is largest near $x^* = 20.74$ because the initial cubic condition must undergo rapid changes to satisfy the governing equation. The Root Mean Square (RMS) error between the numerical and Blasius solutions shown in Figure~\ref{fig:error_vs_x} also decreases (from a maximum of roughly 0.017 near $x^* = 20.74$ due to the initial cubic profile) as $x^*$ increases. Nevertheless, Figure~\ref{fig:error_vs_x} indicates high accuracy of the results over the entire computational domain. The accuracy of the solution is further confirmed by the differences in displacement thickness, momentum thickness, and shape factor listed above. Finally, given that neither the solutions nor the L2 residual show any signs of oscillations or unphysical behavior, the solution is stable. However, this is to be expected because the Crank-Nicolson scheme is unconditionally stable.
+The L2 residual shown in Figure~\ref{fig:residual_vs_x} decreases as $x^*$ increases, which indicates convergence of the solution. The initial residual is largest near $x^* = 20.74$ because the initial cubic condition must undergo rapid changes to satisfy the governing equations. The Root Mean Square (RMS) error between the numerical and Blasius solutions shown in Figure~\ref{fig:error_vs_x} also decreases (from a maximum of roughly 0.017 near $x^* = 20.74$ due to the initial cubic profile) as $x^*$ increases. Nevertheless, Figure~\ref{fig:error_vs_x} indicates high accuracy of the results over the entire computational domain. The accuracy of the solution is further confirmed by the differences in displacement thickness, momentum thickness, and shape factor listed above. Finally, given that neither the solutions nor the L2 residual show any signs of oscillations or unphysical behavior, the solution is stable. However, this is to be expected because the Crank-Nicolson scheme is unconditionally stable.
 
 %---------------------------------------------------------------------------------------------------------------
 

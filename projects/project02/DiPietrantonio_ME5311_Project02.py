@@ -107,8 +107,8 @@ def compute_coefficients(params, v_star, J_star, J_star_eta, nu_star, dnu_star_d
 def compute_v_star(u_star_new, u_star_old, u_star_prev, params, J_star):
     """Compute v* from the transformed/non-dimensional continuity equation
        using a 4th-order approximation for dv*/deta and a 2nd-order approximation 
-       for du*/dx* for the interior domain (j = 2 to N-3) and a 4th-order approximation 
-       for dv*/deta and a 1st-order approximation for du*/dx* near the boundary and at 
+       for du*/dx* for the interior domain (j = 2 to N-3), and a 4th-order approximation 
+       for dv*/deta and a 1st-order approximation for du*/dx* near the boundary/at 
        the initial step in x (i = 1, j = 1 and j = N-2)."""
     
     N          = params["N"]
@@ -149,7 +149,7 @@ def compute_v_star(u_star_new, u_star_old, u_star_prev, params, J_star):
     for j in range(2, N-1):
         r = j - 1                                # row index in banded system
 
-        if j -2 >= 1:
+        if j - 2 >= 1:
             ab[u_diag + r - (r-2), r-2] = c      # map value two columns behind main diagonal (2nd lower diagonal)
                                                  # ab[3, r-2]: v*_{j-2}
         # if j = 2, v*_0 = 0, so no contribution

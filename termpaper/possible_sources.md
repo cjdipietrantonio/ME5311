@@ -86,3 +86,7 @@ https://github.com/yc-liu/readings
 https://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf?utm_source=copilot.com
 
 [7] 1. Options, Futures, and Other Derivatives — John C. Hull
+
+
+OpenFOAM-3.0x: FinancialFoam
+https://github.com/OpenFOAM/OpenFOAM-3.0.x/blob/master/applications/solvers/financial/financialFoam/financialFoam.C 

@@ -1,0 +1,158 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{amsmath, amssymb, geometry, titlesec, esint, listings, xcolor, graphicx, float, caption, booktabs, bm}
+\usepackage[utf8]{inputenc}
+
+\geometry{margin=1in}
+
+%Make section titles smaller
+\titleformat{\section}
+    {\large\bfseries}
+    {\thesection.}{0.5em}{}
+
+\titleformat{\subsection}
+    {\normalsize\bfseries}
+    {\thesubsection.}{0.5em}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\itshape}
+    {\thesubsubsection.}{0.5em}{}
+
+%Customize vertical spacing
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{3pt}
+
+\setlength{\textfloatsep}{5pt} % space between floats and text
+\setlength{\floatsep}{5pt}     % space between floats
+\setlength{\intextsep}{2pt}    % space between in-text floats and text
+
+%\linespread{0.97}
+
+\setlength{\parindent}{0pt} % no indentation
+% \setlength{\parskip}{4pt} % space between paragraphs
+
+%Figure caption sizes
+\captionsetup[figure]{justification=raggedright, font=footnotesize, labelfont=bf, skip=0pt}
+\captionsetup[table]{justification=raggedright, font=small, labelfont=bf, skip=2pt}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize, % Base font style and size
+    keywordstyle=\color{blue!60!black},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{teal!60!black},
+    numbers=left,                      % line numbers on the left
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,                      % line numbers every 1 line
+    breaklines=true,                   % Wrap long lines
+    breakatwhitespace=false,           % Line break anywhere if needed
+    columns=flexible,                  % Better spacing between characters
+    frame=single,                      % Add a frame around the code
+    tabsize=4,                         % Set tab size to 4 spaces
+    showstringspaces=false,
+    inputencoding=utf8,
+    extendedchars=true
+}
+
+% Customize the spacing around equations
+\makeatletter
+\g@addto@macro\normalsize{%
+  \setlength\abovedisplayskip{5pt}%
+  \setlength\belowdisplayskip{5pt}%
+  \setlength\abovedisplayshortskip{5pt}%
+  \setlength\belowdisplayshortskip{5pt}%
+}
+\makeatother
+
+\begin{document}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%INFO
+
+Christian DiPietrantonio \\
+ME 5311: Computational Methods to Viscous Flows \\
+\today
+
+\vspace{6pt}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%TITLE
+{\large \textbf{Computer Assignment 03:} \normalsize Calculating the Development of a Turbulent Boundary Layer}
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DESCRIPTION OF THE PROBLEM
+\section{Description of the Problem}
+
+Using the code you developed for the laminar boundary layer in project 02, calculate the development of a turbulent boundary layer using the algebraic model described below.
+
+In the inner region, use the Reichardt model. The eddy viscocity is given by
+\begin{equation}
+    \nu_t = \kappa \nu \left[ \frac{y u^*}{\nu} - y^{+}_{a} tanh\left( \frac{y u^*}{\nu y^{+}_{a}} \right) \right]
+\end{equation}
+
+Where $y^{+}_{a} = 9.7$.
+
+In the outer region, use the Clauser model that assumes that the eddy viscocity reaches a constant value
+\begin{equation}
+    (\nu_t)_{\text{max}} = c_1 U_e \delta(x)
+\end{equation}
+
+$\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Use $\kappa = 0.41$ and $c_1 = 0.001$. You will need to calculate $u^*$ by taking the numerical derivative of $u$ at the wall.
+
+Make sure you nondimensionalize the expression for $\nu_t$ and find the derivatives of these expressions with respect to $y$.
+\begin{enumerate}
+    \item Calculate the turbulent boundary layer flow for the same dimensional properties used in the laminar case. However, use a value of $y_{\text{max}} = 50 \delta$ and 250 points in the $y$ direction. Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location. Check the boundary layer grows like
+    \begin{equation}
+        \delta(x) = 0.375 x (Re_x)^{-1/5}
+    \end{equation}
+    \item Adjust your results to account for the transition from the assumed initial laminar velocity profile by obtaining a value for $x_0$, the apparent origin of the turbulent boundary layer.
+    \item Show that the turbulent boundary layer follows the ``law of the wall''
+    \item Determine the sensitivity of the turbulence model to the choices of $\kappa$ and $c_1$
+    \item (discussion only) Try increasing the Reynolds number by a factor of 10. What changes are necessary in the grid resolution and stretching factor to obtain a converged solution?
+    \item (discussion only) Discuss the problems with the implementation of this model.
+\end{enumerate}
+
+Again, the report should not exceed 5 pages. Appendices should include details of your computer code.
+%---------------------------------------------------------------------------------------------------------------
+
+%DESCRIPTION OF THE NUMERICAL METHOD
+\section{Description of the Numerical Method}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%PRESENTATION OF RESULTS
+\section{Presentation of Results}
+
+TBD
+
+%---------------------------------------------------------------------------------------------------------------
+
+%DISCUSSION OF RESULTS
+\section{Discussion of Results}
+\subsection{General description}
+
+TBD
+
+\subsection{Accuracy and stability}
+
+TBD
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX A - copy of program listing
+\newpage
+\appendix
+\section{Copy of Program Listing}
+\label{appendix-code}
+
+\lstinputlisting[
+    language=Python
+]{DiPietrantonio_ME5311_Project03.py}
+
+%---------------------------------------------------------------------------------------------------------------
+
+\end{document}

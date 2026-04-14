@@ -121,7 +121,11 @@ Again, the report should not exceed 5 pages. Appendices should include details o
 %DESCRIPTION OF THE NUMERICAL METHOD
 \section{Description of the Numerical Method}
 
-TBD
+The numerical method used is nearly identical to Project 02, the Crank-Nicolson algorithm is used to march in the $x$-direction, a $\sinh$-based stretched grid is used in $\eta$, a fourth-order central difference scheme is used for the discretization of $\eta$ (except at the first interior points, where a second-order discretization is used), and banded linear solvers are used for both $u^*$ and $v^*$ at each $s$-step. However, for this project $\nu^*$ and $\frac{\partial \nu^*}{\partial \eta}$ are no longer constants $(\nu^* = 1, \frac{\partial \nu^*}{\partial \eta} = 0)$, instead they are computed from the turbulence model at each $x$-step. Nevertheless, the coefficients $A_j$ and $B_j$ retain the same formula as in Project 02:
+\begin{equation}
+    A_j = \frac{v^*_j}{J^*_j} - \frac{C}{J^{*2}_j}\frac{\partial \nu^*}{\partial \eta}\bigg|_j + \frac{C\,\nu^*_j\, J^*_{\eta,j}}{J^{*3}_j}, \qquad B_j = \frac{-C\,\nu^*_j}{J^{*2}_j}
+\end{equation}
+
 
 %---------------------------------------------------------------------------------------------------------------
 

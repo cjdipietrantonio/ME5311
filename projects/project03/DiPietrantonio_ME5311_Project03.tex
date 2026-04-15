@@ -126,7 +126,26 @@ The numerical method used is nearly identical to Project 02, the Crank-Nicolson 
     A_j = \frac{v^*_j}{J^*_j} - \frac{C}{J^{*2}_j}\frac{\partial \nu^*}{\partial \eta}\bigg|_j + \frac{C\,\nu^*_j\, J^*_{\eta,j}}{J^{*3}_j}, \qquad B_j = \frac{-C\,\nu^*_j}{J^{*2}_j}
 \end{equation}
 
+The friction velocity is nondimensionalized as $u_{\tau}^* / U_{\infty}$. From the definition $u_{\tau}^2 = \nu\,(\partial u/\partial y)|_w$ and the chain rule, the follwoing relationship is obtained:
+\begin{equation}
+u_{\tau}^{*2} = \frac{1}{Re_\delta \, J^{*}_0} \, \frac{\partial u^*}{\partial \eta}\bigg|_0
+\end{equation}
 
+Where $Re_\delta = U_\infty \delta / \nu_\infty$ and the wall gradient is computed via a 2nd-order forward difference: 
+\begin{equation}
+\frac{\partial u^*}{\partial \eta}\bigg|_0 = \frac{4 u^*_1 - u^*_2}{2 \Delta \eta}
+\end{equation} 
+
+The wall coordinate is expressed as $y^+ = y^* \, u)\tau^* \, Re_\delta$, and the non-dimensionalized effective viscotity as $\nu_{eff}^* = 1 + \nu_\tau / \nu_t$. The Reichardt and Clauser models can then be nondimensionalized by dividing by $\nu_\infty$:
+\begin{equation}
+\frac{\nu_t}{\nu_\infty} = \kappa \left[y^+ - y^+_a \tanh \left(\frac{y^+}{y^+_a} \right)\right], \qquad \frac{\nu_{t, \max}}{\nu_\infty} = c_1 \, Re_\delta \, y^*_{0.994}
+\end{equation}
+
+Where $y^*_{0.994}$ is the $y^*$ location where $u^* = 0.994$, found by linear interpolation of the generated data. Finally, the derivtive required for $A_j$ can be derived using the chain rule:
+
+
+
+The models and logic described above can now be implemented into the program written for Project 02, the result of which is displayed in Appendix~\ref{appendix-code}.
 %---------------------------------------------------------------------------------------------------------------
 
 %PRESENTATION OF RESULTS

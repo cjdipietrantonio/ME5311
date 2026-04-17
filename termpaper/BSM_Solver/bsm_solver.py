@@ -151,8 +151,9 @@ def mc_full_paths(S0, r, sigma, T, N_paths, N_steps):
 
     return S, t
 
-    
-
+# ----------------------------------------------------------------------
+# Finite Difference Solver (Eulerian / Grid Based PDE Solver)
+# ----------------------------------------------------------------------
 
 
 # 15.20 Hull pp335 (Ch. 15)

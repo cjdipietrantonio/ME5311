@@ -86,36 +86,31 @@ ME 5311: Computational Methods to Viscous Flows \\
 %DESCRIPTION OF THE PROBLEM
 \section{Description of the Problem}
 
-Using the code you developed for the laminar boundary layer in project 02, calculate the development of a turbulent boundary layer using the algebraic model described below.
-
-In the inner region, use the Reichardt model. The eddy viscocity is given by
+The objective of this project is to use the code developed in Project 02 for the laminar boundary layer to calculate the development of a turbulent boundary layer using the algebraic model described below. In the inner region of the boundary layer, the Reichardt model is used, and the eddy viscocity is given by
 \begin{equation}
-    \nu_t = \kappa \nu \left[ \frac{y u^*}{\nu} - y^{+}_{a} tanh\left( \frac{y u^*}{\nu y^{+}_{a}} \right) \right]
+    \nu_t = \kappa \nu \left[ \frac{y u_{\tau}}{\nu} - y^{+}_{a} \tanh\left( \frac{y u_{\tau}}{\nu y^{+}_{a}} \right) \right]
 \end{equation}
 
 Where $y^{+}_{a} = 9.7$.
 
-In the outer region, use the Clauser model that assumes that the eddy viscocity reaches a constant value
+In the outer region, the Clauser model is used, which assumes that the eddy viscocity reaches a constant value
 \begin{equation}
     (\nu_t)_{\text{max}} = c_1 U_e \delta(x)
 \end{equation}
 
-$\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Use $\kappa = 0.41$ and $c_1 = 0.001$. You will need to calculate $u^*$ by taking the numerical derivative of $u$ at the wall.
-
-Make sure you nondimensionalize the expression for $\nu_t$ and find the derivatives of these expressions with respect to $y$.
+where $\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Model constants $\kappa = 0.41$ and $c_1 = 0.001$ are used, and the friction velocity is found by taking the numerical derivative of $u$ at the wall. For consistant results with Project 02, the expressions for $\nu_t$ and their spatial derivatives must be nondimensionalized. Further objectives of this project are to:
 \begin{enumerate}
-    \item Calculate the turbulent boundary layer flow for the same dimensional properties used in the laminar case. However, use a value of $y_{\text{max}} = 50 \delta$ and 250 points in the $y$ direction. Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location. Check the boundary layer grows like
+    \item Calculate the turbulent boundary layer flow for the same dimensional properties used in the laminar case. However, this time using a value of $y_{\text{max}} = 50 \delta$ and 250 points in the $y$ direction. Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location and confirm that the boundary layer grows like
     \begin{equation}
         \delta(x) = 0.375 x (Re_x)^{-1/5}
     \end{equation}
-    \item Adjust your results to account for the transition from the assumed initial laminar velocity profile by obtaining a value for $x_0$, the apparent origin of the turbulent boundary layer.
-    \item Show that the turbulent boundary layer follows the ``law of the wall''
-    \item Determine the sensitivity of the turbulence model to the choices of $\kappa$ and $c_1$
-    \item (discussion only) Try increasing the Reynolds number by a factor of 10. What changes are necessary in the grid resolution and stretching factor to obtain a converged solution?
-    \item (discussion only) Discuss the problems with the implementation of this model.
+    \item Adjust the results to account for the transition from the assumed initial laminar velocity profile by obtaining a value for $x_0$, the apparent origin of the turbulent boundary layer.
+    \item Show that the turbulent boundary layer follows the ``law of the wall.''
+    \item Determine the sensitivity of the turbulence model to the choices of $\kappa$ and $c_1$.
+    \item Determine what changes are necessary in the grid resolution and stretching factor to obtain a converged solution when the Reynolds number is increased by a factor of 10.
+    \item Discuss the problems encountered with the implementation of this model.
 \end{enumerate}
 
-Again, the report should not exceed 5 pages. Appendices should include details of your computer code.
 %---------------------------------------------------------------------------------------------------------------
 
 %DESCRIPTION OF THE NUMERICAL METHOD
@@ -131,21 +126,35 @@ The friction velocity is nondimensionalized as $u_{\tau}^* / U_{\infty}$. From t
 u_{\tau}^{*2} = \frac{1}{Re_\delta \, J^{*}_0} \, \frac{\partial u^*}{\partial \eta}\bigg|_0
 \end{equation}
 
-Where $Re_\delta = U_\infty \delta / \nu_\infty$ and the wall gradient is computed via a 2nd-order forward difference: 
+Where $Re_\delta = U_\infty \delta / \nu_\infty$ and the wall gradient is computed via a 2nd-order forward difference stencil: 
 \begin{equation}
 \frac{\partial u^*}{\partial \eta}\bigg|_0 = \frac{4 u^*_1 - u^*_2}{2 \Delta \eta}
 \end{equation} 
 
-The wall coordinate is expressed as $y^+ = y^* \, u)\tau^* \, Re_\delta$, and the non-dimensionalized effective viscotity as $\nu_{eff}^* = 1 + \nu_\tau / \nu_t$. The Reichardt and Clauser models can then be nondimensionalized by dividing by $\nu_\infty$:
+The wall coordinate is expressed as $y^+ = y^* \, u_\tau^* \, Re_\delta$, and the nondimensionalized effective viscotity as $\nu_{eff}^* = 1 + \nu_t / \nu_{\infty}$. The Reichardt and Clauser models can then be nondimensionalized by dividing by $\nu_\infty$:
 \begin{equation}
 \frac{\nu_t}{\nu_\infty} = \kappa \left[y^+ - y^+_a \tanh \left(\frac{y^+}{y^+_a} \right)\right], \qquad \frac{\nu_{t, \max}}{\nu_\infty} = c_1 \, Re_\delta \, y^*_{0.994}
 \end{equation}
 
-Where $y^*_{0.994}$ is the $y^*$ location where $u^* = 0.994$, found by linear interpolation of the generated data. Finally, the derivtive required for $A_j$ can be derived using the chain rule:
+Where $y^*_{0.994}$ is the $y^*$ location where $u^* = 0.994$, found by linear interpolation of the generated data. Therefore, the nondimensional effective viscocity can be expressed in the Reichardt region as
+\begin{equation}
+    \nu_{eff}^* = 1 + \kappa \left[y^+ - y_{a}^+ \tanh\left(\frac{y^+}{y_{a}^+}\right)\right]
+\end{equation}
 
+and in the Clauser region as:
+\begin{equation}
+    \nu_{eff}^* = 1 + c_1 \, Re_\delta \, y^*_{0.994}
+\end{equation}
 
+in the Clauser region. Finally, the derivtive required for $A_j$ can be derived using the chain rule for both regions:
+\begin{equation}
+    \frac{\partial \nu_{eff}^*}{\partial \eta} = \begin{cases}
+        \kappa \, u_\tau^* \, Re_\delta \, J^* \left[1 - \mathrm{sech}^2\!\left(\dfrac{y^+}{y^+_a}\right)\right], & \text{Reichardt region} \\[6pt]
+        0, & \text{Clauser region (constant } \nu_t\text{)}
+    \end{cases}
+\end{equation}
 
-The models and logic described above can now be implemented into the program written for Project 02, the result of which is displayed in Appendix~\ref{appendix-code}.
+At the wall ($y^+ = 0$), $\mathrm{sech}^2(0) = 1$, so $d\nu^*/d\eta = 0$. Furthermore, the skin friction coefficient can be expressed in terms of the nondimensional friction velocity as $c_f = 2(u_\tau^*)^2$. The models and logic described above can now be implemented into the program written for Project 02, the result of which is displayed in Appendix~\ref{appendix-code}.
 %---------------------------------------------------------------------------------------------------------------
 
 %PRESENTATION OF RESULTS
@@ -160,6 +169,7 @@ TBD
 \subsection{General description}
 
 TBD
+- Capping y+ to avoid overflow errors
 
 \subsection{Accuracy and stability}
 

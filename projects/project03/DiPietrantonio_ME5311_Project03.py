@@ -4,8 +4,11 @@
 # 04/10/2026
 
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.linalg import solve_banded
+from scipy.optimize import curve_fit
 
 # ------------------------------------------------------------------
 # 1. SET PARAMETERS
@@ -439,8 +442,6 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
             delta_store[pos]      = y_star_994_s          # BL Thickness
             cf_store[pos]         = 2 * u_tau_star_s**2   # Skin Friction Coefficient
             u_tau_star_store[pos] = u_tau_star_s          # Nondimensional Friction Velocity
-            
-
         
         # if step % stride == 0:
         if (n_step + 1) % 1000 == 0:
@@ -513,13 +514,15 @@ def compute_thicknesses(u_star, J_star, deta):
 # 11.  POST-PROCESSING
 # ------------------------------------------------------------------
 
-def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
+def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_store, eta, y_phys, y_star, J_star):
     N          = params["N"]
     deta       = params["deta"]
     nu         = params["nu_inf"]
     U_inf      = params["U_inf"]
     L          = params["L"]
     delta      = params["delta"]
+    Re_delta   = params["Re_delta"]
+    kappa      = params["kappa"]
 
     print("Computing Blasius solution...")
     eta_B, F_B, f_B = compute_blasius(eta_max=10.0, n_points = 10000)
@@ -529,9 +532,100 @@ def post_process(params, x_vals, u_store, eta, y_phys, y_star, J_star):
         idx = np.argmin(np.abs(x_vals - x_out))          #take difference between desired x and stored x and return index of lowest entry
         output_indices.append(idx)
 
-    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
+    colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown']
 
-    # Plot 01: u* vs. y/delta
+    # ----- Plot 01: u* vs. y* -----
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    
+    for i, idx in enumerate(output_indices):
+        x_now = x_vals[idx]
+        u_num = u_store[idx, :]
+
+        # Left panel: near-wall zoom
+        axes[0].plot(u_num, y_star, '-', color=colors[i % len(colors)], linewidth=1.5, label=fr'$x^*={x_now:.2f}$')
+
+        # Right panel: full domain
+        axes[1].plot(u_num, y_star, '-', color=colors[i % len(colors)], linewidth=1.5, label=fr'$x^*={x_now:.2f}$')
+
+    # Left panel formatting
+    axes[0].set_xlabel(r'$u^* = u / U_\infty$', fontsize=14)
+    axes[0].set_ylabel(r'$y^* = y / \delta$', fontsize =14)
+    axes[0].set_xlim([-0.05, 1.1])
+    axes[0].set_ylim([0.0, 5.0])
+    axes[0].set_title('Near-wall Region', fontsize=15)
+    axes[0].tick_params(labelsize=12)
+    axes[0].grid(True, linestyle='--', alpha=0.5)
+    axes[0].legend(fontsize=12, loc='upper left')
+
+    # Right panel formatting
+    axes[1].set_xlabel(r'$u^* = u / U_\infty$', fontsize=14)
+    axes[1].set_ylabel(r'$y^* = y / \delta$', fontsize =14)
+    axes[1].set_xlim([-0.05, 1.1])
+    axes[1].set_ylim([0.0, y_star[-1]])
+    axes[1].set_title('Full Domain', fontsize=15)
+    axes[1].tick_params(labelsize=12)
+    axes[1].grid(True, linestyle='--', alpha=0.5)
+    axes[1].legend(fontsize=12, loc='upper left')
+
+    plt.tight_layout()
+    plt.savefig('velocity_profiles.png', dpi=300, bbox_inches='tight')
+    print('     ...Saved velocity_profiles.png')
+
+    # ----- Plot 02: Boundary Layer Growth -----
+    delta_994 = delta_store * delta # meters
+    x_phys = x_vals * L
+
+    n_data = len(x_vals)
+    #i_start = n_data // 3     # skip initial laminar profile
+
+    cf_threshold = 0.01        # threshold for turbulent skin friction coefficient
+
+    turbulent_indices = np.where(cf_store > cf_threshold)[0]     # record indices where Cf > threshold
+
+    if len(turbulent_indices) > 0:
+        i_start = turbulent_indices[0]
+    else:
+        i_start = 0     # if no turbulent indices, just start at begining of the data
+
+    turb_mask = (delta_994[i_start:] > 0) & (x_phys[i_start:] > 0)    # create boolean mask for turbulent indices (taking only values with positive x and delta values)
+
+    x_fit             = x_phys[i_start:][turb_mask]                   # apply masks to filtered arrays 
+    delta_994_fit     = delta_994[i_start:][turb_mask]
+    delta_994_54      = delta_994_fit**(5.0/4.0)
+
+    if len(x_fit) > 2:
+        coeffs     = np.polyfit(x_fit, delta_994_54, 1)
+        slope_fit  = coeffs[0]
+        x0_turb    = -coeffs[1] / slope_fit if abs(slope_fit) > 1e-15 else 0.0
+    else:
+        x0_turb    = x_phys[0]     # if not enough points for curve fit, just set x0_turb to initial x location
+
+    x0_turb_star = x0_turb / L
+
+    print(f'n\     Turbulent BL apparent origin:')
+    print(f'       x0_turb = {x0_turb:.2f} m (x0_turb* = {x0_turb_star:.2f})')
+
+    # compute the empirical correlation delta(x) for comparison 
+    x_corr     = x_phys - x0_turb          # distance from apparent origin
+    x_corr_pos = np.maximum(x_corr, 1e-15) # avoid negative/zero
+    Re_x_corr  = U_inf * x_corr_pos / nu
+    delta_corr = 0.375 * x_corr_pos * Re_x_corr**(-1.0/5.0)
+
+    plt.figure(figsize=(6, 5))
+    plt.plot(x_vals, delta_994 * 1000, 'b-', linewidth=1.5, label=r'Numerical $\delta_{99.4}(x)$')
+    plot_mask = x_corr > 0          # boolean so that only turbulent values are plotted for numerical correlation
+    plt.plot(x_vals[plot_mask], delta_corr[plot_mask] * 1000, 'r--', linewidth=1.5, label=r'$0.375\, x\, Re_x^{-1/5}$')
+    plt.xlabel(r'$x^* = x/L$', fontsize=14)
+    plt.ylabel(r'$\delta_{99.4}$ [mm]', fontize=14)
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig('BL_growth.png', dpi=300, bbox_inches='tight')
+    print('     ...Saved BL_growth.png')
+
+    # ----- Plot 03: Skin Friction Coefficient -----
+
+# OLD PLOTS!!! KEEP RESIDUAL!!!
     #plt.figure(figsize=(8,6))
     plt.figure(figsize=(6,5)) 
     for i, idx in enumerate(output_indices):

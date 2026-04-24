@@ -5,121 +5,186 @@
 
 ---
 
-## Slide 1: Title (~30 sec)
+## Slide 1: Title
 
-Good morning everyone. My name is Christian DiPietrantonio and today I'll be presenting my term paper on the connection between the Black-Scholes-Merton equation for pricing financial derivatives and the transported probability density function method used in computational fluid dynamics.
+Good morning everyone. My name is Christian DiPietrantonio and today I'll be discussing the transported probability density function method used in computational fluid dynamics and its relation to the Black-Scholes-Merton equation Black-Scholes-Merton equation for pricing financial derivatives.
 
-The central argument is that these two equations — from completely different fields — are derived from the same type of stochastic differential equation and can be solved by the same numerical methods. The BSM PDE is the backward Kolmogorov equation, while the transported PDF equation is the forward Kolmogorov equation — both arising from SDEs of the drift-plus-diffusion form.
-
----
-
-## Slide 2: The Transported PDF Method in CFD (~60 sec)
-
-Let me start with the CFD side — the transported PDF method.
-
-In turbulent flows, the velocity field is random. As Pope discusses in Turbulent Flows, if you repeat the same experiment under identical conditions, you get different results each time. So we use a statistical approach and work with the probability density function of velocity.
-
-Pope derives the Eulerian PDF transport equation directly from the Navier-Stokes equations. This describes how the PDF of velocity evolves in space and time from a fixed-frame perspective.
-
-To model the evolution of fluid particle velocities, Pope introduces the generalized Langevin model — a stochastic differential equation with a deterministic drift coefficient "a" and a diffusion coefficient "b", driven by a Wiener process. This is the Lagrangian description — we're tracking individual particles.
-
-From this Langevin SDE, using stochastic calculus, Pope derives the Fokker-Planck equation — also called the forward Kolmogorov equation. This is the PDE that governs how the conditional PDF of particle velocity evolves. The Langevin SDE and the Fokker-Planck equation describe the same physics from two different viewpoints — Lagrangian and Eulerian.
+The central argument is that these two equations, from completely different fields, are derived from the same type of stochastic differential equation and can be solved by the same numerical methods.
 
 ---
 
-## Slide 3: The BSM Equation (~50 sec)
+## Slide 2: Financial Derivatives: Options
 
-Now the finance side. Stock prices are random — nobody knows what a stock will be worth tomorrow. Black and Scholes in 1973, and independently Merton, derived a PDE for pricing European options.
+In order to understand the content of this presentation we must define a few financial terms/concepts. A derivative as defined by Hull is listed above. Very often the variables underlying derivatives are the prices of traded assets. A stock option, for example, is a derivative whose value is dependent on the price of a stock. However, derivatives can be dependent on almost any variable, from the price of hogs to the amount of snow falling at a certain ski resort. There is now active trading in credit derivatives, electricity derivatives, weather derivatives, and insurance derivatives. (HULL)
 
-The BSM PDE is shown here. It was derived from the Geometric Brownian Motion SDE for stock prices using Ito's Lemma and a hedging argument.
+Above we can see several definitions for different types of options. For the remainer of this presentation, we will be focusing on European Call Options. You can also long (buy) options, or short (sell) options.
 
-For our CFD class, look at the structure. The half-sigma-squared-S-squared term is diffusion. The rS term is advection. And negative rV is a reaction or decay term. This is an advection-diffusion-reaction equation — the same type of PDE we've been solving all semester.
+As for payout rules, for a short position on an option, you can see that as the price of the stock exceeds the strike price, you lose money because you are obligated to sell the stock at the strike price. For for the long position, the profit increases as the price of the underlying asset (stock) exceeds the strike price. Thus, for the remained of our analysis we can express the value of the function as shown above.
 
-Here's the critical point: the BSM PDE is the BACKWARD Kolmogorov equation associated with the GBM SDE. The Fokker-Planck equation on the previous slide was the FORWARD Kolmogorov equation. Both arise from SDEs of the same form — one looks forward in probability, the other looks backward in conditional expectation.
-
----
-
-## Slide 4: The Connection (~50 sec)
-
-This is the central slide. Both equations are derived from stochastic differential equations of the same drift-plus-diffusion form.
-
-Finance uses geometric Brownian motion: dS = rS dt + sigma S dW. CFD uses the Langevin equation: dU-star = a dt + b dW. Same mathematical structure.
-
-The BSM PDE is the backward Kolmogorov equation — it computes the conditional expectation of a future payoff given the current state. The Fokker-Planck is the forward Kolmogorov equation — it describes how the probability density evolves forward in time.
-
-The variable mapping is direct: stock price maps to particle velocity, risk-free rate to drift coefficient, volatility to diffusion coefficient. And the solution methods map too: Monte Carlo simulation in finance corresponds exactly to the Lagrangian particle method in CFD.
 
 ---
 
-## Slide 5: Two Solution Approaches (~50 sec)
+## Slide 3: The BSM Equation
 
-Both equations can be solved two ways.
+Now, since we have shown that the value of an option depends on the price of the underlying asset/stock, we must find a way to model said asset. However, this is difficult because In financial markets, stock prices are random. Black and Scholes in 1973, and independently Merton in the same year, derived a second order linear parabolic PDE for pricing European options.
 
-The Eulerian approach solves the PDE directly on a fixed grid. For BSM, I implemented an implicit finite difference scheme following Hull Chapter 21 — using the same tridiagonal banded solver from our course projects. For CFD, this is the finite volume method. The advantage is no statistical noise. The limitation is the curse of dimensionality.
+This was done by creating a riskless portfolio by combining a position in a derivative with a position in an underlying stock. Without arbitrage opportunities, the return from the portfolio must be the risk-free interest rate r. The reason this works is because the stock and derivative prices are both effected by the same underlying source of uncertainty (the stock price). When the appropriate portfolio of the stock and derivative are established, the gain or loss from the stock position always offsets the gain or loss from the derivative position, so the overall value of the portfolio at the end of the time period is always known. (Hull)
 
-The Lagrangian approach simulates random particle trajectories and averages. For BSM, this is Monte Carlo simulation. For CFD, this is Pope's Lagrangian particle method from Chapter 12. The advantage is natural scaling to high dimensions. The limitation is slow convergence — error decreases as one over root N.
+The following assumptions were made by Black and Scholes:
+Idealized, frictionless market with continuous trading (no transaction cost)
+No dividends
+Unrestricted short selling
+Ability to borrow/lend at the risk-free rate
+European Option
+Arbitrage free market 
+        
+As previously mentioned, Merton derived the same equation, but he did so through the use of Stochastic Calculus and Ito’s Lemma (which shows that for a variable following a stochastic process, S, the function G(s, t) follows the process shown above) . This type of calculus (stochastic, also referred to as Ito Calculus), was created specifically to handle derivatives and integrals of stochastic processes.
 
-A critical distinction: for BSM with constant coefficients, Ito's Lemma gives an exact SDE step formula. For the Langevin equation with variable coefficients, only Euler-Maruyama discretization is available. And because no closed-form PDF exists for variable-coefficient SDEs, particle methods become the only practical approach in real turbulent flows.
+Now we should note that this equation looks awfully familiar to transport equations we have worked with this semester, we have a temporal term, diffusion term, advection term, and a source (decay) term.
 
----
+Another note on Merton’s derivation: Merton started with the process for a stock price, which is modeled using the Stochastic Differential Equation above. Ito’s lemma is then used to express the rate of change of the value of the option, a hedged portfolio is created and its derivative with respect to time is taken, the result of Ito’s lemma and the SDE are substituted to eliminate the Weiner process, making the portfolio riskless. Because of the assumptions, the change in value of the portfolio must be expressed in terms of the risk-free interest rate. Finally, the original expressions for the value of the portfolio and its change with respect to time can be substituted to obtain the BSM equation! 
 
-## Slide 6: Results (~45 sec)
-
-Here are the results. On the left, option value versus stock price. The black curve is the exact analytical Black-Scholes formula. Red squares are the finite difference solver — Eulerian. Blue circles are Monte Carlo — Lagrangian. All three agree, confirming the Feynman-Kac theorem.
-
-On the right, Monte Carlo convergence. The error decreases as one over root N — the same slow convergence that characterizes Lagrangian particle methods in CFD. To cut the error in half, you need four times the paths. This is a fundamental tradeoff between Eulerian and Lagrangian approaches.
-
----
-
-## Slide 7: From Particles to PDF (~50 sec)
-
-This slide demonstrates the transported PDF method using our BSM example.
-
-On the left: 30 individual Monte Carlo paths — particle trajectories in the Lagrangian sense. They fan out over time, showing drift and diffusion.
-
-On the right: instead of tracking individual particles, we histogram their positions at each time snapshot. The shaded bars are Monte Carlo histograms from 100,000 particles. The solid curves are the exact analytical log-normal PDF. They match.
-
-This IS the transported PDF method in action. Lagrangian particle statistics converge to the Eulerian PDF. Notice the drift — the peak shifts right, like advection — and the diffusion — the distribution spreads, just like a scalar field in a turbulent flow.
-
-In real turbulent flows, you can't compute the analytical PDF because the Fokker-Planck equation has variable coefficients. The particle method is the only way to obtain the PDF.
-
----
-
-## Slide 8: 3D PDF Surface (~40 sec)
-
-This 3D surface was built entirely from Monte Carlo particle data — 100,000 simulated paths, histogrammed at each time snapshot. No analytical PDF formula was used.
-
-This is exactly how the transported PDF method works in CFD. Simulate particles, histogram their positions, and the PDF surface emerges from the statistics.
-
-For BSM with constant coefficients, we have the luxury of verifying against the exact log-normal PDF. For real turbulent flows with variable coefficients, the particle-based PDF is all you have — which is why the Lagrangian particle method is essential.
+Other notes/Definitions:
+- Volatility can be estimated from historical data
+- Ito process: A stochastic process where the change in a variable during each short period of time of length t has a normal distribution. The mean and variance of the distribution are proportional to t and are not necessarily constant.
+- Ito's Lemma: A result that enables the stochastic process for a function of a variable to be calculated from the stochastic process for the variable itself.
+- Ito/Stochastic Calculus: Built to specifically handle random processes (define derivatives, chain rules, integrals for random processes)
+- Stochastic Process: An equation describing the probabilistic behavior of a stochastic variable
+- Stochastic Variable: A variable whose future value is uncertain
+- SDE: Defines the infinitesimal increment of a stochastic process
+- Markov Process: A stochastic process where the behavior of a variable over a short period of time depends Soley on the value of the variable at the beginning of the period, not on its past history.
+- Weiner Process: A stochastic process where the change in a variable during each short period of time of length ∆T has a normal distribution with a mean equal to zero and a variance equal to ∆T (Sometimes referred to as Brownian motion)
+- Geometric Brownian Motion: A stochastic process often assumed for asset prices where the logarithm of the underlying variable follows a generalized Wiener process
+- Risk-free rate: The rate of interest that can be earned without assuming any risks (treasuries are common, London Interbank Offered Rate, LIBOR (less common after 2008), Overnight Indexed Swap rate (OIS).
 
 ---
 
-## Slide 9: Conclusions (~40 sec)
+## Slide 4: The Transported PDF Method
+Pope remarks that the velocity field in a turbulent flow is random. Which means that if one were to repeat the same experiment multiple times under the same set of conditions, a given event may, but need not occur, making the event inherently unpredictable. Therefore, since U is random, its value is inherently unpredictable. Nevertheless, the probability of events can be used to create a Probability Density Function (PDF), and according to Pope, a random variable such as U is completely characterized by its PDF, which can be thought of as the probability per unit distance in the sample space.
 
-Four takeaways:
+The evolution of the Eulerian PDF of the velocity defined by Pope is shown above, and underneath we have the equation for the evolution of the conditional PDF of the particle velocity. We can think of this as the Lagrangian equivalent of the first equation (the conditional PDF, f* is also the corresponding representation of f for a particle system). 
 
-One — the BSM PDE is the backward Kolmogorov equation and the Fokker-Planck is the forward Kolmogorov equation. Both are derived from SDEs of the same drift-diffusion form, directly connecting financial derivative pricing to the transported PDF method in CFD.
+Now, one might ask, where did this Lagrangian PDF transport equation come from? Pope began his derivation by expressing the velocity of each fluid particle as a generalized Langevin model for a diffusion process, as shown above.
 
-Two — both Eulerian and Lagrangian methods solve these equations, producing identical results validated against the exact analytical formula.
+The Langevin equation was originally proposed in 1908 as a stochastic model for the velocity of a microscopic particle undergoing Brownian motion (sound familiar?). Pope claims the equation provides a good model for the velocity of a fluid particle in turbulence. The stochastic process U*(t) is called the Ornstein-Uhlenbeck (OU) process, and its PDF evolves by the Fokker-Planck equation. U*(t) is known as a diffusion process, and the Langevin equation shown above is a stochastic differential equation, where a(V, x, t) and b(x, t) are the drift and diffusion coefficients respectively. Note, the Langevin equation it is the simplest stochastic Lagrangian model according to Pope. (Pope)
 
-Three — Monte Carlo particle simulations reproduce the analytical PDF, demonstrating the same Lagrangian-to-Eulerian convergence that Pope's transported PDF method relies on.
+From this SDE, Ito calculus can be used to derive the Fokker-Planck Equation (also known as the Forward Kolmogorov Equation), which is the equation for the transport/evolution of the joint Lagrangian PDF of the particle velocity and position. This can then be divided by the marginal PDF for the particles position to obtain the equation for the evolution of the conditional PDF of the particle velocity shown above!
 
-Four — BSM serves as an ideal validation problem because closed-form solutions exist for both the SDE and the PDF — a luxury unavailable in general turbulent flows, where particle methods become essential.
-
-Thank you. I'm happy to take questions.
-
----
-
-## Slide 10: References
-
-[No speaking needed — just displayed]
+Definitions:
+- Vector Valued Weiner Process: a vector of Weiner Processes (random motion in multiple directions)
 
 ---
 
-## Slide 11: Backup — Heatmap
+## Slide 5: The Connection
 
-Available if questions arise about the PDF evolution visualization. Shows drift path (white dashed) and ±1σ bounds (white dotted) overlaid on the probability density.
+Let's take a second to compare the two stochastic differential equations shown thus far. Both the BSM equation and the transported PDF equation are derived from stochastic differential equations of the same drift plus diffusion form. The BSM equation is derived from the SDE describing the price of a stock (often referred to as geometric Brownian motion), whereas the PDF transport equation is derived from the Langevin equation. Regardless, both equations have the same mathematic structure: deterministic drift plus random fluctuations driven by a Wiener process. Both equations are derived using Ito’s Lemma/Stochastic calculus.
+
+The key distinction to be made however is that the BSM equation computes the conditional expectation of a future payoff given the current state, then discounts it back to give the current option price. On the other hand, the transported PDF equation that Pope derived from the Fokker-Planck equation describes how the PDF of velocity evolves over time. In other words, for BSM, you use the PDF at expiry to find the expected payoff, then discount it back to today (this is done implicitly with the SDE hedging described previously, but later we show how this is done explicitly with a Monte Carlo simulation). 
+
+Regardless, both equations arise from the same type of SDE, and we can observe the direct variable mapping above, including the mapping of solution methods.
+
+Some key differences to notice are that the drift and diffusion coefficients are constant for the Brownian Motion SDE, but depend on the particles current position and velocity for the Langevin Equation.
+
+Note that the SDE for the velocity of a particle uses a vector-valued Wiener process because the stochastic perturbations act in multiple spatial directions (typically three-dimensional space).
+---
+
+## Slide 6: Solution Methods
+
+It's important to take a moment to talk about both solution methods available. 
+
+The Eulerian approach solves the PDE directly on a fixed grid.
+
+Eulerian:
+- Scales poorly to high dimensions, let's say we want to simulate two stocks, each axis with 500 grid points, you would now need 250,000 grid locations to cover all combinations
+
+The Lagrangian approach simulates random particle trajectories.
+
+Lagrangian:
+- If portfolio grows, we can just simulate random samples of the full vector (no giant mesh needed)
+- Compatible with CPUs/accelerators/clusters because each simulation is independent so they are easy to parallelize
+- Need 4x more simulations to cut error in half, and 100x more simulations to cut error by 10x
+
+We should note, that according to Pope: “It is not feasible, computationally, to represent the joint PDF accurately through a discretization of the seven-dimensional V-θ-x space (for the velocity-frequency joint PDF), as is required in finite-difference, finite-volume, and finite-element methods. Instead, the model PDF equations are solved by particle methods.” (Pope). Professor Zhao also mentioned this in our final lecture. 
+
+---
+
+## Slide 7: Results: Option Pricing
+
+To explore the different solution methods, I decided to write a python script to compare the two mentioned above for the BSM equation. The plot shows the option value for a European call versus stock prices. 
+
+The Eulerian approach solves the PDE directly on a fixed grid using implicit finite difference scheme, and second order central difference stencils for the first and second derivative terms. Doing so resulted in a tridiagonal system that was extremely similar to what we saw in Project 01 and Flip Classroom Exercise 01. This idea was inspired by Professor Zhao provided me with a repository for OpenFoam (more specifically finacialFoam), which executes solves the BSM equation using FVM.
+
+The Lagrangian approach simulated 200,000 random stock price trajectories (GBM paths) for 80 stock prices between $50 and $200 using a Monte Carlo simulation, averaged the payoffs, and discounted them, back to present day value.
+
+The results of both approaches are plotted here on top of the analytical solution to the BSM PDE. I have also included the intrinsic value (if the option expired today, what would it be worth at each price) to show how even though some stock prices currently sit below the strike price, they still hold value due to the possibility of their price increasing above the strike price before expiration. 
+
+For this case, the strike price, risk free interest rate, volatility, and contract time period are listed above. 
+
+We can observe excellent agreement between all three solutions!
+
+---
+
+## Slide 8: Results: Monte Carlo Visualization
+
+To help visualize the Monte Carlo simulation, I created this plot to demonstrate the motion of different stock price paths. The plot shows 30 individual Monte Carlo paths (of 100 simulated paths). The bold blue line represents the mean of these paths; and the black dashed line is the theoretical expected return of the stock. As the number of simulations increase, the mean converges to this value.
+
+We can now extract data from time steps in our Monte Carlo simulation to construct the transport of the PDF of the stock price! From this point on, we will focus on the case of a stock with an initial price of $100.
+
+---
+
+## Slide 9: Results: PDF Transport
+
+The 3d surface show above was constructed entirely from Monte Carlo particle data (200,000 simulated GBM paths, histogram med at each time snapshot)
+
+This is exactly how one can imagine the transported PDF method for a turbulent flow. Thousands of particles are simulated using the Langevin SDE, their velocities (conditioned on position and time) are recorded at each time step, and the PDF surface is constructed from the statistics. 
+
+We can observe the PDF starting as a sharp spike near the initial stock price, then spreading and shifting over time due to drift and diffusion. 
+
+---
+
+## Slide 10: Results: PDF Transport 
+
+The following plot was created to better illustrate this concept of drift and diffusion. The shaded bars are pdfs constructed from Monte Carlo data plotted as histograms, and the solid curves are the exact analytical log-normal PDFs. Over time, the volatility spreads the distribution of possible stock prices, and the drift shifts it to the right.
+
+We can conceptualize this for a turbulent flow, where drift can be thought of as where the average velocity tends to go, and diffusion as how strongly turbulence randomizes the velocity around the mean
+
+Hull uses Ito's Lemma to show that, for our GBM model, the price of a stock at a given time follows a lognormal distribution. Therefore, we can use the standard equation for the probability density function of a lognormal variable. For the Langevin SDE, because the coefficients vary with respect to particle velocity/position and time, we don’t have this luxury, so we must construct the PDFs for given time steps using the data from the Monte Carlo simulation. Regardless, both methods are used above, and we can observe excellent agreement between the two.
+
+---
+
+## Slide 11: Results: PDF Transport 
+
+Finally, a top-down heat map view of the PDF evolution can help us visualize the drift of the average stock price at each time step. We clearly see the PDF shifting in line with the expected stock price, which can also be though of as the deterministic growth of the stock in the absence of volatility. 
+
+---
+
+## Slide 12: Monte Carlo Convergence
+
+A quick note on convergence, as mentioned earlier, the standard error of the estimate is expressed as the standard deviation over the square root of the number of trials (to cut error in half, you need 4x more trials). With 100 trials, the estimate is noisy (each path has a larger influence so estimate can jump around) by 1,000,000 paths it approaches the exact value. Again, this is a key tradeoff between Eulerian and Lagrangian approaches.
+
+---
+
+## Slide 13: Conclusions
+
+Finally, to recap what we discussed:
+
+The BSM the Fokker-Planck (forward Kolmogorov equation) are both derived from SDEs of the same form. This directly connects financial derivative pricing to the transported PDF method in CFD.
+
+Second, the same results (validated against the exact analytical formula) can be obtained from both Eulerian and Lagrangian methods as demonstrated with the BSM equation.
+
+Third, Monte Carlo particle simulations reproduce the analytical PDF
+
+Fourth, BSM is actually a great validation problem because closed-form solutions exist for both the SDE and the PDF. In turbulent flows, these may not exist, which is why particle methods become essential.
+
+Finally, Advancements in financial modeling and computational fluid dynamics are mutually beneficial. Numerical methods/variance reduction can transfer directly between CFD and quantitative finance, so techniques/methods developed in either discipline can be utilized by/applied to problems in the other.
+
+Thank you!
+
+---
+
+## Slide 14: References
+
+No speaking necesary for this slide.
 
 ---
 

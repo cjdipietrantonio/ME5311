@@ -313,12 +313,12 @@ def plot_sample_paths(S0=100.0, N_show=30, N_sim=100):
 
     # overlay the expected return
     S_expected = S0 * np.exp(r * t)
-    ax.plot(t, S_expected, 'k--', linewidth=2.0, label=f'Expected return: $S_0 e^{{rt}}$')
+    ax.plot(t, S_expected, 'k--', linewidth=2.0, label=f'Expected Stock Price: $S_0 e^{{rt}}$')
 
     ax.axhline(K, color='tab:red', linestyle=':', linewidth=1.5, label=f'Strike Price K = ${K:.0f}')
 
     ax.set_xlabel('Time (years)', fontsize=12)
-    ax.set_ylabel('Stick Price, S ($)', fontsize=12)
+    ax.set_ylabel('Stock Price, S ($)', fontsize=12)
     ax.set_title(f'Geometric Brownian Motion: {N_show} Sample Paths (S₀ = ${S0:.0f})', fontsize=15)
     ax.legend(fontsize=12, loc='upper center', bbox_to_anchor=(0.6, 1.0))
     ax.set_xlim(0, T)

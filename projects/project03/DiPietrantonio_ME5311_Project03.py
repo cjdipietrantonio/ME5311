@@ -579,7 +579,7 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     #i_start = n_data // 3     # skip initial laminar profile
 
     #*****GET THIS FROM TEXT*****#
-    cf_threshold = 0.01        # threshold for turbulent skin friction coefficient 
+    cf_threshold = 3.8e-3        # threshold for turbulent skin friction coefficient 
 
     turbulent_indices = np.where(cf_store > cf_threshold)[0]     # record indices where Cf > threshold
 
@@ -628,7 +628,8 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     # Emperical turbulent flat-plate correlation: cf = 0.059 * Rex^{-1/5} 
     #*****CONFIRM WITH TEXT*****#
     cf_corr            = np.zeros_like(x_vals)
-    cf_corr[plot_mask] = 0.059 * Re_x_corr[plot_mask]**(-1.0/5.0)     # only use correlation for turbulent data
+    #cf_corr[plot_mask] = 0.059 * Re_x_corr[plot_mask]**(-1.0/5.0)     # only use correlation for turbulent data
+    cf_corr[plot_mask] = 0.027 * Re_x_corr[plot_mask]**(-1.0/7.0)     # only use correlation for turbulent data
 
     plt.figure(figsize=(6, 5))
     plt.plot(x_vals, cf_store, 'b-', linewidth='1.5', label=r'Numerical $c_f$')
@@ -648,14 +649,14 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     #*****VERIFY 5.45 CONSTANT*****#
     #*****VERIFY REGION LIMIT/TRANSITION VALUES*****#
 
-    plt.figure(figsize=(6,5))
+    plt.figure(figsize=(6, 5))
 
     y_plus_theor = np.logspace(-1, 4, 500)
     u_plus_visc  = y_plus_theor                                   # viscous sublayer u+ = y+
-    u_plus_log   = (1.0 / kappa) * np.log(y_plus_theor) + 5.45    # log law region
+    u_plus_log   = (1.0 / kappa) * np.log(y_plus_theor) + 5.2     # log law region
 
     plt.semilogx(y_plus_theor, u_plus_visc, 'k--', linewidth=1, label=r'u^+ = y^+')
-    plt.semilogx(y_plus_theor[y_plus_theor > 60], u_plus_log[y_plus_theor > 60], 'k--', linewidth=1, label=r'$u^+ = \frac{1}{\kappa}\ln y^+ + 5.45')
+    plt.semilogx(y_plus_theor[y_plus_theor > 30], u_plus_log[y_plus_theor > 30], 'k--', linewidth=1, label=r'$u^+ = \frac{1}{\kappa}\ln y^+ + 5.2')
 
     for i, idx in enumerate(output_indices):
         if i == 0:          # skip initial condition
@@ -665,58 +666,27 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
         u_num      = u_store[idx, :]
         u_tau_star = u_tau_star_store[idx]
 
+        if u_tau_star < 1e-15:          # protect against dividing by zero
+            continue 
 
-#*****OLD PLOTS!!! KEEP RESIDUAL!!!*****#
-    #plt.figure(figsize=(8,6))
-    plt.figure(figsize=(6,5)) 
-    for i, idx in enumerate(output_indices):
-        x_now = x_vals[idx]; x_dim = x_now * L
-        u_num = u_store[idx, :]
+        y_plus_local = y_star * Re_delta * u_tau_star 
+        u_plus_local = u_num / u_tau_star
 
-        plt.plot(u_num, y_star, '-', color=colors[i], linewidth=1.5, label = fr"Numerical, $x^*={x_now:.2f}$")
+        plt.semilog(y_plus_local[1:], u_plus_local[1:], '-', colors=colors[i % len(colors)], linewidth=1.5, label=fr'$x^*={x_now:.1f}$')     #avoid y*=0
 
-        if i > 0:
-            scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blasius Similarity Variable
-            eta_B_local = y_phys * scale                   # compute Blasius Similarity Variable for desired locations
-
-            u_blasius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blasius solution values using eta_b_local array
-
-            plt.plot(u_blasius, y_star, '--', color=colors[i], linewidth=1.5, label = fr"Blasius, $x^*={x_now:.2f}$")
-    
-    plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
-    plt.ylabel(fr'$y^* = y / \delta$', fontsize =14)
-    plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
+    plt.xlabel(r'$y^+$', fontsize=14)
+    plt.ylabel(r'$u^+$', fontsize=14)
+    plt.xlim([0.5, 5e3])
+    plt.ylim([0, 35])
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.legend(fontsize=14, loc='best')
+    plt.grid(True, linestyle='--', alpha=0.5, which='both')
+    plt.legend(fontsize=12, loc='upper left')
     plt.tight_layout()
-    plt.savefig('velocity_profiles.png', dpi=300, bbox_inches='tight')
-    print("...Saved velocity_profiles.png")
+    plt.savefig('LawOfTheWall.png', dpi=300, bbox_inches='tight')
+    print('     ...Saved LawOfTheWall.png')
 
-    #Plot 02: Similarity Profiles
-    #plt.figure(figsize=(8,6))
-    plt.figure(figsize=(6,5))
-    for i, idx in enumerate(output_indices):
-        x_now = x_vals[idx]; x_dim = x_now * L
-        u_num = u_store[idx, :]
-
-        scale = np.sqrt(U_inf / (nu * x_dim))
-        eta_B_local = y_phys * scale
-
-        plt.plot(u_num, eta_B_local, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.2f}$")
-    plt.plot(F_B, eta_B, 'k--', linewidth=2, label='Blasius')
-    plt.xlabel(fr'$u^* = u / U_\infty$', fontsize=14)
-    plt.ylabel(fr'$\eta_B$', fontsize =14)
-    plt.xlim([-0.05, 1.1]); plt.ylim([0, 8])
-    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.legend(fontsize=14, loc='best')
-    plt.tight_layout()
-    plt.savefig('similarity_profiles.png', dpi=300, bbox_inches='tight')
-    print("...Saved similarity_profiles.png")
-
-    #Plot 03: L2 Residual
-    plt.figure(figsize=(6,5))
+    #Plot 05: L2 Residual
+    plt.figure(figsize=(6, 5))
     residuals = []; x_res = []
     for i in range(1, len(x_vals)):          # start from 1 so we can compare to previous step
         dx_gap = x_vals[i] - x_vals[i-1]     # take difference between stored x-values
@@ -735,97 +705,144 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     plt.savefig('residual_vs_x.png', dpi=300, bbox_inches='tight')
     print("...Saved residual_vs_x.png")
 
-    #Plot 04: RMS Error
-    plt.figure(figsize=(6,5))
-    errors = []; x_errors = []; rms_vals = []
-    for i in range(1, len(x_vals)):
-        x_now = x_vals[i]; x_dim = x_now * L
-        u_num = u_store[i, :] 
-
-        if x_dim == 0: continue
-        
-        scale = np.sqrt(U_inf / (nu * x_dim))          # compute scaling factor for Blasius Similarity Variable
-        eta_B_local = y_phys * scale                   # compute Blasius Similarity Variable for desired locations
-
-        u_blasius = np.interp(eta_B_local, eta_B, F_B, right=1.0)     # interpolate for Blasius solution values using eta_b_local array
-
-        err = np.linalg.norm(u_num - u_blasius, ord=2)
-        rms = err / np.sqrt(len(u_num))
-
-        errors.append(err); x_errors.append(x_now); rms_vals.append(rms)
-        
-    plt.plot(x_errors, rms_vals, 'o-', color='tab:red', linewidth=1.5, markersize=2)
-    #plt.ylabel(r'L2 Error: $\|u_{num} - u_{Blas}\|_2$', fontsize=18)
-    plt.ylabel(r'RMS Error', fontsize=14)
-    plt.xlabel(fr'$x^* = x / L$', fontsize =14)
-    #plt.xlim([-0.05, 1.1]); plt.ylim([0, 4])
-    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
-    #plt.legend(fontsize=9, loc='best')
-    plt.tight_layout()
-    plt.savefig('error_vs_x.png', dpi=300, bbox_inches='tight')
-    print("...Saved error_vs_x.png")
-
-    #Plot 05: Boundary Layer Growth
-    plt.figure(figsize=(8,6))
-    for i, idx in enumerate(output_indices):
-        x_now = x_vals[idx]; u_num = u_store[idx, :]
-        plt.plot(y_star, u_num, '-', color=colors[i], linewidth=1.5, label=fr"$x^*={x_now:.0f}$")
-    plt.ylabel(fr'$u^* = u / U_\infty$', fontsize=14)
-    plt.xlabel(fr'$y^* = y / \delta$', fontsize =14)
-    plt.xlim([0,6])
-    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.legend(fontsize=10, loc='best')
-    plt.tight_layout()
-    plt.savefig('boundary_layer_growth.png', dpi=300, bbox_inches='tight')
-    print("...Saved boundary_layer_growth.png")
-
     #Table: Thicknesses
     print("\n" + "="*120)
-    print(f"{'x*':>10} {'x [m]':>10} {'d*/d':>12} {'th/d':>12} "
-          f"{'H':>12} {'d*_Blas/d':>15} {'th_Blas/d':>15} {'H_Blas':>12}")
+    print(f"{'x*':>10} {'x [m]':>10} {'delta_99/d':>12} {'d*/d':>12} {'th/d':>12} "
+          f"{'H':>12} {'cf':>12} {'u_tau*':>12}")
     print("="*120)
-    thickness_data = []
     for i, idx in enumerate(output_indices):
-        x_now = x_vals[idx]; x_dim = x_now * L
-        u_num = u_store[idx, :]
+        x_now      = x_vals[idx]
+        x_dim      = x_now * L
+        u_num      = u_store[idx, :]
         delta_star, theta, H = compute_thicknesses(u_num, J_star, deta)
-        sqrt_nu_x_U = np.sqrt(nu * x_dim / U_inf)
-        delta_star_blas = 1.72 * sqrt_nu_x_U / delta 
-        theta_blas      = 0.664 * sqrt_nu_x_U / delta 
-        H_blas = delta_star_blas / theta_blas if theta_blas > 0 else 0.0
-        thickness_data.append((x_now, x_dim, delta_star, theta, H, delta_star_blas, theta_blas, H_blas))
-        print(f"{x_now:10.2f} {x_dim:10.2f} {delta_star:12.6f} {theta:12.6f} {H:12.4f} {delta_star_blas:15.6} {theta_blas:15.6} {H_blas:12.4f}")
+        print(f"{x_now:10.2f} {x_dim:10.2f} {delta_store[idx]:12.4f} {delta_star:12.6f} {theta:12.6f} {H:10.4f} {cf_store[idx]:12.6e} {u_tau_star_store[idx]:12.6e}")
     print("="*120 )
 
-    #Print x0 calculation summary
-    print(f"\nInitial x-location calculation:")
-    print(f"     From Blasius: delta = c*sqrt(x0), c = 4.91*sqrt(nu/U)")
-    print(f"     c = 4.91*sqrt({nu}/{U_inf}) = {4.91*np.sqrt(nu/U_inf):.6e}")
-    print(f"     x0 = delta^2/c^2 = ({delta})^2 / ({4.91*np.sqrt(nu/U_inf):.6e})^2 = {params['x0']:.2f} m")
-    print(f"     xo* = x0/L = {params['x0_star']:.2f}")
-    print(f"     Re_x0 = U_inf*x0/nu = {U_inf*params['x0']/nu:.2e}")
+    return x0_turb, x0_turb_star
 
-    return thickness_data
-    
+# ------------------------------------------------------------------
+# 12.  Sensitivity Study
+# ------------------------------------------------------------------
+
+def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
+    """
+    Run the solver with different values of cappa and c1 to asses sensitivity of the turbulence model.
+    """
+
+    kappa_vals = [0.35, 0.41, 0.45]          # test values for von Karman constant
+    c1_vals    = [0.0005, 0.001, 0.002]      # test values for clauser constant 
+
+    results_kappa = {}
+    results_c1    = {}
+
+    # --- Sensitivity to kappa (hold c1 = 0.001 fixed) ---
+    print('\n' + '=' * 120)
+    print('SENSITIVITY STUDY: Varying kappa (c1 = 0.001 fixed)')
+    print('=' * 120)
+    for kap in kappa_vals:
+        params = base_params.copy()
+        params["kappa"] = kap
+        params["c1"]    = 0.001
+        print(f'\n     Running kappa = {kap}...')
+        x_v, u_s, d_s, cf_s, ut_s = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
+        results_kappa[kap] = (x_v, d_s. cf_s)
+
+    # --- Sensitivity to c1 (hold kappa = 0.41 fixed) ---
+    print('\n' + '=' * 120)
+    print("SENSITIVITY STUDY: Varying c1 (kappa = 0.41 fixed)")
+    print('=' * 120)
+    for c1v in c1_vals:
+        params = base_params.copy()
+        params["kappa"]     = 0.41
+        params["c1"]        = c1v
+        print(f'\n     Running c1 = {c1v}...')
+        x_v, u_s, d_s, cf_s, ut_s = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
+        results_c1[c1v] = (x_v, d_s. cf_s)
+
+    # --- Plot sensitivity to kappa ---
+    delta_ref = base_params["delta"]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5)) 
+
+    for kap in kappa_vals:
+        x_v, d_s, cf_s = results_kappa[kap]
+        axes[0].plot(x_v, d_s * delta_ref * 1000, linewidth=1.5, label=fr'$\kappa={kap}$')
+        axes[1].plot(x_v, cf_s, linewidth=1.5, label=fr'$\kappa={kap}')
+
+    axes[0].set_xlabel(r'$x^*$', fontsize=14)
+    axes[0].set_ylabel(r'$\delta_{99.4}$ [mm]', fontsize=14)
+    axes[0].legend(fontsize=12)
+    axes[0].grid(True, linestyle='--', alpha=0.5)
+    axes[0].tick_params(labelsize=12)
+    axes[1].set_xlabel(r'$x^*$', fontsize=14)
+    axes[1].set_ylabel(r'$c_f$', fontsize=14)
+    axes[1].legend(fontsize=12)
+    axes[1].grid(True, linestyle='--', alpha=0.5)
+    axes[1].tick_params(labelsize=12)
+    plt.suptitle(r'Sensitivity to $\kappa$ ($c_1 = 0.001$)', fontsize=14)
+    plt.tight_layout()
+    plt.savefig('Kappa_Sensitivity.png', dpi=300, bbox_inches='tight')
+    print('\n     ...Saved Kappa_Sensitivity.png')
+
+    # --- Plot sensitivity to kappa ---
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    for c1v in c1_vals:
+        x_v, d_s, cf_s = results_c1[c1v]
+        axes[0].plot(x_v, d_s * delta_ref * 1000, linewidth=1.5, label=fr'$\c_1={c1v}$')
+        axes[1].plot(x_v, cf_s, linewidth=1.5, label=fr'$\c_1={c1v}')
+
+    axes[0].set_xlabel(r'$x^*$', fontsize=14)
+    axes[0].set_ylabel(r'$\delta_{99.4}$ [mm]', fontsize=14)
+    axes[0].legend(fontsize=12)
+    axes[0].grid(True, linestyle='--', alpha=0.5)
+    axes[0].tick_params(labelsize=12)
+    axes[1].set_xlabel(r'$x^*$', fontsize=14)
+    axes[1].set_ylabel(r'$c_f$', fontsize=14)
+    axes[1].legend(fontsize=12)
+    axes[1].grid(True, linestyle='--', alpha=0.5)
+    axes[1].tick_params(labelsize=12)
+    plt.suptitle(r'Sensitivity to $c_1$ ($\kappa = 0.41$)', fontsize=14)
+    plt.tight_layout()
+    plt.savefig('c1_Sensitivity.png', dpi=300, bbox_inches='tight')
+    print('\n     ...Saved c1_Sensitivity.png')
+
 # ------------------------------------------------------------------
 # 12.  MAIN DRIVER
 # ------------------------------------------------------------------
 def main():
     print("=" * 120)
-    print( "     ME 5311 - Project 02: Laminar Boundary Layer Solver")
+    print( "     ME 5311 - Project 03: Turbulent Boundary Layer Solver")
+    print( "     Reichardt (inner region) + Clauser Model (outer region)")
     print("=" * 120)
 
+    # --- Step 1: Set Parameters ---
     print("\n[1] Setting parameters...")
     params = set_parameters()
-    print(f"     Re_L = {params['Re_L']:.2e}")
-    print(f"     x0*  = {params['x0_star']:.2f}")
+    print(f"     Re_L      = {params['Re_L']:.2e}")
+    print(f"     RE_delta  = {params['Re_delta']:.2e}")
+    print(f"     x0*       = {params['x0_star']:.2f}")
+    print(f"     N         = {params['N']}")
+    print(f"     y_max     = {params['y_max']} m     ({params['y_max']/params['delta']:.0f} delta)")
+    print(f"     kappa     = {params['kappa']}")
+    print(f"     c1        = {params['c1']}")
+    print(f"     ya+       = {params['ya+']}")
+    print(f"     Nx        = {params['Nx']},     dx* = {params['dx_star']:6f}")
 
+    # --- Step 2: Compute stretched grid
     print("\n[2] Computing stretched grid...")
     eta, y_phys, y_star, J_star, J_star_eta = compute_grid(params)
     print(f"     dy_min = {y_phys[1]-y_phys[0]:.2e} m, dy_max = {y_phys[-1]-y_phys[-2]:.2e} m")
-
+    print(f"     y*_min = {y_star[1]:.4f},     y*_max = {y_star[-1]:.4f}")
+    
+    #check if first point is within viscous sublayer
+    u_star_0      = compute_initial_condition(params, y_star)
+    du_deta_0     = (4.0 * u_star_0[1] - u_star_0[2]) / (2.0 * params["deta"])
+    #u_tau_init    = np.sqrt(max(du_deta_0 / (params['Re_delta'] * J_star[0])), 1e-15)
+    u_tau_init    = np.sqrt(du_deta_0 / (params["Re_delta"] * J_star[0]))
+    y_plus_init   = y_star[1] * params["Re_delta"]
+    print(f"     Initial u_tau* ~ {u_tau_init:.6f},     y+_1 ~ {y_plus_init:.3f}")
+    
+    # --- Step 3: Set Initial Conditions --- 
     print("\n[3] Setting initial conditions...")
     u_star_0 = compute_initial_condition(params, y_star)
 

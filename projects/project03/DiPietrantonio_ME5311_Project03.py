@@ -578,7 +578,8 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     n_data = len(x_vals)
     #i_start = n_data // 3     # skip initial laminar profile
 
-    cf_threshold = 0.01        # threshold for turbulent skin friction coefficient
+    #*****GET THIS FROM TEXT*****#
+    cf_threshold = 0.01        # threshold for turbulent skin friction coefficient 
 
     turbulent_indices = np.where(cf_store > cf_threshold)[0]     # record indices where Cf > threshold
 
@@ -607,13 +608,13 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
 
     # compute the empirical correlation delta(x) for comparison 
     x_corr     = x_phys - x0_turb          # distance from apparent origin
-    x_corr_pos = np.maximum(x_corr, 1e-15) # avoid negative/zero
+    x_corr_pos = np.maximum(x_corr, 1e-15) # avoid negative/zero values
     Re_x_corr  = U_inf * x_corr_pos / nu
     delta_corr = 0.375 * x_corr_pos * Re_x_corr**(-1.0/5.0)
 
     plt.figure(figsize=(6, 5))
     plt.plot(x_vals, delta_994 * 1000, 'b-', linewidth=1.5, label=r'Numerical $\delta_{99.4}(x)$')
-    plot_mask = x_corr > 0          # boolean so that only turbulent values are plotted for numerical correlation
+    plot_mask = x_corr > 0          # boolean mask so that only turbulent values are plotted for numerical correlations
     plt.plot(x_vals[plot_mask], delta_corr[plot_mask] * 1000, 'r--', linewidth=1.5, label=r'$0.375\, x\, Re_x^{-1/5}$')
     plt.xlabel(r'$x^* = x/L$', fontsize=14)
     plt.ylabel(r'$\delta_{99.4}$ [mm]', fontize=14)
@@ -624,8 +625,48 @@ def post_process(params, x_vals, u_store, delta_store, cf_store, u_tau_star_stor
     print('     ...Saved BL_growth.png')
 
     # ----- Plot 03: Skin Friction Coefficient -----
+    # Emperical turbulent flat-plate correlation: cf = 0.059 * Rex^{-1/5} 
+    #*****CONFIRM WITH TEXT*****#
+    cf_corr            = np.zeros_like(x_vals)
+    cf_corr[plot_mask] = 0.059 * Re_x_corr[plot_mask]**(-1.0/5.0)     # only use correlation for turbulent data
 
-# OLD PLOTS!!! KEEP RESIDUAL!!!
+    plt.figure(figsize=(6, 5))
+    plt.plot(x_vals, cf_store, 'b-', linewidth='1.5', label=r'Numerical $c_f$')
+    plt.plot(x_vals[plot_mask], cf_corr[plot_mask], 'r--', linewidth=1.5, label=r'$0.059\,Re_x^{-1/5}$')
+    plt.xlabel(r'$x^* = x/L', fontsize=14)
+    plt.ylabel(r'$c_f', fontsize=14)
+    plt.xticks(fontsize=12); plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.legend(fontsize=12, loc='best')
+    plt.tight_layout()
+    plt.savefig('SkinFrictionCoeff.png', dpi=300, bbox_inches='tight')
+    print('     ...Saved SkinFrictionCoeff.png')
+
+    # ----- Plot 04: The Law of the Wall -----
+    #plot a selected downstream locations
+    #*****VERIFY THIS*****#
+    #*****VERIFY 5.45 CONSTANT*****#
+    #*****VERIFY REGION LIMIT/TRANSITION VALUES*****#
+
+    plt.figure(figsize=(6,5))
+
+    y_plus_theor = np.logspace(-1, 4, 500)
+    u_plus_visc  = y_plus_theor                                   # viscous sublayer u+ = y+
+    u_plus_log   = (1.0 / kappa) * np.log(y_plus_theor) + 5.45    # log law region
+
+    plt.semilogx(y_plus_theor, u_plus_visc, 'k--', linewidth=1, label=r'u^+ = y^+')
+    plt.semilogx(y_plus_theor[y_plus_theor > 60], u_plus_log[y_plus_theor > 60], 'k--', linewidth=1, label=r'$u^+ = \frac{1}{\kappa}\ln y^+ + 5.45')
+
+    for i, idx in enumerate(output_indices):
+        if i == 0:          # skip initial condition
+            continue
+
+        x_now      = x_vals[idx]
+        u_num      = u_store[idx, :]
+        u_tau_star = u_tau_star_store[idx]
+
+
+#*****OLD PLOTS!!! KEEP RESIDUAL!!!*****#
     #plt.figure(figsize=(8,6))
     plt.figure(figsize=(6,5)) 
     for i, idx in enumerate(output_indices):

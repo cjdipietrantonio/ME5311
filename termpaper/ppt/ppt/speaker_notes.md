@@ -7,7 +7,7 @@
 
 ## Slide 1: Title
 
-Good morning everyone. My name is Christian DiPietrantonio and today I'll be discussing the transported probability density function method used in computational fluid dynamics and its relation to the Black-Scholes-Merton equation Black-Scholes-Merton equation for pricing financial derivatives.
+Good morning everyone. My name is Christian DiPietrantonio and today I'll be discussing the transported probability density function method used in computational fluid dynamics and its relation to the Black-Scholes-Merton equation for pricing financial derivatives.
 
 The central argument is that these two equations, from completely different fields, are derived from the same type of stochastic differential equation and can be solved by the same numerical methods.
 
@@ -19,7 +19,7 @@ In order to understand the content of this presentation we must define a few fin
 
 Above we can see several definitions for different types of options. For the remainer of this presentation, we will be focusing on European Call Options. You can also long (buy) options, or short (sell) options.
 
-As for payout rules, for a short position on an option, you can see that as the price of the stock exceeds the strike price, you lose money because you are obligated to sell the stock at the strike price. For for the long position, the profit increases as the price of the underlying asset (stock) exceeds the strike price. Thus, for the remained of our analysis we can express the value of the function as shown above.
+As for payout rules, for a short position on an option, you can see that as the price of the stock exceeds the strike price, you lose money because you are obligated to sell the stock at the strike price. For the long position, the profit increases as the price of the underlying asset (stock) exceeds the strike price. Thus, for the remained of our analysis we can express the value of the function as shown above.
 
 
 ---
@@ -31,18 +31,18 @@ Now, since we have shown that the value of an option depends on the price of the
 This was done by creating a riskless portfolio by combining a position in a derivative with a position in an underlying stock. Without arbitrage opportunities, the return from the portfolio must be the risk-free interest rate r. The reason this works is because the stock and derivative prices are both effected by the same underlying source of uncertainty (the stock price). When the appropriate portfolio of the stock and derivative are established, the gain or loss from the stock position always offsets the gain or loss from the derivative position, so the overall value of the portfolio at the end of the time period is always known. (Hull)
 
 The following assumptions were made by Black and Scholes:
-Idealized, frictionless market with continuous trading (no transaction cost)
-No dividends
-Unrestricted short selling
-Ability to borrow/lend at the risk-free rate
-European Option
-Arbitrage free market 
+- Idealized, frictionless market with continuous trading (no transaction cost)
+- No dividends
+- Unrestricted short selling
+- Ability to borrow/lend at the risk-free rate
+- European Option
+- Arbitrage free market 
         
 As previously mentioned, Merton derived the same equation, but he did so through the use of Stochastic Calculus and Ito’s Lemma (which shows that for a variable following a stochastic process, S, the function G(s, t) follows the process shown above) . This type of calculus (stochastic, also referred to as Ito Calculus), was created specifically to handle derivatives and integrals of stochastic processes.
 
 Now we should note that this equation looks awfully familiar to transport equations we have worked with this semester, we have a temporal term, diffusion term, advection term, and a source (decay) term.
 
-Another note on Merton’s derivation: Merton started with the process for a stock price, which is modeled using the Stochastic Differential Equation above. Ito’s lemma is then used to express the rate of change of the value of the option, a hedged portfolio is created and its derivative with respect to time is taken, the result of Ito’s lemma and the SDE are substituted to eliminate the Weiner process, making the portfolio riskless. Because of the assumptions, the change in value of the portfolio must be expressed in terms of the risk-free interest rate. Finally, the original expressions for the value of the portfolio and its change with respect to time can be substituted to obtain the BSM equation! 
+Another note on Merton’s derivation: Merton started with the process for a stock price, which is modeled using the Stochastic Differential Equation above. Ito’s lemma is then used to express the rate of change of the value of the option, a hedged portfolio is created and its change in value over a small time interval is expressed, then the result of Ito’s lemma and the SDE are substituted to eliminate the Weiner process, making the portfolio riskless. Because of the assumptions, the change in value of the portfolio must be expressed in terms of the risk-free interest rate. Finally, the original expressions for the value of the portfolio and its change with respect to time can be substituted to obtain the BSM equation! (Hull walks through this entire derivation).
 
 Other notes/Definitions:
 - Volatility can be estimated from historical data
@@ -54,8 +54,8 @@ Other notes/Definitions:
 - SDE: Defines the infinitesimal increment of a stochastic process
 - Markov Process: A stochastic process where the behavior of a variable over a short period of time depends Soley on the value of the variable at the beginning of the period, not on its past history.
 - Weiner Process: A stochastic process where the change in a variable during each short period of time of length ∆T has a normal distribution with a mean equal to zero and a variance equal to ∆T (Sometimes referred to as Brownian motion)
-- Geometric Brownian Motion: A stochastic process often assumed for asset prices where the logarithm of the underlying variable follows a generalized Wiener process
-- Risk-free rate: The rate of interest that can be earned without assuming any risks (treasuries are common, London Interbank Offered Rate, LIBOR (less common after 2008), Overnight Indexed Swap rate (OIS).
+Geometric Brownian Motion: A stochastic process often assumed for asset prices where the logarithm of the underlying variable follows a generalized Wiener process
+- Risk-free rate: The rate of interest that can be earned without assuming any risks (treasuries are common, London Interbank Offered Rate, LIBOR (less common after 2008), Overnight Indexed Swap rate (OIS)).
 
 ---
 

@@ -160,7 +160,88 @@ At the wall ($y^+ = 0$), $\mathrm{sech}^2(0) = 1$, so $d\nu^*/d\eta = 0$. Furthe
 %PRESENTATION OF RESULTS
 \section{Presentation of Results}
 
-TBD
+The solution is marched from $x^*_0 = 20.74$ to $x^*_{\max} = 60.74$ using $N_x = 20{,}000$ steps. The initial cubic profile from project 02 is used. At the first grid point, $y^+_1 \approx 0.07$, confirming the point is within the viscous sublayer.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{velocity_profiles.png}
+    \caption{Velocity profiles at downstream locations. Left: $u^*$ vs.\ $y^*$ near-wall zoom showing the initial profile. Middle: $u^*$ vs.\ $y^*$ full domain showing boundary layer growth from $\sim\,1\delta$ to $\sim\,48\delta$. Right: $v^*$ vs.\ $y^*$ showing the wall-normal profiles.}
+    \label{fig:velocity}
+\end{figure}
+
+The apparent origin of the turbulent boundary layer $x_{0, \text{turb}}$ was found to be at $21.3$ meters, and was obtained by linearizing the correlation: $\delta(x) = 0.375 x (Re_x)^{-1/5}$. Since $\delta = C (x - x_{0, \text{turb}})^{4/5}$, raising both sides to the power of $5/4$ results in $\delta^{5/4} = C^{5/4} (x - x_{0, \text{turb}})$, which is linear in x. Since when $x = x_{0, \text{turb}}$, $\delta(x)=0$, and $\delta^{5/4} = 0$, a linear regression was used on the downstream data to solve for the $x_{0, \text{turb}}$ at which $\delta^{5/4} = 0$. It should be noted that the data used for the linear regression was filtered using a shape factor threshold $H < 1.4$, to ensure data from the initial laminar profile was omitted. In Figure~\ref{fig:growth} below, agreement between the numerical $\delta(x)$ and the aforementioned corelation can be observed over the turbulent region.
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.47\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{BL_growth.png}
+        \caption{Boundary layer growth: numerical $\delta_{99.4}(x)$ vs.\ empirical correlation.}
+        \label{fig:growth}
+    \end{minipage}
+    \hspace{8pt}
+    \begin{minipage}[t]{0.47\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{SkinFrictionCoeff.png}
+        \caption{Skin friction coefficient: numerical $c_f(x)$ vs.\ empirical correlation.}
+        \label{fig:skinfriction}
+    \end{minipage}
+\end{figure}
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Boundary layer quantities at selected streamwise locations.}
+\label{tab:thicknesses}
+\begin{tabular}{ccccccc}
+\toprule
+$x^*$ & $\delta_{99.4}/\delta$ & $\delta^*/\delta$ & $\theta/\delta$ & $H$ & $c_f$ & $u_\tau^*$ \\
+\midrule
+20.74 & 0.936 & 0.375 & 0.139 & 2.692 & $2.998\times10^{-5}$ & $3.872\times10^{-3}$ \\
+25.00 & 7.480 & 1.106 & 0.808 & 1.368 & $1.510\times10^{-3}$ & $2.757\times10^{-2}$ \\
+30.00 & 14.87 & 2.063 & 1.541 & 1.339 & $1.424\times10^{-3}$ & $2.668e\times10^{-2}$ \\
+40.00 & 28.91 & 3.829 & 2.916 & 1.313 & $1.336\times10^{-3}$ & $2.584\times10^{-2}$ \\
+50.00 & 42.50 & 5.477 & 4.210 & 1.301 & $1.287\times10^{-3}$ & $2.537\times10^{-2}$ \\
+60.74 & 47.96 & 7.056 & 5.385 & 1.310 & $1.224\times10^{-3}$ & $2.474\times10^{-2}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+The shape factor drops rapidly from $H \approx 2.69$ (laminar) to $H \approx 1.3$ (turbulent) between $x^* = 20.74$ and $x^* = 25$, confirming a rapid trransition from the initial cubic laminar profile. The downstream values of $H \approx 1.3$ are in agreement with the theoretical shape factor for a turbulent boundary layer on a smooth flat plate.
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.47\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{LawOfTheWall.png}
+        \caption{Law of the wall: $u^+$ vs.\ $y^+$ compared with $u^+=y^+$ and $u^+=(1/\kappa)\ln y^+ + 5.2$.}
+        \label{fig:loglaw}
+    \end{minipage}
+    \hspace{8pt}
+    \begin{minipage}[t]{0.47\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{residuals_vs_x.png}
+        \caption{$L_2$ residuals (normalized by $\Delta x^*$) vs.\ $x^*$.}
+        \label{fig:residuals}
+    \end{minipage}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Kappa_Sensitivity.png}
+    \caption{Sensitivity to $\kappa$ ($c_1 = 0.001$, $s = 10$ fixed).}
+    \label{fig:kappa}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{c1_Sensitivity.png}
+    \caption{Sensitivity to $c_1$ ($\kappa = 0.41$, $s = 10$ fixed).}
+    \label{fig:c1sens}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{s_Sensitivity.png}
+    \caption{Sensitivity to Stretching Factor $s$ ($\kappa = 0.41$, $c_1 = 0.001$ fixed).}
+    \label{fig:ssens}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------
 

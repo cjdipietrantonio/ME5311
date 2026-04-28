@@ -79,44 +79,24 @@ ME 5311: Computational Methods to Viscous Flows \\
 %---------------------------------------------------------------------------------------------------------------
 
 %TITLE
-{\large \textbf{Computer Assignment 03:} \normalsize Calculating the Development of a Turbulent Boundary Layer}
+{\large \textbf{Computer Assignment 03:} \normalsize Calculating Turbulent Boundary Layer Development}
 
 %---------------------------------------------------------------------------------------------------------------
 
 %DESCRIPTION OF THE PROBLEM
 \section{Description of the Problem}
-
 The objective of this project is to use the code developed in Project 02 for the laminar boundary layer to calculate the development of a turbulent boundary layer using the algebraic model described below. In the inner region of the boundary layer, the Reichardt model is used, and the eddy viscocity is given by
 \begin{equation}
     \nu_t = \kappa \nu \left[ \frac{y u_{\tau}}{\nu} - y^{+}_{a} \tanh\left( \frac{y u_{\tau}}{\nu y^{+}_{a}} \right) \right]
 \end{equation}
 
-Where $y^{+}_{a} = 9.7$.
-
-In the outer region, the Clauser model is used, which assumes that the eddy viscocity reaches a constant value
-\begin{equation}
-    (\nu_t)_{\text{max}} = c_1 U_e \delta(x)
-\end{equation}
-
-where $\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Model constants $\kappa = 0.41$ and $c_1 = 0.001$ are used, and the friction velocity is found by taking the numerical derivative of $u$ at the wall. For consistant results with Project 02, the expressions for $\nu_t$ and their spatial derivatives must be nondimensionalized. Further objectives of this project are to:
-\begin{enumerate}
-    \item Calculate the turbulent boundary layer flow for the same dimensional properties used in the laminar case. However, this time using a value of $y_{\text{max}} = 50 \delta$ and 250 points in the $y$ direction. Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location and confirm that the boundary layer grows like
-    \begin{equation}
-        \delta(x) = 0.375 x (Re_x)^{-1/5}
-    \end{equation}
-    \item Adjust the results to account for the transition from the assumed initial laminar velocity profile by obtaining a value for $x_0$, the apparent origin of the turbulent boundary layer.
-    \item Show that the turbulent boundary layer follows the ``law of the wall.''
-    \item Determine the sensitivity of the turbulence model to the choices of $\kappa$ and $c_1$.
-    \item Determine what changes are necessary in the grid resolution and stretching factor to obtain a converged solution when the Reynolds number is increased by a factor of 10.
-    \item Discuss the problems encountered with the implementation of this model.
-\end{enumerate}
+Where $y^{+}_{a} = 9.7$. In the outer region, the Clauser model is used, which assumes that the eddy viscocity reaches a constant value of $(\nu_t)_{\text{max}} = c_1 U_e \delta(x)$, where $\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Model constants $\kappa = 0.41$ and $c_1 = 0.001$ are used, and the friction velocity is found by taking the numerical derivative of $u$ at the wall. The same dimensional properties from Project 02 are used, with $y_{\text{max}} = 50 \delta$ and $N = 250$. The objectives are to: Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location and confirm that the $\delta(x)$ grows like $\delta(x) = 0.375 x (Re_x)^{-1/5}$; obtain the apparent origion of the turbulent boundary layer $x_{0,\text{turb}}$; confirm the boundary layer follows the ''law of the wall''; determine the sensitivity of the model to $\kappa$, $c_1$, and $s$; discuss the necesary changes in grid resolution and stretching factor when $Re$ is increased by a factor of 10; and discuss implementation issues.
 
 %---------------------------------------------------------------------------------------------------------------
 
 %DESCRIPTION OF THE NUMERICAL METHOD
 \section{Description of the Numerical Method}
-
-The numerical method used is nearly identical to Project 02, the Crank-Nicolson algorithm is used to march in the $x$-direction, a $\sinh$-based stretched grid is used in $\eta$, a fourth-order central difference scheme is used for the discretization of $\eta$ (except at the first interior points, where a second-order discretization is used), and banded linear solvers are used for both $u^*$ and $v^*$ at each $s$-step. However, for this project $\nu^*$ and $\frac{\partial \nu^*}{\partial \eta}$ are no longer constants $(\nu^* = 1, \frac{\partial \nu^*}{\partial \eta} = 0)$, instead they are computed from the turbulence model at each $x$-step. Nevertheless, the coefficients $A_j$ and $B_j$ retain the same formula as in Project 02:
+The numerical method used is nearly identical to Project 02, the Crank-Nicolson algorithm is used to march in the $x$-direction, a $\sinh$-based stretched grid is used in $\eta$, a fourth-order central difference scheme is used for the discretization of $\eta$ (except at the first interior points, where a second-order discretization is used), and banded linear solvers are used for both $u^*$ and $v^*$ at each $x$-step. However, for this project $\nu^*$ and $\frac{\partial \nu^*}{\partial \eta}$ are no longer constants $(\nu^* = 1, \frac{\partial \nu^*}{\partial \eta} = 0)$, instead they are computed from the turbulence model at each $x$-step. Nevertheless, the coefficients $A_j$ and $B_j$ retain the same formula as in Project 02:
 \begin{equation}
     A_j = \frac{v^*_j}{J^*_j} - \frac{C}{J^{*2}_j}\frac{\partial \nu^*}{\partial \eta}\bigg|_j + \frac{C\,\nu^*_j\, J^*_{\eta,j}}{J^{*3}_j}, \qquad B_j = \frac{-C\,\nu^*_j}{J^{*2}_j}
 \end{equation}
@@ -136,17 +116,12 @@ The wall coordinate is expressed as $y^+ = y^* \, u_\tau^* \, Re_\delta$, and th
 \frac{\nu_t}{\nu_\infty} = \kappa \left[y^+ - y^+_a \tanh \left(\frac{y^+}{y^+_a} \right)\right], \qquad \frac{\nu_{t, \max}}{\nu_\infty} = c_1 \, Re_\delta \, y^*_{0.994}
 \end{equation}
 
-Where $y^*_{0.994}$ is the $y^*$ location where $u^* = 0.994$, found by linear interpolation of the generated data. Therefore, the nondimensional effective viscocity can be expressed in the Reichardt region as
+Where $y^*_{0.994}$ is the $y^*$ location where $u^* = 0.994$, found by linear interpolation of the generated data. Therefore, the nondimensional effective viscocity can be expressed in the Reichardt and Clauser regions as
 \begin{equation}
-    \nu_{eff}^* = 1 + \kappa \left[y^+ - y_{a}^+ \tanh\left(\frac{y^+}{y_{a}^+}\right)\right]
+    \nu_{eff}^* = 1 + \kappa \left[y^+ - y_{a}^+ \tanh\left(\frac{y^+}{y_{a}^+}\right)\right], \qquad \nu_{eff}^* = 1 + c_1 \, Re_\delta \, y^*_{0.994}
 \end{equation}
 
-and in the Clauser region as:
-\begin{equation}
-    \nu_{eff}^* = 1 + c_1 \, Re_\delta \, y^*_{0.994}
-\end{equation}
-
-in the Clauser region. Finally, the derivtive required for $A_j$ can be derived using the chain rule for both regions:
+Finally, the derivtive required for $A_j$ can be derived using the chain rule for both regions:
 \begin{equation}
     \frac{\partial \nu_{eff}^*}{\partial \eta} = \begin{cases}
         \kappa \, u_\tau^* \, Re_\delta \, J^* \left[1 - \mathrm{sech}^2\!\left(\dfrac{y^+}{y^+_a}\right)\right], & \text{Reichardt region} \\[6pt]
@@ -159,16 +134,14 @@ At the wall ($y^+ = 0$), $\mathrm{sech}^2(0) = 1$, so $d\nu^*/d\eta = 0$. Furthe
 
 %PRESENTATION OF RESULTS
 \section{Presentation of Results}
-
-The solution is marched from $x^*_0 = 20.74$ to $x^*_{\max} = 60.74$ using $N_x = 20{,}000$ steps. The initial cubic profile from Project 02 is used. At the first grid point, $y^+_1 \approx 0.07$, confirming the point is within the viscous sublayer.
+The solution is marched from $x^*_0 = 20.74$ to $x^*_{\max} = 60.74$ using $N_x = 20{,}000$ steps. At the first grid point, $y^+_1 \approx 0.07$, confirming the point is within the viscous sublayer.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{velocity_profiles.png}
     \caption{Velocity profiles at downstream locations. Left: $u^*$ vs.\ $y^*$ near-wall zoom showing the initial profile. Middle: $u^*$ vs.\ $y^*$ full domain showing boundary layer growth from $\sim\,1\delta$ to $\sim\,48\delta$. Right: $v^*$ vs.\ $y^*$ showing the wall-normal profiles.}
     \label{fig:velocity}
 \end{figure}
-
-The apparent origin of the turbulent boundary layer $x_{0, \text{turb}}$ was found to be at $21.3$ meters, and was obtained by linearizing the correlation: $\delta(x) = 0.375 x (Re_x)^{-1/5}$. Since $\delta = C (x - x_{0, \text{turb}})^{4/5}$, raising both sides to the power of $5/4$ results in $\delta^{5/4} = C^{5/4} (x - x_{0, \text{turb}})$, which is linear in x. Since when $x = x_{0, \text{turb}}$, $\delta(x)=0$, and $\delta^{5/4} = 0$, a linear regression was used on the downstream data to solve for the $x_{0, \text{turb}}$ at which $\delta^{5/4} = 0$. It should be noted that the data used for the linear regression was filtered using a shape factor threshold $H < 1.4$, to ensure data from the initial laminar profile was omitted. In Figure~\ref{fig:growth} below, agreement between the numerical $\delta(x)$ and the aforementioned corelation can be observed over the turbulent region.
+The apparent origin of the turbulent boundary layer $x_{0, \text{turb}} = 21.3$~m was obtained by linearizing the provided growth correlation. Raising $\delta = C(x - x_{0,\text{turb}})^{4/5}$ to the power of $5/4$ gives $\delta^{5/4} = C^{5/4}(x - x_{0,\text{turb}})$, which is linear in $x$ and equals zero at $x = x_{0,\text{turb}}$. Following this, a linear regression was used on the downstream data (filtered with $H < 1.4$ to omit laminar results) to obtain $x_{0,\text{turb}}$. Figure~\ref{fig:growth} below shows agreement between the numerical $\delta(x)$ and the corelation the turbulent region.
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.47\textwidth}
@@ -248,19 +221,20 @@ The shape factor drops rapidly from $H \approx 2.69$ (laminar) to $H \approx 1.3
 %DISCUSSION OF RESULTS
 \section{Discussion of Results}
 \subsection{General description}
-
 Figure~\ref{fig:velocity} shows that the initial cubic laminar profile at $x^* = 27.74$ is confined to $y^* \leq 1$, while by $x^* = 60.74$, $\delta_{99.4} \approx 48\delta$, approaching $y_{\max} = 50\delta$. The $v^*$ profiles confirm the satisfaction of continuity. Inside the boundary layer, $\frac{\partial u^*}{\partial x*} < 0$ (the boundary layer is growing), so  $\frac{\partial v^*}{\partial y*} > 0$ (fluid is displaced away from the wall). Outside the boundary layer, $u^* = 1$, so both derivaives are zero and $v^*$ assymptotes to a constant. This constant decreases with downstream distance because $\frac{\partial u^*}{\partial x*}$ decreases in magnitude (as the boundary layer growth rate slows).
 
-Agreement between the simulated skin friction coefficent and the skin friction coefficent correlation for a turbulent boundary layer on a smooth flat plate can be observed in Figure~\ref{fig:skinfriction}. The initial disagreement between the coreleation is expected for two reasons. First, the correlation assumes the boundary layer is entirely turbulent for $x > x_{0, \text{turb}}$, and predicts a larger gradient at the wall for small boundary layers. Second, the model must relax into the turbulent boundary layer from the laminar cubic initial profile, which has a lower gradient at the wall. Figure~\ref{fig:loglaw} exhibits very close agreement with the law of the wall. It should be noted, that there is some slight disagreement in the turbulent region for the $x*=25$ case, as the solution is still relaxing fromt he unitial cubic relation.
+Agreement between the simulated $c_f$ and the empirical correlation can be observed in Figure~\ref{fig:skinfriction}. The initial disagreement is expected because the correlation assumes a fully turbulent boudary layer growing from zero thickness at $x_{0, \text{turb}}$, which predicts a large gradient at the wall for a small boundary layer. Whereas, at $x_{0, \text{turb}}$ the numerical solution is still relaxing from the laminar cubic profile, which has a smaller gradient in the wall in comparison. Figure~\ref{fig:loglaw} confirms that the numerical solution cloesly agreess with the law of the wall, with a slight deviation in the outer region for $x^* = 25$, as again, the solution relaxes from the initial condition.
 
-Figures~\ref{fig:kappa}--\ref{fig:ssens} show the sensitivity to the three model/grid parameters. $Cf$ and $\delta$ were chosen for the sensitivity study because they allow ffor a comparison of a single number at each step in x (quick check for sensitivity). Varying $\kappa$ by $1\%$ produces roughly a $0.24\%$ to $0.28\%$ change in $\delta$ and a $0.66\%$ to $0.74\%$ change in $c_f$. Varying $c_1$ by $1\%$ produces roughly a $0.5\%$ to $0.8\%$ change in $\delta$ and a $0.21\%$ to $0.55\%$ change in $c_f$. Therefore, the skin friction coefficient is more sensitive to changes in $\kappa$, while $\delta_{99.4}$ is more sensitive to changes in $c_1$. These results are intuitive because $\kappa$ is used in the Reichardt model which is responsible for inner region viscocity/mixing, while $c_1$ is used in the Clauser model which is responsible for outer region viscocity/mixing (and an increase in mixing in the outer region spreads the velocity transition over a wider distance, increasing $\delta$). For the stretching factor $s$, the solutions for $s=10$ and $s=15$ are nearly identical, demonstrating grid convergance, while $s=5$ produces a noticably different result that is due to insufficent near-wall resoluton (first point is in the buffer layer $y^+ \approx 25.7$).   
+Figures~\ref{fig:kappa}--\ref{fig:ssens} show the sensitivity to the three model/grid parameters. At $x^* = 40.74$, varying $\kappa$ by $1\%$ produces roughly a $0.24\%$ to $0.28\%$ change in $\delta$ and a $0.66\%$ to $0.74\%$ change in $c_f$, while varying $c_1$ by $1\%$ produces roughly a $0.5\%$ to $0.8\%$ change in $\delta$ and a $0.21\%$ to $0.55\%$ change in $c_f$. Therefore, $c_f$ is more sensitive to $\kappa$ and $\delta_{99.4}$ is more sensitive to $c_1$. This makes sense intuitively, as $\kappa$ controls inner region viscocity/mixing (Reichardt model) where the wall gradient is determined, and $c_1$ controls outer region viscocity/mixing (Clauser model) where increased mixing spreads the velocity transition over a wider distance, increasing $\delta$. For the stretching factor, the results for $s=10$ and $s=15$ are nearly identical, demonstrating grid convergance. However, $s=5$ differs significantly due to insufficient near-wall resoultion and because its first point falls within the buffer layer ($y^+ \approx 25.7$).
 
-It should be noted that, increasing Reynolds number would create a sharper velocity gradient at the wall and effectively reduce the size of the viscous sublayer. Both of which would require a larger stretching factor (which would result in and a finer resolution grid near the wall) and/or more grid points $N$ to properly resolve and ensure our that first grid point remains within the viscious sublayer (and not the buffer layer). Since increasing $s$ alone clusters more points near the wall, but reduces resulition in the outer layer, increasing $N$ may also be necesary for proper convergance of the entire solution.
+Increasing the Reynolds number by a factor of 10 would create a larger velocity gradient at the wall, increasing $u_\tau$ and effectively reducing the thickness of the viscous sublayer. This would require a larger stretching factor $s$ (and as a result, possibly more grid points $N$ to maintain fidelity in the outer layer) to resolve the sharper gradient and keep $y^+_1$ within the viscous sublayer.
 
-Finally, several problems with implementation of the model were encountered. First, the equation for the derivative of the effective viscocity contains a $\mathrm{sech}^2(y^+/y_a^+)$ term. For large $y^+$, the argument $y^+/y_a^+$ becomes very large, and computing $\cosh{y^+/y_a^+}$ results in overfow errors. However, $\mathrm{sech}^2(x) \to 0$ for large $x$, so line 160 in Appendix~\ref{appendix-code} resolves this by clamping the argument to a maximum of 50. Since $\mathrm{sech}^2(50) \approx 1.5 \times 10^{-43}$ is effectively zero, this logic allows the program to proceed without encountering overflow errors. Another implementation issue encountered was sever fluctuationsin the $v^*$ residual, which are addressed in the Accuracy and Stability section below.
+An implementation challenge was the $\mathrm{sech}^2(y^+/y_a^+)$ term in $d\nu^*/d\eta$, which resulted in overflow errors for large $y^+/y_a^+$. Since $\mathrm{sech}^2(x) \to 0$ for large $x$. Line 160 in Appendix~\ref{appendix-code} clamps the argument to 50 ($\mathrm{sech}^2(50) \approx 10^{-43}$), which allows the program to procede witout errors. Another implementation issue encountered was sever fluctuationsin the $v^*$ residual, which are addressed in the Accuracy and Stability section below.
 
 \subsection{Accuracy and stability}
-The L2 residual for $u^*$ shown in Figure~\ref{fig:residuals} decreases as $x^*$ increases, which indicates convergence of the solution. The initial residual is largest near $x^* = 20.74$ because the initial cubic condition must undergo rapid changes to satisfy the governing equations. This is to be expected because the Crank-Nicolson scheme is unconditionally stable. The L2 residual for $v^*$, however, seems to show sever oscilations. It is suspected that this is a result of several factors. Primarily, since $v^*$ is calculated from the continuity equation at each step, it is derived from the derivative of the velocity profile, which can amplify changes that may be smoothed out by the Crank-Nicolson scheme. Second, these differences bay result from the transition between the Reichardt and Clauser regions of the boundary layer, which suggests that these instabilities are a property of the chosen turbulence models, and not an implementation error. Nevertheless, physically intuitive results are still obtained for $u^*$ and $v^*$ at each step, the accuracy of which has been validated against theoretical corelations.
+The $u^*$ residual in Figure~\ref{fig:residuals} decreases as $x^*$ increases (as to be expected with the Crank-Nicolson scheme), which indicates convergence of the solution. The large initial residual is a result of the solutions rapit adjustment from the laminar initial condition. The $v^*$ residual exhibits oscillations that are suspected to result from the transition between the Reichardt and Clauser regions. BUT HOW. Since $v^*$ is derived from $\partial u/ \partial x$, these discontinuities are amplified. Nevertheless, physically intuitive results are still obtained for $v^*$ at each step.
+
+
 
 %---------------------------------------------------------------------------------------------------------------
 
@@ -274,6 +248,50 @@ The L2 residual for $u^*$ shown in Figure~\ref{fig:residuals} decreases as $x^*$
     language=Python
 ]{DiPietrantonio_ME5311_Project03.py}
 
+%---------------------------------------------------------------------------------------------------------------
+
+%APPENDIX B - Other Stuff/Notes
+\newpage
+\appendix
+\section{Other Notes}
+\label{other-notes}
+
+\section{Description of the Problem}
+
+The objective of this project is to use the code developed in Project 02 for the laminar boundary layer to calculate the development of a turbulent boundary layer using the algebraic model described below. In the inner region of the boundary layer, the Reichardt model is used, and the eddy viscocity is given by
+\begin{equation}
+    \nu_t = \kappa \nu \left[ \frac{y u_{\tau}}{\nu} - y^{+}_{a} \tanh\left( \frac{y u_{\tau}}{\nu y^{+}_{a}} \right) \right]
+\end{equation}
+
+Where $y^{+}_{a} = 9.7$. In the outer region, the Clauser model is used, which assumes that the eddy viscocity reaches a constant value of $(\nu_t)_{\text{max}} = c_1 U_e \delta(x)$, where $\delta(x)$ is taken to be the location where $u = 0.994 U_{\infty}$. Whenever $\nu_t$ calculated from Reichardt's model exceeds $(\nu_t)_{\text{max}}$, the Clauser model is used and the derivative of $\nu_t$ is set to zero. Model constants $\kappa = 0.41$ and $c_1 = 0.001$ are used, and the friction velocity is found by taking the numerical derivative of $u$ at the wall. For consistant results with Project 02, the expressions for $\nu_t$ and their spatial derivatives must be nondimensionalized. Further objectives of this project are to:
+\begin{enumerate}
+    \item Calculate the turbulent boundary layer flow for the same dimensional properties used in the laminar case. However, this time using a value of $y_{\text{max}} = 50 \delta$ and 250 points in the $y$ direction. Calculate $\delta(x)$ and $c_f (x)$ for each $x$ location and confirm that the boundary layer grows like
+    \begin{equation}
+        \delta(x) = 0.375 x (Re_x)^{-1/5}
+    \end{equation}
+    \item Adjust the results to account for the transition from the assumed initial laminar velocity profile by obtaining a value for $x_0$, the apparent origin of the turbulent boundary layer.
+    \item Show that the turbulent boundary layer follows the ``law of the wall.''
+    \item Determine the sensitivity of the turbulence model to the choices of $\kappa$ and $c_1$.
+    \item Determine what changes are necessary in the grid resolution and stretching factor to obtain a converged solution when the Reynolds number is increased by a factor of 10.
+    \item Discuss the problems encountered with the implementation of this model.
+\end{enumerate}
+
+The apparent origin of the turbulent boundary layer $x_{0, \text{turb}}$ was found to be at $21.3$ meters, and was obtained by linearizing the correlation: $\delta(x) = 0.375 x (Re_x)^{-1/5}$. Since $\delta = C (x - x_{0, \text{turb}})^{4/5}$, raising both sides to the power of $5/4$ results in $\delta^{5/4} = C^{5/4} (x - x_{0, \text{turb}})$, which is linear in x. Since when $x = x_{0, \text{turb}}$, $\delta(x)=0$, and $\delta^{5/4} = 0$, a linear regression was used on the downstream data to solve for the $x_{0, \text{turb}}$ at which $\delta^{5/4} = 0$. It should be noted that the data used for the linear regression was filtered using a shape factor threshold $H < 1.4$, to ensure data from the initial laminar profile was omitted. In Figure~\ref{fig:growth} below, agreement between the numerical $\delta(x)$ and the aforementioned corelation can be observed over the turbulent region.
+
+The L2 residual for $v^*$, however, seems to show sever oscilations. It is suspected that this is a result of several factors. Primarily, since $v^*$ is calculated from the continuity equation at each step, it is derived from the derivative of the velocity profile, which can amplify changes that may be smoothed out by the Crank-Nicolson scheme. Second, these differences bay result from the transition between the Reichardt and Clauser regions of the boundary layer, which suggests that these instabilities are a property of the chosen turbulence models, and not an implementation error. Nevertheless, physically intuitive results are still obtained for $u^*$ and $v^*$ at each step, the accuracy of which has been validated against theoretical corelations.
+
+The $v^*$ residual exhibits oscillations that are believed to result 
+from the discrete transition between Reichardt and Clauser regions: as the 
+boundary layer grows, the crossover point passes through successive grid 
+cells, causing step changes in $d\nu^*/d\eta$ (which jumps from its 
+Reichardt value to zero at each grid point that transitions to the Clauser 
+region). Since $v^*$ is derived from $\partial u^*/\partial x^*$ through 
+continuity, these discontinuities are amplified in the $v^*$ computation. 
+Despite these residual oscillations, the $v^*$ profiles themselves are 
+physically consistent at every station, and all results have been validated 
+against theoretical correlations.
+
+Finally, several problems with implementation of the model were encountered. First, the equation for the derivative of the effective viscocity contains a $\mathrm{sech}^2(y^+/y_a^+)$ term. For large $y^+$, the argument $y^+/y_a^+$ becomes very large, and computing $\cosh{y^+/y_a^+}$ results in overfow errors. However, $\mathrm{sech}^2(x) \to 0$ for large $x$, so line 160 in Appendix~\ref{appendix-code} resolves this by clamping the argument to a maximum of 50. Since $\mathrm{sech}^2(50) \approx 1.5 \times 10^{-43}$ is effectively zero, this logic allows the program to proceed without encountering overflow errors. Another implementation issue encountered was sever fluctuationsin the $v^*$ residual, which are addressed in the Accuracy and Stability section below.
 %---------------------------------------------------------------------------------------------------------------
 
 \end{document}

@@ -387,7 +387,8 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
     cf_store = np.zeros(n_store)                      # initialize array to store Cf coefficients
     u_tau_star_store = np.zeros(n_store)              # initialize array to store nondimensional friction velocities
     v_store = np.zeros((n_store, N))                  # initialize array to store v* profiles
-    #TEST
+    
+    # initialize residual storage
     x_res_list = []
     u_res_list = []
     v_res_list = []
@@ -432,7 +433,8 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
         # update for next step
         u_star_prev = u_star.copy()   # store current u_star before updating for next iteration
         u_star = u_star_new.copy()    # update u_star for next iteration
-        #TEST
+        
+        # calculate residuals at every step, ensuring there is a previous point to compare with 
         if u_star_prev is not None and v_star_prev_res is not None:
             u_res_list.append(np.linalg.norm(u_star - u_star_prev, ord=2) / dx_star)
             v_res_list.append(np.linalg.norm(v_star - v_star_prev_res, ord=2) / dx_star)
@@ -711,32 +713,6 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
 
     #Plot 05: L2 Residual
     plt.figure(figsize=(6, 5))
-    '''
-    u_residuals = []
-    v_residuals = [] 
-    x_res = []
-    '''
-
-    '''
-    #TEST
-    #use only uniformly spaced stored points?
-    #res_stride = max(1, params["Nx"] // 10000)
-    #dx_stride = stride * params["dx_star"]
-    for i in range(1, len(x_vals)):          # start from 1 so we can compare to previous step
-        dx_gap = x_vals[i] - x_vals[i-1]     # take difference between stored x-values
-        if dx_gap < 1e-15: continue          # skip loop if comparing data from same x-values
-        #TEST
-        #if abs(dx_gap - dx_stride) > 1e-10: continue
-
-        u_res = np.linalg.norm(u_store[i, :] - u_store[i-1,:], ord=2) / dx_gap    # normalize to step size in x between stored solutions
-        v_res = np.linalg.norm(v_store[i, :] - v_store[i-1,:], ord=2) / dx_gap
-        u_residuals.append(u_res)
-        v_residuals.append(v_res)
-        x_res.append(x_vals[i])
-    '''
-    
-    #plt.plot(x_res, u_residuals, 'o-', color='tab:blue', linewidth=1.5, markersize=2, label=r'$\|u^{n+1} - u^n\|_2 / \Delta x^*$')
-    #plt.plot(x_res, v_residuals, 'o-', color='tab:red', linewidth=1.5, markersize=2, label=r'$\|v^{n+1} - v^n\|_2 / \Delta x^*$')
     plt.plot(x_res_list, u_res_list, 'o-', color='tab:blue', linewidth=1.5, markersize=2, label=r'$\|u^*,{n+1} - u^{*,n}\|_2 / \Delta x^*$')
     plt.plot(x_res_list, v_res_list, 'o-', color='tab:red', linewidth=1.5, markersize=2, label=r'$\|v^{*,n+1} - v^{*,n}\|_2 / \Delta x^*$')
     plt.yscale('log')

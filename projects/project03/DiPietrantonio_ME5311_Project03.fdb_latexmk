@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1777259330.7978 "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/projects/project03/DiPietrantonio_ME5311_Project03.tex" "DiPietrantonio_ME5311_Project03.pdf" "DiPietrantonio_ME5311_Project03" 1777259335.38485 0
+["pdflatex"] 1777338321.92814 "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/projects/project03/DiPietrantonio_ME5311_Project03.tex" "DiPietrantonio_ME5311_Project03.pdf" "DiPietrantonio_ME5311_Project03" 1777338326.60989 0
   "BL_growth.png" 1777259057 121034 83c2372525c4cc731a04c5c35be55c18 ""
   "C:/Users/cjdip/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1774661873 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/cjdip/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tctt1000.pk" 1774661877 9492 a41a1a8c2de35ca54a6318de2bed11a4 ""
@@ -109,16 +109,16 @@
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/titlesec/titlesec.sty" 1736608268 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/tools/bm.sty" 1761901070 13389 9f718787b5d641dbc0271856c125f004 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "DiPietrantonio_ME5311_Project03.aux" 1777259335 3474 872315020e3653be2d8c0d0db790e8f0 "pdflatex"
-  "DiPietrantonio_ME5311_Project03.py" 1777259209 44221 0e7284931eea532724e7cc07e29a5ddd ""
-  "DiPietrantonio_ME5311_Project03.tex" 1777255453 14458 5f4b090c5160fd6abcdcce2351bc1a8c ""
-  "Kappa_Sensitivity.png" 1777259325 272463 cf795ce215f0b7e36f3a59e1b04a737b ""
+  "DiPietrantonio_ME5311_Project03.aux" 1777338326 3747 7fe137c354d126032804072ad4ab3ed7 "pdflatex"
+  "DiPietrantonio_ME5311_Project03.py" 1777338161 43153 df2d4330cdd2731a927a4689e564a317 ""
+  "DiPietrantonio_ME5311_Project03.tex" 1777338321 23022 706b76f8d91481a0de04aac0270eefd9 ""
+  "Kappa_Sensitivity.png" 1777324529 269053 9a9567570a0feed2730e6cf6d19c631c ""
   "LawOfTheWall.png" 1777259057 148186 e02d8a2eeeb05243aa581fc96eac6729 ""
   "SkinFrictionCoeff.png" 1777259057 99825 ce6956d992ccedc343610bcf73a93f10 ""
-  "c1_Sensitivity.png" 1777259325 257825 a0f561c0023e70f763708b1b21b1af56 ""
-  "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/projects/project03/DiPietrantonio_ME5311_Project03.tex" 1777255453 14458 5f4b090c5160fd6abcdcce2351bc1a8c ""
-  "residuals_vs_x.png" 1777259058 161018 6ab9f6d0ae9a2d41e28e2aec320ed55d ""
-  "s_Sensitivity.png" 1777259326 251239 36e9da979f908d037c58be99c8df3a26 ""
+  "c1_Sensitivity.png" 1777324529 253794 8d38fa001efc381614f80ebdffbac9b0 ""
+  "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/projects/project03/DiPietrantonio_ME5311_Project03.tex" 1777338321 23022 706b76f8d91481a0de04aac0270eefd9 ""
+  "residuals_vs_x.png" 1777324529 161959 295ea401102bb40e77494dfb4e03540e ""
+  "s_Sensitivity.png" 1777324529 244477 aabc21e4979d373643b069cb52127e2e ""
   "velocity_profiles.png" 1777259056 431191 2dfd9e8ed3575fdaa02800947ae130b8 ""
   (generated)
   "DiPietrantonio_ME5311_Project03.aux"

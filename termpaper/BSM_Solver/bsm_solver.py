@@ -12,7 +12,7 @@ This script demonstrates three approaches to pricing a European call option:
     2. Monte Carlo simulation (Lagrangian / stochastic particle method)
     3. Finite Difference (Eulerian / grid-based PDE solver)
 
-Methods 2 and 3 are the Lagrangian and Eulerian numerical approaches, mirroring the two ways to solve the PDF transport equations in CFD.
+Methods 2 and 3 are the Lagrangian and Eulerian numerical approaches.
 """
 
 import numpy as np
@@ -278,7 +278,7 @@ def plot_option_value_curve():
     ax.set_ylim(bottom=-2)
     ax.grid(True, alpha=0.3)
 
-    param_text = (f'K = ${K:.0f},  r = {r:.0%},  σ = {sigma:.0%},  T = {T:.1f} yr')
+    param_text = (fr'K = \${K:.0f},  r = {r:.0%},  $\sigma$ = {sigma:.0%},  T = {T:.1f} yr')
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=10, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
@@ -319,12 +319,12 @@ def plot_sample_paths(S0=100.0, N_show=30, N_sim=100):
 
     ax.set_xlabel('Time (years)', fontsize=12)
     ax.set_ylabel('Stock Price, S ($)', fontsize=12)
-    ax.set_title(f'Geometric Brownian Motion: {N_show} Sample Paths (S₀ = ${S0:.0f})', fontsize=15)
+    ax.set_title(fr'Geometric Brownian Motion: {N_show} Sample Paths ($S_0$ = \${S0:.0f})', fontsize=15)
     ax.legend(fontsize=12, loc='upper center', bbox_to_anchor=(0.6, 1.0))
     ax.set_xlim(0, T)
     ax.grid(True, alpha=0.3)
 
-    param_text = (f'r = {r:.0%},  σ = {sigma:.0%},  T = {T:.1f} yr')
+    param_text = (fr'r = {r:.0%},  $\sigma$ = {sigma:.0%},  T = {T:.1f} yr')
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
@@ -418,7 +418,7 @@ def plot_pdf_slices(S0=100.0, N_sim=200000):
         pdf_max = max(pdf_max, np.max(pdf_vals))
         ax.plot(S_grid, pdf_vals, color=colors[i], linewidth=2.0, label=f't = {t_val:.2f} years')
 
-    ax.axvline(S0, color='black', linestyle=':', linewidth=2.0, alpha=0.5, label=f'S₀ = ${S0:.0f}')
+    ax.axvline(S0, color='black', linestyle=':', linewidth=2.0, alpha=0.5, label=fr'$S_0$ = \${S0:.0f}')
 
     ax.set_xlabel('Stock Price, S ($)', fontsize=12)
     ax.set_ylabel('Probability Density', fontsize=12)
@@ -428,7 +428,7 @@ def plot_pdf_slices(S0=100.0, N_sim=200000):
     ax.set_ylim(0, pdf_max * 1.1)
     ax.grid(True, alpha=0.3)
 
-    param_text = (f'S₀ = ${S0:.0f}, r = {r:.0%},  σ = {sigma:.0%},  N = {N_sim:,} paths')
+    param_text = (fr'$S_0$ = \${S0:.0f}, r = {r:.0%},  $\sigma$ = {sigma:.0%},  N = {N_sim:,} paths')
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
@@ -458,12 +458,12 @@ def plot_convergance(S0=100.0):
 
     fig, ax = plt.subplots(figsize=(9, 6))
     ax.semilogx(N_range, V_estimates, 'o-', color='tab:blue', markersize=5, linewidth=1.0, label='MC Estimate')
-    ax.fill_between(N_range, V_estimates - 2*V_errors, V_estimates + 2*V_errors, alpha=0.2, color='tab:blue', label='±2σ (95% CI)')
+    ax.fill_between(N_range, V_estimates - 2*V_errors, V_estimates + 2*V_errors, alpha=0.2, color='tab:blue', label=r'$\pm 2 \sigma$ (95% CI)')
     ax.axhline(V_exact, color='tab:red', linestyle='--', linewidth=2.0, label=f'Exact (BS) = ${V_exact:.2f}')
 
     ax.set_xlabel('Number of Monte Carlo Paths, N', fontsize=12)
     ax.set_ylabel('Estimated Option Value, V ($)', fontsize=12)
-    ax.set_title(f'Monte Carlo Convergence (S₀ = ${S0:.0f})', fontsize=15)
+    ax.set_title(fr'Monte Carlo Convergence ($S_0$ = \${S0:.0f})', fontsize=15)
     ax.legend(fontsize=12)
     ax.grid(True, alpha=0.3)
 
@@ -499,7 +499,7 @@ def plot_pdf_heatmap(S0=100.0):
     S_expected = S0 * np.exp(r * t_grid)
     ax.plot(S_expected, t_grid, 'w--', linewidth=2.0, label=r'$E(S_T) = S_0 e^{rt}$')
 
-    for sign, lbl in [(1, '+1σ'), (-1, '-1σ')]:
+    for sign, lbl in [(1, r'+1$\sigma$'), (-1, r'-1$\sigma$')]:
         mu_ln      = np.log(S0) + (r - 0.5 * sigma**2) * t_grid
         sigma_ln   = sigma * np.sqrt(t_grid)
         S_bound    = np.exp(mu_ln + sign * sigma_ln)
@@ -508,7 +508,7 @@ def plot_pdf_heatmap(S0=100.0):
     ax.set_xlabel('Stock Price, S ($)', fontsize=12)
     ax.set_ylabel('Time (years)', fontsize=12)
     ax.set_title('PDF Evolution Heatmap\n' \
-                 f'(S₀ = ${S0:.0f}, r = {r:.0%}, σ = {sigma:.0%})', fontsize=15)
+                 fr'($S_0$ = \${S0:.0f}, r = {r:.0%}, $\sigma$ = {sigma:.0%})', fontsize=15)
     ax.legend(fontsize=12, loc='upper right', facecolor='black', edgecolor='white', labelcolor='white')
     fig.colorbar(pcm, ax=ax, label ='Probability Density')
     ax.set_xlim(40, 250)
@@ -525,7 +525,7 @@ def main():
     print("=" * 120)
     print("BSM Solver - Monte Carlo + Finite Difference + Analytical")
     print("=" * 120)
-    print(f'Parameters: K=${K}, r={r:.2%}, σ={sigma:.2%}, T={T} years')
+    print(fr'Parameters: K=${K}, r={r:.2%}, $\sigma$={sigma:.2%}, T={T} years')
     print(f'Monte Carlo: {N_paths:,} paths, {N_steps} time steps')
     print("=" * 120)
 

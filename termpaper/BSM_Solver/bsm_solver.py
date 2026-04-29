@@ -292,7 +292,7 @@ def plot_option_value_curve():
 # Figure 2: Sample GBM Paths
 # ----------------------------------------------------------------------
 def plot_sample_paths(S0=100.0, N_show=30, N_sim=100):
-    """"
+    """
     Show a handful of GBM trajectories to illustrate stochastic behavior.
 
     Page 323, 325, Hull (Expected Return)

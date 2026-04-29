@@ -4,30 +4,30 @@
 \contentsline {subsection}{\numberline {2.2}The Black-Scholes-Merton Equation}{2}{subsection.2.2}%
 \contentsline {section}{\numberline {3}Derivation of the Black-Scholes-Merton Equation}{3}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Stochastic Calculus and It\^{o}'s Lemma}{3}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}The Stock Price Model: Geometric Brownian Motion}{3}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Applying It\^{o}'s Lemma to the Option Value}{3}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Constructing the Hedged Portfolio}{3}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}No Arbitrage Condition}{3}{subsection.3.5}%
-\contentsline {section}{\numberline {4}The Transported PDF Method}{3}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Statistical Description of Turbulent Flows}{3}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Eulerian PDF Transport Equation}{3}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}The Generalized Langevin Model}{4}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Derivation of the PDF Transport Equation}{4}{subsection.4.4}%
-\contentsline {section}{\numberline {5}The Connection Between the BSM Equation and the Transported PDF Method}{4}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Structural Equivalence of the SDEs}{4}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Variable Mapping}{4}{subsection.5.2}%
-\contentsline {section}{\numberline {6}Solution Methods}{4}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Eulerian Methods}{4}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Lagrangian Methods}{4}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Constant vs. Variable Coefficients}{4}{subsection.6.3}%
-\contentsline {section}{\numberline {7}Computational Experiments and Results}{4}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Problem Description}{4}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Analytical Solution}{5}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Finite Difference Solver (Eulerian)}{5}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Monte Carlo SOlver (Lagrangian)}{5}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Results: Option Pricing}{5}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Results: Monte Carlo Visualization}{5}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Results: PDF Transport}{5}{subsection.7.7}%
-\contentsline {subsection}{\numberline {7.8}Results: Monte Carlo Convergence}{5}{subsection.7.8}%
-\contentsline {section}{\numberline {8}Conclusions}{5}{section.8}%
-\contentsline {section}{\numberline {A}Copy of Program Listing}{7}{appendix.A}%
+\contentsline {subsection}{\numberline {3.2}The Stock Price Model: Geometric Brownian Motion}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Applying It\^{o}'s Lemma to the Option Value}{4}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Constructing the Hedged Portfolio}{4}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}No Arbitrage Condition}{5}{subsection.3.5}%
+\contentsline {section}{\numberline {4}The Transported PDF Method}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Statistical Description of Turbulent Flows}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Eulerian PDF Transport Equation}{5}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}The Generalized Langevin Model}{5}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Derivation of the PDF Transport Equation}{5}{subsection.4.4}%
+\contentsline {section}{\numberline {5}The Connection Between the BSM Equation and the Transported PDF Method}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Structural Equivalence of the SDEs}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Variable Mapping}{5}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Solution Methods}{5}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Eulerian Methods}{5}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Lagrangian Methods}{5}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Constant vs. Variable Coefficients}{6}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Computational Experiments and Results}{6}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Problem Description}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Analytical Solution}{6}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Finite Difference Solver (Eulerian)}{6}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Monte Carlo SOlver (Lagrangian)}{6}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Results: Option Pricing}{6}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Results: Monte Carlo Visualization}{6}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Results: PDF Transport}{6}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Results: Monte Carlo Convergence}{6}{subsection.7.8}%
+\contentsline {section}{\numberline {8}Conclusions}{6}{section.8}%
+\contentsline {section}{\numberline {A}Copy of Program Listing}{8}{appendix.A}%

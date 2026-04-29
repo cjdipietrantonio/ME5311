@@ -12,7 +12,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 
-\singlespacing
+\singlespacing 
 
 \lstset{
     language=Python,
@@ -78,7 +78,7 @@ To begin the comparison of the equations and methods, a foundational understandi
 
 \subsection{Financial Derivatives and Options}
 
-In order to understand the Black-Scholes-Merton equation, a foundational understanding of financial derivatives, specifically options, is required. According to Hull, a derivative is a ''financial instrument whose value depends on (or derives from) the values of other, more basic, underlying variables''~\cite{Hull2022}. A stock option, for example, is a derivatve whose value is dependant on the price of a stock. However, different derivatives can be dependant on almost any variable, even the weather. For this paper, the primary derivatives of interest are options, which are securities that give ''the right to buy or sell an asset, subject to certain conditions, within a specified period of time''~\cite{BlackScholes1973}.
+In order to understand the Black-Scholes-Merton equation, a foundational understanding of financial derivatives, specifically options, is required. According to Hull, a derivative is a ``financial instrument whose value depends on (or derives from) the values of other, more basic, underlying variables''~\cite{Hull2022}. A stock option, for example, is a derivatve whose value is dependant on the price of a stock. However, different derivatives can be dependant on almost any variable, even the weather. For this paper, the primary derivatives of interest are options, which are securities that give ``the right to buy or sell an asset, subject to certain conditions, within a specified period of time''~\cite{BlackScholes1973}.
 
 The two major types of options are call and put options. A call option gives the holder the right, but not the obligation, to buy the underlying asset by a certain data for a certain price. A put option gives the holder the right, but not the obligation, to sell the underlying asset by a certain data for a certain price~\cite{Hull2022}. Options can also be further classified by when they can be excercised. American options can be excercised at any time up to the expiration date as specified in the contract, while European options can only be excercised on the expiration date itself~\cite{BlackScholes1973}. The price at which the asset may be bought or sold is refered to as the strike price, $K$, and the expiration date can an also be refrered to as the maturity date, $T$.
 
@@ -111,23 +111,69 @@ The use of Stochastic Calculus in the derivation of Equation~\ref{eq:bsm} is cru
 
 \subsection{Stochastic Calculus and It\^{o}'s Lemma}
 
-TBD
+GO TO SHREVE FOR DEFINITION OF STOCHASTIC CALCULUS
+
+Before completing the derivation, it is important to highlight a few concepts from Stochastic Calculus that are used in the derivation. First, it should be noted that Stochastic Calculus is a branch of mathematics built specifically to handle the derivatives and integrals of stochastic processes, which are by definition, ``an equation describing the probabilistic behavior of a stochastic variable''~\cite{Hull2022}. Furthermore, a stochastic variable can be defined as a variable ``whose future is uncertain'', or in other words, random. The first process to consider is the generalzied Wiener process:
+\begin{equation}
+    dx = adt + bdz
+\end{equation}
+Where $dz = \epsilon \sqrt{\Delta t}$ is refered to as a Wiener process, and $\epsilon$ has a standard normal distribution. Further, an It\^{o} process is a generalized Wiener process where the parameters $a$ and $b$ are functions of the underlying variable and time, and can be expressed as:
+\begin{equation}
+    dx = a(x, t)dt + b(x, t)dz
+    \label{eq:ito_process}
+\end{equation}
+In standard calculus, the chain rule can be used to find the derivative or differential of a multivariable function. However, in Stochastic Calculus, one must use It\^{o}'s Lemma to compute the stochastic differential of a function that depends on a stochastic process. Doing so accounts for the fact that second-order terms can not be ignored in the formulation of the differential. This is because the diffusion term in a stochastic process (at least the ones within the scope of this paper) depends on a Wiener Process $dz \sim \sqrt{\Delta t}$, and when squared, this term is on the order of $dt$.
+It\^{o}'s lemma shows that for a function $G(x, t)$, where $x$ is a stochastic variable following an It\^{o} process, the differential of $G$ can be expressed as
+\begin{equation}
+    dG = \frac{\partial G}{\partial x} dx + \frac{\partial G}{\partial t} dt + \frac{1}{2} \frac{\partial^2 G}{\partial x^2} b^2 dt
+    \label{eq:ito_lemma}
+\end{equation}
+Again, the key difference from ordinary calculus is the presence of the second-order term $\frac{\partial^2 G}{\partial x^2} b^2$~\cite{Hull2022}.
 
 \subsection{The Stock Price Model: Geometric Brownian Motion}
 
-TBD
+Returning to the topics of this paper, the price of a stock $S$ is modeled as a stochastic process using the following stochastic differential equation:
+\begin{equation}
+    dS = rS\, dt + \sigma S\, dW
+    \label{eq:gbm}
+\end{equation}
+where $r$ is the stocks expected rate of return(in this case, the risk-free rate), $\sigma$ is the volatility of the stock price, and $dW$ is a Wiener process (analagous to $dz$)~\cite{Hull2022, Shreve2004}. This model is commonly refered to as geometric Brownian motion. The first term, $rS\, dt$, represents the deterministic drift of the stock's price, and the second term, $\sigma S\, dW$ represents random variance.
 
 \subsection{Applying It\^{o}'s Lemma to the Option Value}
 
-TBD
+Suppose $V(S, t)$ is the value of a European call option dependant on the price of stock $S$. Given that the price of $S$ is modled using the It\^{o} process above, It\^{o}'s lemma (Equation~\ref{eq:ito_lemma}) can be applied, and the result can be rearranged using Equation~\ref{eq:gbm} to obtain:
+\begin{equation}
+    dV = \left(rS\frac{\partial V}{\partial S} + \frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)dt + \frac{\partial V}{\partial S}\sigma S\,dW
+    \label{eq:dV}
+\end{equation}
+
+Since the Wiener processes in Equatiion~\ref{eq:gbm} and Equation~\ref{eq:dV} are the same, a portfolion consisting of positions in both the option and the stock can be created such that the Wiener process is eliminated~\cite{Hull2022}.
 
 \subsection{Constructing the Hedged Portfolio}
 
-TBD
+This portfolio as created by Hull, consists of a short position (selling) in one derivative and a long posiiton (buying) in $\frac{\partial V}{\partial S}$ shares of the underlying stock.
+\begin{equation}
+    \Pi = -V + \frac{\partial V}{\partial S}
+\end{equation}
+
+The change in this portfolio over a smal time interval, $dt$, can be expressed as:
+\begin{equation}
+    d \Pi = - dV + \frac{\partial V}{\partial S}\, dS
+\end{equation}
+
+The expressions above for $dV$ (Equation~\ref{eq:dV}) and $dS$ (Equation~\ref{eq:gbm}) can be substituted into the equation above to obtain:
+\begin{equation}
+    d\Pi = \left(- \frac{\partial V}{\partial t} - \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)dt
+\end{equation}
+
+As expected, the Wiener processes cancel, eliminating randomness fromt the expression.
+
+SHOULD I MENTION CONTINUOUS HEDGING???
+
 
 \subsection{No Arbitrage Condition}
 
-TBD
+Hull states that because this expression is now free of the Wiener process, it must be riskless.
 
 % ----------------------------------------------------------------------
 % SECTION 04: THE TRANSPORTED PDF METHOD

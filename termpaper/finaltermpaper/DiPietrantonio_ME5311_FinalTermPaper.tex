@@ -90,7 +90,7 @@ Where $S_T$ is the stock price at expiry. From this payoff function one can obse
 
 \subsection{The Black-Scholes-Merton Equation}
 
-In deriving their valuation formula, Black and Scholes~\cite{BlackScholes1973} assume an idealized, frictionless market with continuous trading, no transaction costs, constant interest rates, no dividends, unrestricted short selling, and the ability to borrow or lend at the risk-free rate. The option is also assumed to be a European call option. Furthermore, an arbitrage-free market is also assumed, which means that no trading strategy can generate riskless. More explicitly, an arbitrage opportunity can be formally defined as “a (self-financing) trading strategy” that starts with zero value and terminates with a positive value. Therefore, a market is arbitrage-free if there are no such arbitrage opportunities~\cite{BaxterRennie1996}.
+In deriving their valuation formula, Black and Scholes~\cite{BlackScholes1973} assume an idealized, frictionless market with continuous trading, no transaction costs, constant interest rates, no dividends, unrestricted short selling, and the ability to borrow or lend at the risk-free rate. The option is also assumed to be a European call option. Furthermore, an arbitrage-free market is also assumed, which means that no trading strategy can generate riskless profits. More explicitly, an arbitrage opportunity can be formally defined as “a (self-financing) trading strategy” that starts with zero value and terminates with a positive value. Therefore, a market is arbitrage-free if there are no such arbitrage opportunities~\cite{BaxterRennie1996}.
 
 The assumptions outlined above lead to the derivation of the following second-order linear parabolic Partial Differential Equation (PDE) for the price $V(S,t)$ of a European call option. The same equation was independently derived by Robert C. Merton~\cite{Merton1973} through the use of stochastic calculus, and therefore is commonly referred to as the Black-Scholes-Merton PDE:
 \begin{equation}
@@ -137,7 +137,7 @@ Returning to the topics of this paper, the price of a stock $S$ is modeled as a 
     dS = rS\, dt + \sigma S\, dW
     \label{eq:gbm}
 \end{equation}
-where $r$ is the stocks expected rate of return(in this case, the risk-free rate), $\sigma$ is the volatility of the stock price, and $dW$ is a Wiener process (analagous to $dz$)~\cite{Hull2022, Shreve2004}. This model is commonly refered to as geometric Brownian motion. The first term, $rS\, dt$, represents the deterministic drift of the stock's price, and the second term, $\sigma S\, dW$ represents random variance.
+where $r$ is the stocks expected rate of return (in this case, the risk-free rate), $\sigma$ is the volatility of the stock price, and $dW$ is a Wiener process (analagous to $dz$)~\cite{Hull2022, Shreve2004}. This model is commonly refered to as geometric Brownian motion. The first term, $rS\, dt$, represents the deterministic drift of the stock's price, and the second term, $\sigma S\, dW$ represents random variance.
 
 \subsection{Applying It\^{o}'s Lemma to the Option Value}
 
@@ -153,7 +153,8 @@ Since the Wiener processes in Equatiion~\ref{eq:gbm} and Equation~\ref{eq:dV} ar
 
 This portfolio as created by Hull, consists of a short position (selling) in one derivative and a long posiiton (buying) in $\frac{\partial V}{\partial S}$ shares of the underlying stock.
 \begin{equation}
-    \Pi = -V + \frac{\partial V}{\partial S}
+    \Pi = -V + \frac{\partial V}{\partial S} S
+    \label{eq:hedged_portfolio}
 \end{equation}
 
 The change in this portfolio over a smal time interval, $dt$, can be expressed as:
@@ -164,16 +165,27 @@ The change in this portfolio over a smal time interval, $dt$, can be expressed a
 The expressions above for $dV$ (Equation~\ref{eq:dV}) and $dS$ (Equation~\ref{eq:gbm}) can be substituted into the equation above to obtain:
 \begin{equation}
     d\Pi = \left(- \frac{\partial V}{\partial t} - \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)dt
+    \label{eq:portfolio_change}
 \end{equation}
 
 As expected, the Wiener processes cancel, eliminating randomness fromt the expression.
 
-SHOULD I MENTION CONTINUOUS HEDGING???
-
-
 \subsection{No Arbitrage Condition}
 
-Hull states that because this expression is now free of the Wiener process, it must be riskless.
+Hull states that because this expression is now free of the randomness induced by the Wiener process, it must be riskless. Therefore, due to the no arbitrage assumption, the portfolio must grow with the risk free rate:
+\begin{equation}
+    d Pi = r\, \Pi\, d t
+\end{equation}
+
+Subsituting Equation~\ref{eq:hedged_portfolio} and Equation~\ref{eq:portfolio_change} then yields:
+\begin{equation}
+    \left(\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)dt = r\left(V - \frac{\partial V}{\partial S}S\right)dt
+\end{equation}
+
+Then, dividing both sides by $dt$ and rearranging yields the Black-Scholes Merton PDE exactly as seen in Equation~\ref{eq:bsm}
+\begin{equation}
+    \frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV = 0
+\end{equation}
 
 % ----------------------------------------------------------------------
 % SECTION 04: THE TRANSPORTED PDF METHOD
@@ -182,19 +194,36 @@ Hull states that because this expression is now free of the Wiener process, it m
 
 \subsection{Statistical Description of Turbulent Flows}
 
-TBD
+In \textit{Turbulent Flows}, Stephen B. Pope remarks that “in a turbulent flow, the velocity field $U(x,t)$ is random”~\cite{Pope2000}. This means that if one were to repeat the same experiment multiple times under the same set of conditions, a given event may, but need not occur, making the event inherently unpredictable. Although a random variable, such as velocity, can not be predicted, the probability of events (e.g., the velocity is less than 10 m/s) can be used to create a Probability Density Function (PDF) that characterizes the random variable. Formally, the probability of any event can be determined by the Cumulative Distribution Function, and the PDF is defined to be the derivative of the CDF. Therefore, according to Pope, a random variable such as the velocity of a turbulent fluid, is completely characterized by its PDF, which can be thought of as the probability per unit distance in the sample space ~\cite{Pope2000}.
+
 
 \subsection{Eulerian PDF Transport Equation}
 
-TBD
+The evolution of this Eulerian PDF of velocity in space and time can be represented by a transport equation derived by Pope from the Navier-Stokes equations. The result is the following Eulerian PDF transport equation:
+\begin{equation}
+    \frac{\partial f}{\partial t} + V_i \frac{\partial f}{\partial x_i} = - \frac{\partial}{\partial V_i} \left[f \left \langle \frac{DU_i}{Dt} \middle| \mathbf{V} \right \rangle \right]\
+    \label{eq:eulerian_pdf}
+\end{equation}
+
+\noindent Where $f(\mathbf{V}; \mathbf{x}, t)$ is the Eulerian PDF of velocity.
 
 \subsection{The Generalized Langevin Model}
 
-TBD
+To model the evolution of fluid particle velocities, Pope introduced the generalized Langevin model for a diffusion process. The Langevin equation was originally proposed in 1908 as a stochastic model for the velocity of a microscopic particle undergoing Brownian motion. Pope states that the equation provides a good model for the velocity of a fluid particle in turbulence~\cite{Pope2000}. The generalized Langevin model used to expresses the velocity of a fluid particle is expressed below:
+\begin{equation}
+    d\mathbf{U^*}(t) = \mathbf{a}(\mathbf{U^*}(t), \mathbf{X^*}(t), t)\,dt + b(\mathbf{X^*}(t), t)\,d\mathbf{W}
+    \label{eq:langevin}
+\end{equation}
+where $\mathbf{a}(\mathbf{U^*}, \mathbf{X^*}, t)$ is the drift coefficient, $b(\mathbf{X^*}, t)$ is the diffusion coefficient, and $d\mathbf{W}$ is a vector-valued Wiener process~\cite{Pope2000}. The drift coefficient effectively describes the direction and speed of the system if no randomness were present, and the diffusion coefficient determines the intensity of the random fluctuations induced by the vector-valued Wiener process~\cite{Pope2000}. According to Pope, the Langevin equation is the simplest stochastic Lagrangian model for a turbulent fluid particle. It should also be noted that The stochastic process $U^*(t)$ is refered to in the text as the Ornstein-Uhlenbeck (OU) process, and although its PDF is already known to evolve by the Fokker-Planck equation~\cite{Pope2000}, Pope still highlights this transition.
 
 \subsection{Derivation of the PDF Transport Equation}
 
-TBD
+From the Langevin SDE (Equation~\ref{eq:langevin}), It\^{o} calculus can be used to derive the Fokker-Planck equation, which is also known as the forward Kolmogorov equation, and describes the transport of the joint Lagrangian PDF of the particle velocity and position, $ f^{*}_L(\mathbf{V}, \mathbf{x}; t)$. The Fokker-Planck equation can then be divided by the marginal position PDF, $f^{*}_X (\mathbf{x}, t)$ to obtain an expression for the evolution of the conditional PDF of the particle velocity, $f^*\left(\mathbf{V} \middle| \mathbf{x}, t\right)$~\cite{Pope2000}.
+\begin{equation}
+    \frac{\partial f^*}{\partial t} + V_i \frac{\partial f^*}{\partial x_i} = - \frac{\partial}{\partial V_i} \left[f^* a_i(\mathbf{V}, \mathbf{x}, t)\right] + \frac{1}{2} b{\left(\mathbf{x}, t\right)}^2 \frac{\partial^2 f^*}{\partial V_i \partial V_i}
+    \label{eq:lagrangian_pdf}
+\end{equation}
+Pope notes that the conditional PDF, $f^*$ is the corresponding representation of the Eulerian PDF of velocity, $f$, for a particle system. Therefore, Equation~\ref{eq:lagrangian_pdf} can be thought of as the Lagrangian equvalent of the Eulerian PDF transport equation, Equation~\ref{eq:eulerian_pdf}. As a result, Equation~\ref{eq:lagrangian_pdf} is commonly refered to as the Lagrangian PDF transport equation, and again, it describes the transport of the conditional PDF of the particle velocity~\cite{Pope2000}.
 
 % ----------------------------------------------------------------------
 % SECTION 05: THE CONNECTION
@@ -203,11 +232,37 @@ TBD
 
 \subsection{Structural Equivalence of the SDEs}
 
-TBD
+Both the Black-Scholes-Merton and Lagrangian PDF Transport equations are both derived from stochastic differential equations of the same drift plus diffusion form. Comparing the geometric Brownian motion SDE from which the BSM equation is derived (Equation~\ref{eq:gbm}):
+\begin{equation*}
+    dS = rS\,dt + \sigma S\,dW
+\end{equation*}
+with the generalized Langevin SDE (Equation~\ref{eq:langevin}) from which the Lagrangian PDF Transport equation is derived:
+\begin{equation*}
+    d\mathbf{U^*}(t) = \mathbf{a}(\mathbf{U^*}, \mathbf{X^*}, t)\,dt + b(\mathbf{X^*}, t)\,d\mathbf{W}
+\end{equation*}
+reveals that both equations have the same mathematical structure: deterministic drift term multiiplied by $dt$, plus a diffusion term (random fluctuations) driven by a Wiener process, $dW$. Furthermore, both equations can be derived using the same mathematical tools, Stochastic Calculus and It\^{o}'s lemma.
+
 
 \subsection{Variable Mapping}
 
-TBD
+In short, the structural equivalece between the two mathematical frameworks can be summarized through the direct variable mapping:
+\begin{table}[H]
+    \centering
+    \caption{Variable mapping between Black-Scholes-Merton and PDF Transport frameworks}  
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Quantitative Finance (GBM / BSM)} & \textbf{CFD (Langevin / PDF Transport)} \\
+        \midrule
+        Stock price, $S$ & Particle velocity, $\mathbf{U^*}$ \\
+        Risk-free rate, $r$ & Drift Coefficient, $\mathbf{a}$ \\
+        Volatility, $\sigma$ & Diffusion coefficient, $b$ \\
+        Wiener process, $dW$ & Vector-valued Wiener process, $d\mathbf{W}$ \\
+        Monte Carlo simulation & Langrangian particle method \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:mapping}
+\end{table}
+However, a few key distinctions should be made. The most prominent is that the BSM equation computes the conditional expectation of a future payoff given the current state, then discounts it back to give the current option price. Wheras, the Lagrangian Transported PDF equation describes how the PDF of velocity evolves over time. In other words, for BSM, the PDF of the stock price is used at expiry (or any future time) to find the expected payoff at that time, then the result is discount it back to its value at a past date. Another different to highlight is that the drift and diffusion coefficients ($r$ and $\sigma$) are constant for the Brownian Motion SDE, while the coefficients in the Langevin SDE ($\mathbf{a}$ and $b$) depend on the particle's velocity and position at a given time. This difference has a significant impact on the availale solution methods and validation techniques, which is discussed in Section~\ref{sec:solution_methods}. Finally, it should be mentioned that the stochastic differential equation for the velocity of a particle uses a vector-valued Wiener process, because the stochastic perturbations act in multiple spatial directions (typically three-dimensional space). Nevertheless, through observing the variable mapping above, a significant connection between not just the two frameworks, but their solution methods as well can be observed.
 
 % ----------------------------------------------------------------------
 % SECTION 06: SOLUTION METHODS
@@ -215,7 +270,7 @@ TBD
 \section{Solution Methods}
 \label{sec:solution_methods}
 
-TBD
+Both the Black-Scholes-Merton and Lagrangian Transported PDF equations can be solved using Eulerian (grid-based) and Lagrangian (particle-based) methods.
 
 \subsection{Eulerian Methods}
 
@@ -232,9 +287,13 @@ TBD
 % ----------------------------------------------------------------------
 % SECTION 07: COMPUTATIONAL EXPERIMENTS AND RESULTS
 % ----------------------------------------------------------------------
+
 \section{Computational Experiments and Results}
 
-TBD
+MAIN PLOT ON OWN FIG \\
+MC PATHS \& PDF TRANSPORT (SIDE BY SIDE) \\
+FRONT \& TOP VIEWS OF PDF TRANSPORT (SIDE BY SIDE) \\
+MC ERROR ON OWN FIG
 
 \subsection{Problem Description}
 
@@ -248,7 +307,7 @@ TBD
 
 TBD
 
-\subsection{Monte Carlo SOlver (Lagrangian)}
+\subsection{Monte Carlo Solver (Lagrangian)}
 
 TBD
 
@@ -279,6 +338,7 @@ TBD
 % ----------------------------------------------------------------------
 % REFERENCES
 % ----------------------------------------------------------------------
+\nocite{*}
 \newpage
 \bibliographystyle{IEEEtran}
 \bibliography{sources}

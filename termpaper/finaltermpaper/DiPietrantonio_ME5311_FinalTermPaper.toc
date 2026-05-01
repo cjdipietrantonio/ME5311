@@ -25,9 +25,9 @@
 \contentsline {subsection}{\numberline {7.2}Analytical Solution}{8}{subsection.7.2}%
 \contentsline {subsection}{\numberline {7.3}Finite Difference Solver (Eulerian)}{8}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Monte Carlo Solver (Lagrangian)}{8}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Results: Option Pricing}{8}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Results: Monte Carlo Visualization}{9}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Results: PDF Transport}{9}{subsection.7.7}%
-\contentsline {subsection}{\numberline {7.8}Results: Monte Carlo Convergence}{9}{subsection.7.8}%
-\contentsline {section}{\numberline {8}Conclusions}{9}{section.8}%
-\contentsline {section}{\numberline {A}Copy of Program Listing}{11}{appendix.A}%
+\contentsline {subsection}{\numberline {7.5}Results: Option Pricing}{9}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Results: Monte Carlo Visualization and PDF Transport}{9}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Results: PDF Transport Continued}{9}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Results: Monte Carlo Convergence}{10}{subsection.7.8}%
+\contentsline {section}{\numberline {8}Conclusions}{10}{section.8}%
+\contentsline {section}{\numberline {A}Copy of Program Listing}{12}{appendix.A}%

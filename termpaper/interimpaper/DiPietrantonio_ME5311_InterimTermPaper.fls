@@ -1,6 +1,6 @@
-PWD c:\Users\cjdip\Desktop\Home\School\GraduateSchool\UConn\Spring2026\ME5311\GitHub\ME5311\termpaper\latex
+PWD c:\Users\cjdip\Desktop\Home\School\GraduateSchool\UConn\Spring2026\ME5311\GitHub\ME5311\termpaper\interimpaper
 INPUT C:\Users\cjdip\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\cjdip\Desktop\Home\School\GraduateSchool\UConn\Spring2026\ME5311\GitHub\ME5311\termpaper\latex\DiPietrantonio_ME5311_InterimTermPaper.tex
+INPUT c:\Users\cjdip\Desktop\Home\School\GraduateSchool\UConn\Spring2026\ME5311\GitHub\ME5311\termpaper\interimpaper\DiPietrantonio_ME5311_InterimTermPaper.tex
 OUTPUT DiPietrantonio_ME5311_InterimTermPaper.log
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\tex\latex\ieeetran\IEEEtran.cls
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\tex\latex\ieeetran\IEEEtran.cls

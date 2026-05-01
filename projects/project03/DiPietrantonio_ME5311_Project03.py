@@ -1,13 +1,14 @@
 # Christian DiPietrantonio
 # ME 5311: Computational Methods to Viscous Flows
 # Computer Assignment 03
-# 04/10/2026
+# 04/30/2026
 
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.linalg import solve_banded
+import sys
 
 # ------------------------------------------------------------------
 # 1. SET PARAMETERS
@@ -111,6 +112,7 @@ def compute_nu(params, u_star, J_star):
 
     u_tau_star_sq = du_deta_wall / (Re_delta * J_star[0])
 
+    # check for negative u_tau_star_sq
     """
     if u_tau_star_sq < 0:
         u_tau_star_sq = 1e-15
@@ -141,7 +143,7 @@ def compute_nu(params, u_star, J_star):
         u_above = u_star[idx_994]                     # u* just above 0.994
         y_below = y_star_arr[idx_994 - 1]             # corresponding y*
         y_above = y_star_arr[idx_994]                 # corresponding y*
-        if abs(u_above - u_below) > 1e-15:
+        if abs(u_above - u_below) > 1e-15:            # prevent divide by zero
             frac = (0.994 - u_below)/(u_above - u_below)
             y_star_994 = y_below + frac * (y_above - y_below)     # linearly interpolate for y* at u* = 0.994
         else:
@@ -165,7 +167,8 @@ def compute_nu(params, u_star, J_star):
 
     #dnu_star_eff_deta[0] = 0.0                    # not needed
 
-    return nu_star_eff, dnu_star_eff_deta, u_tau_star, y_star_994
+    crossover_idx = np.argmax(clauser_mask)  # first grid point where Clauser is active
+    return nu_star_eff, dnu_star_eff_deta, u_tau_star, y_star_994, crossover_idx
 
 # ------------------------------------------------------------------
 # 5.  COMPUTE COEFFICIENTS A_j and B_j
@@ -369,7 +372,7 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
     v_star = np.zeros(N)
     u_star_prev = None                                # No previous step initially -> use 1st order du/dx in compute_v_star
 
-    stride = max(1, Nx // 20000)                       # store solution every stride steps
+    stride = max(1, Nx // 20000)                      # store solution every stride steps
 
     store_indices = set(range(0, Nx + 1, stride))     # indices/step numbers at which to store solution
 
@@ -393,6 +396,8 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
     u_res_list = []
     v_res_list = []
     v_star_prev_res = None
+    cross_idx_list = []
+    cross_x_list = []
 
     store_map = {idx: pos for pos, idx in enumerate(store_indices)} # map from step number to storage index
 
@@ -404,7 +409,7 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
         v_store[pos, :] = v_star.copy()
 
         # compute initial turbulent quantities
-        nu_star_eff_0, dnu_star_eff_0, u_tau_star_0, y_star_994_0 = compute_nu(params, u_star, J_star)
+        nu_star_eff_0, dnu_star_eff_0, u_tau_star_0, y_star_994_0, _ = compute_nu(params, u_star, J_star)
         delta_store[pos]      = y_star_994_0          # BL Thickness
         cf_store[pos]         = 2 * u_tau_star_0**2   # Skin Friction Coefficient
         u_tau_star_store[pos] = u_tau_star_0          # Nondimensional Friction Velocity
@@ -412,13 +417,22 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
     # --- march in x ---
     for n_step in range(Nx):
         # compute effective viscosity from current velocity profile
-        nu_star_eff_n, dnu_star_eff_n, u_tau_star_n, y_star_994_n = compute_nu(params, u_star, J_star)
+        nu_star_eff_n, dnu_star_eff_n, u_tau_star_n, y_star_994_n, cross_idx = compute_nu(params, u_star, J_star)
+        cross_idx_list.append(cross_idx)
+        cross_x_list.append(x0_star + (n_step + 1) * dx_star)
 
         # compute coefficients A_j and B_j
         A_j, B_j = compute_coefficients(params, v_star, J_star, J_star_eta, nu_star_eff_n, dnu_star_eff_n)
 
         # build and solve the linear system for u* at the next x-step
         ab, rhs_vec, l_diag, u_diag = build_system(params, u_star, A_j, B_j)
+        
+        # check main diagonal for negative values
+        main_diag = ab[2, :]  # main diagonal is at row index u_diag = 2
+        if np.any(main_diag < 0):
+            neg_indices = np.where(main_diag < 0)[0]
+            print(f"  WARNING step {n_step+1}: negative main diagonal at indices {neg_indices}")
+
         u_interior = solve_banded((l_diag, u_diag), ab, rhs_vec)
 
         # assemble the new velocity profile
@@ -449,7 +463,7 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
             v_store[pos, :] = v_star.copy()         # store v* profile for current step
 
             # compute turbulent quantities at this step
-            nu_star_eff_s, dnu_star_eff_s, u_tau_star_s, y_star_994_s = compute_nu(params, u_star, J_star)
+            nu_star_eff_s, dnu_star_eff_s, u_tau_star_s, y_star_994_s, _ = compute_nu(params, u_star, J_star)
             delta_store[pos]      = y_star_994_s          # BL Thickness
             cf_store[pos]         = 2 * u_tau_star_s**2   # Skin Friction Coefficient
             u_tau_star_store[pos] = u_tau_star_s          # Nondimensional Friction Velocity
@@ -459,7 +473,7 @@ def step_in_x(params, u_star_0, J_star, J_star_eta):
             # print(f" Step {step}/{Nx}, x* = {x0_star + (step) * dx_star:.2f}")
             print(f" Step {n_step+1}/{Nx}, x* = {x0_star + (n_step+1) * dx_star:.2f}, u*_tau = {u_tau_star_n:.6f}, delta_99/delta = {y_star_994_n:.4f}")
 
-    return x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, stride, x_res_list, u_res_list, v_res_list
+    return x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, stride, x_res_list, u_res_list, v_res_list, cross_x_list, cross_idx_list
 
 # ------------------------------------------------------------------
 # 9.  COMPUTE BLASIUS SOLUTION
@@ -525,7 +539,7 @@ def compute_thicknesses(u_star, J_star, deta):
 # 11.  POST-PROCESSING
 # ------------------------------------------------------------------
 
-def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, eta, y_phys, y_star, J_star, stride, x_res_list, u_res_list, v_res_list):
+def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, eta, y_phys, y_star, J_star, stride, x_res_list, u_res_list, v_res_list, cross_x_list, cross_idx_list):
     N          = params["N"]
     deta       = params["deta"]
     nu         = params["nu_inf"]
@@ -600,7 +614,7 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
     delta_994 = delta_store * delta # meters
     x_phys = x_vals * L
 
-    n_data = len(x_vals)
+    #n_data = len(x_vals)
     #i_start = n_data // 3     # skip initial laminar profile
 
     # calculate shape factors at each output location
@@ -614,7 +628,7 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
     if len(turbulent_indices) > 0:
         i_start = turbulent_indices[0]
     else:
-        i_start = 0     # if no turbulent indices, just start at begining of the data
+        i_start = 0     # if no turbulent indices, just start at beginning of the data
 
     turb_mask = (delta_994[i_start:] > 0) & (x_phys[i_start:] > 0)    # create boolean mask for turbulent indices (taking only values with positive x and delta values)
 
@@ -654,7 +668,7 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
     print('     ...Saved BL_growth.png')
 
     # ----- Plot 03: Skin Friction Coefficient -----
-    # Emperical turbulent flat-plate correlation: cf = 0.059 * Rex^{-1/5} or 0.027 * Rex^{-1/7} 
+    # Empirical turbulent flat-plate correlation: cf = 0.059 * Rex^{-1/5} or 0.027 * Rex^{-1/7} 
     cf_corr            = np.zeros_like(x_vals)
     #cf_corr[plot_mask] = 0.059 * Re_x_corr[plot_mask]**(-1.0/5.0)     # only use correlation for turbulent data
     cf_corr[plot_mask] = 0.027 * Re_x_corr[plot_mask]**(-1.0/7.0)     # only use correlation for turbulent data
@@ -698,7 +712,7 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
         y_plus_local = y_star * Re_delta * u_tau_star 
         u_plus_local = u_num / u_tau_star
 
-        plt.semilogx(y_plus_local[1:], u_plus_local[1:], '-', color=colors[i % len(colors)], linewidth=1.5, label=fr'$x^*={x_now:.2f}$')     #avoid y*=0
+        plt.semilogx(y_plus_local[1:], u_plus_local[1:], '-', color=colors[i % len(colors)], linewidth=1.5, label=fr'$x^*={x_now:.2f}$')     #avoid y*=0 for log
 
     plt.xlabel(r'$y^+$', fontsize=14)
     plt.ylabel(r'$u^+$', fontsize=14)
@@ -723,7 +737,32 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
     plt.legend(fontsize=10, loc='best')
     plt.tight_layout()
     plt.savefig('residuals_vs_x.png', dpi=300, bbox_inches='tight')
-    print("...Saved residuals_vs_x.png")
+    print("     ...Saved residuals_vs_x.png")
+
+    # Plot 06: L2 Residuals with crossover overlay
+    fig, ax1 = plt.subplots(figsize=(12, 5))
+
+    # left y-axis: residuals
+    ax1.plot(x_res_list, u_res_list, '-', color='tab:blue', linewidth=0.5, label=r'$u^*$ residual')
+    ax1.plot(x_res_list, v_res_list, '-', color='tab:red', linewidth=0.5, label=r'$v^*$ residual')
+    ax1.set_yscale('log')
+    ax1.set_xlabel(r'$x^*$', fontsize=14)
+    ax1.set_ylabel('$L_2$ Residuals', fontsize=14, color='black')
+    ax1.tick_params(labelsize=12)
+    ax1.grid(True, linestyle='--', alpha=0.3)
+    ax1.legend(fontsize=9, loc='lower left', bbox_to_anchor=(0, 1.02))
+
+    # right y-axis: crossover index
+    ax2 = ax1.twinx()
+    ax2.plot(cross_x_list, cross_idx_list, '-', color='tab:green', linewidth=1.0, label='Crossover index')
+    ax2.set_ylabel('Clauser crossover grid index', fontsize=14)
+    ax2.tick_params(axis='y', labelsize=12)
+    ax2.legend(fontsize=9, loc='lower right', bbox_to_anchor=(1, 1.02))
+
+    plt.title(f"s = {params['s']}", fontsize=15, loc='center')
+    plt.tight_layout()
+    plt.savefig('residuals_crossover.png', dpi=300, bbox_inches='tight')
+    print("     ...Saved residuals_crossover.png")
 
     #Table: Thicknesses
     print("\n" + "="*120)
@@ -746,7 +785,7 @@ def post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_
 
 def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
     """
-    Run the solver with different values of cappa and c1 to asses sensitivity of the turbulence model.
+    Run the solver with different values of kappa and c1 to assess sensitivity of the turbulence model.
     """
 
     kappa_vals = [0.35, 0.41, 0.45]          # test values for von Karman constant
@@ -766,7 +805,7 @@ def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
         params["kappa"] = kap
         params["c1"]    = 0.001
         print(f'\n     Running kappa = {kap}...')
-        x_v, u_s, v_s, d_s, cf_s, ut_s, stride, _, _, _ = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
+        x_v, u_s, v_s, d_s, cf_s, ut_s, _, _, _, _, _, _ = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
         results_kappa[kap] = (x_v, d_s, cf_s)
 
     # --- Sensitivity to c1 (hold kappa = 0.41 fixed) ---
@@ -778,7 +817,7 @@ def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
         params["kappa"]     = 0.41
         params["c1"]        = c1v
         print(f'\n     Running c1 = {c1v}...')
-        x_v, u_s, v_s, d_s, cf_s, ut_s, stride, _, _, _ = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
+        x_v, u_s, v_s, d_s, cf_s, ut_s, _, _, _, _, _, _ = step_in_x(params, u_star_0.copy(), J_star, J_star_eta)
         results_c1[c1v] = (x_v, d_s, cf_s)
 
     # --- Sensitivity to s (hold kappa = 0.41 and c1 = 0.001 fixed) ---
@@ -793,7 +832,7 @@ def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
         print(f'\n     Running s = {s_val}...')
         _, _, y_star_s, J_star_s, J_star_eta_s = compute_grid(params)
         u_star_0_s = compute_initial_condition(params, y_star_s)
-        x_v, u_s, v_s, d_s, cf_s, ut_s, stride, _, _, _ = step_in_x(params, u_star_0_s, J_star_s, J_star_eta_s)
+        x_v, u_s, v_s, d_s, cf_s, ut_s, _, _, _, _, _, _ = step_in_x(params, u_star_0_s.copy(), J_star_s, J_star_eta_s)
         results_s[s_val] = (x_v, d_s, cf_s)
 
     # --- Plot sensitivity to kappa ---
@@ -870,6 +909,7 @@ def run_sensitivity(base_params, u_star_0, J_star, J_star_eta, y_star):
 # 12.  MAIN DRIVER
 # ------------------------------------------------------------------
 def main():
+    run_sensitivity_flag = '--no-sensitivity' not in sys.argv
     print("=" * 120)
     print( "     ME 5311 - Project 03: Turbulent Boundary Layer Solver")
     print( "     Reichardt (inner region) + Clauser Model (outer region)")
@@ -887,6 +927,7 @@ def main():
     print(f"     c1        = {params['c1']}")
     print(f"     ya+       = {params['ya_plus']}")
     print(f"     Nx        = {params['Nx']},     dx* = {params['dx_star']:6f}")
+    print(f"     s         = {params['s']}")
 
     # --- Step 2: Compute stretched grid ---
     print("\n[2] Computing stretched grid...")
@@ -897,8 +938,8 @@ def main():
     #check if first point is within viscous sublayer
     u_star_0      = compute_initial_condition(params, y_star)
     du_deta_0     = (4.0 * u_star_0[1] - u_star_0[2]) / (2.0 * params["deta"])
-    #u_tau_init    = np.sqrt(max(du_deta_0 / (params['Re_delta'] * J_star[0])), 1e-15)
-    u_tau_init    = np.sqrt(du_deta_0 / (params["Re_delta"] * J_star[0]))
+    u_tau_init    = np.sqrt(max(du_deta_0 / (params['Re_delta'] * J_star[0]), 1e-15))     #prevent negative numbers
+    #u_tau_init    = np.sqrt(du_deta_0 / (params["Re_delta"] * J_star[0]))
     y_plus_init   = y_star[1] * params["Re_delta"] * u_tau_init
     print(f"     Initial u_tau* ~ {u_tau_init:.6f},     y+_1 ~ {y_plus_init:.3f}")
     
@@ -908,15 +949,18 @@ def main():
 
     # --- Step 4: March in x ---
     print("\n[4] Marching in x...")
-    x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, stride, x_res_list, u_res_list, v_res_list  = step_in_x(params, u_star_0, J_star, J_star_eta)
+    x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, stride, x_res_list, u_res_list, v_res_list, cross_x_list, cross_idx_list = step_in_x(params, u_star_0, J_star, J_star_eta)
 
     # --- Step 5: Post Process ---
     print("\n[5] Post-processing...")
-    x0_turb, x0_turb_star = post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, eta, y_phys, y_star, J_star, stride, x_res_list, u_res_list, v_res_list)
+    x0_turb, x0_turb_star = post_process(params, x_vals, u_store, v_store, delta_store, cf_store, u_tau_star_store, eta, y_phys, y_star, J_star, stride, x_res_list, u_res_list, v_res_list, cross_x_list, cross_idx_list)
 
     # --- Step 6: Sensitivity Study ---
-    print("\n[6] Running sensitivity study ...")
-    run_sensitivity(params, u_star_0, J_star, J_star_eta, y_star)
+    if run_sensitivity_flag:
+        print("\n[6] Running sensitivity study ...")
+        run_sensitivity(params, u_star_0, J_star, J_star_eta, y_star)
+    else:
+        print("\n[6] Skipping sensitivity study due to --no-sensitivity flag)")
 
     print("\n" + "=" * 120)
     print("\nDone!")
@@ -924,4 +968,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
 

@@ -282,7 +282,7 @@ def plot_option_value_curve():
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=10, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure01_option_value_curve.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure01_option_value_curve.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure01_option_value_curve.png')
 
@@ -328,7 +328,7 @@ def plot_sample_paths(S0=100.0, N_show=30, N_sim=100):
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure02_GMB_sample_paths.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure02_GMB_sample_paths.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure02_GMB_sample_paths.png')
 
@@ -377,7 +377,7 @@ def plot_pdf_evolution(S0=100.0, N_sim=200000):
     fig.colorbar(surf, ax=ax, shrink=0.45, aspect=15, label ='Probability Density', pad=0.10)
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure03_3d_pdf_evolution.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure03_3d_pdf_evolution.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure03_3d_pdf_evolution.png')
     return t_snapshots, S_bin_centers, PDF_mc
@@ -432,7 +432,7 @@ def plot_pdf_slices(S0=100.0, N_sim=200000):
     ax.text(0.02, 0.97, param_text, transform=ax.transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', edgecolor='black', pad=0.5, alpha=0.8))
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure04_2D_pdf_slices.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure04_2D_pdf_slices.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure04_2D_pdf_slices.png')
 
@@ -468,7 +468,7 @@ def plot_convergance(S0=100.0):
     ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure05_MC_convergence.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure05_MC_convergence.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure05_MC_convergence.png')
 
@@ -480,6 +480,7 @@ def plot_pdf_heatmap(S0=100.0):
     2D Heatmap: x = stock price, y = time, color = probability density.
 
     Page 84, Montgomerey, Runger, Hubele (Mean and Varince in Price Space)
+    Page 315, Hull (Mean and Variance in log space)
     """
 
     print("Computing PDF heatmap...")
@@ -514,7 +515,7 @@ def plot_pdf_heatmap(S0=100.0):
     ax.set_xlim(40, 250)
 
     fig.tight_layout()
-    fig.savefig(f'{out_dir}/figure06_pdf_heatmap.png', dpi=200)
+    fig.savefig(f'{out_dir}/figure06_pdf_heatmap.png', dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f'     Saved:  {out_dir}/figure06_pdf_heatmap.png')
 

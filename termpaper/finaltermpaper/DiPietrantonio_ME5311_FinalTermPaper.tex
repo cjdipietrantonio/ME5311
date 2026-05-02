@@ -1,4 +1,5 @@
-\documentclass[12pt, onecolumn]{article}
+%\documentclass[12pt, onecolumn]{article}
+\documentclass[12pt, onecolumn, journal]{IEEEtran}
 
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath}
@@ -262,7 +263,7 @@ In short, the structural equivalece between the two mathematical frameworks can 
     \end{tabular}
     \label{tab:mapping}
 \end{table}
-However, a few key distinctions should be made. The most prominent is that the BSM equation computes the conditional expectation of a future payoff given the current state, then discounts it back to give the current option price. Wheras, the Lagrangian Transported PDF equation describes how the PDF of velocity evolves over time. In other words, for BSM, the PDF of the stock price is used at expiry (or any future time) to find the expected payoff at that time, then the result is discount it back to its value at a past date. Another different to highlight is that the drift and diffusion coefficients ($r$ and $\sigma$) are constant for the Brownian Motion SDE, while the coefficients in the Langevin SDE ($\mathbf{a}$ and $b$) depend on the particle's velocity and position at a given time. This difference has a significant impact on the availale solution methods and validation techniques, which is discussed in Section~\ref{sec:solution_methods}. Finally, it should be mentioned that the stochastic differential equation for the velocity of a particle uses a vector-valued Wiener process, because the stochastic perturbations act in multiple spatial directions (typically three-dimensional space). Nevertheless, through observing the variable mapping above, a significant connection between not just the two frameworks, but their solution methods as well can be observed.
+However, a few key distinctions should be made. The most prominent is that the BSM equation computes the conditional expectation of a future payoff given the current state, then discounts it back to give the current option price. Wheras, the Lagrangian Transported PDF equation describes how the PDF of velocity evolves over time. In other words, for BSM, the PDF of the stock price is used at expiry (or any future time) to find the expected payoff at that time, then the result is discount it back to its value at a past date. Another difference to highlight is that the drift and diffusion coefficients ($r$ and $\sigma$) are constant for the Brownian Motion SDE, while the coefficients in the Langevin SDE ($\mathbf{a}$ and $b$) depend on the particle's velocity and position at a given time. This difference has a significant impact on the availale solution methods and validation techniques, which is discussed in Section~\ref{sec:solution_methods}. Finally, it should be mentioned that the stochastic differential equation for the velocity of a particle uses a vector-valued Wiener process, because the stochastic perturbations act in multiple spatial directions (typically three-dimensional space). Nevertheless, through observing the variable mapping above, a significant connection can be made between not just the two frameworks, but also their solution methods.
 
 % ----------------------------------------------------------------------
 % SECTION 06: SOLUTION METHODS
@@ -274,15 +275,31 @@ Both the Black-Scholes-Merton and Lagrangian Transported PDF equations can be so
 
 \subsection{Eulerian Methods}
 
-TBD
+The Eulerian approach solves the partial differential equation directly on a fixed grid. While Eulerian methods are efficient in low dimensions, and provide a deterministic solution, they scale poorly to high dimensions. For example, in order to simulate the price of a portfolio of two stocks, if each stocks price axis was discritized using 500 points, the solver would require 250,000 grid locations to cover all possible combinations. The same cocnept can be applied to the transported PDF method for high-dimensional PDFs. This is the exact reason, when refering to the velocity-frequency joint PDF, that Pope states is not feasible, computationally, to represent the joint PDF accurately through a discretization of the seven-dimensional $V$-$\theta$-$x$ space, as is required in finite-difference, finite-volume, and finite-element methods~\cite{Pope2000}. Therefore, the transported PDF equations are modeled using langragian methods.
 
 \subsection{Lagrangian Methods}
+The Lagrangian approach simulates random particle trajectories using the respective underlying stochastic differential equation, then uses statistics to obtain the desired information from the resulting data. The Lagrangian approach most typically used to solve the Black-Scholes-Merton equation is the Monte Carlo method. For thsi, many random stock price paths are simulated using the Geometric Brownian Motion SDE. The payoff is computed for each path, and the option value is estimated as the average payoff discounted back to the current time. For the transported PDF method, the Lagrangian particle method is used. In this case, the velocities of many fluid particles in a turbulent flow are simulated using the Langevin SDE, and the resuting PDF and its transport is constructed from the particle statistics~\cite{Pope2000}.
 
-TBD
+The primary advantage of Lagrangian methods is that they scale well with high dimensions. Adding additional state variables (e.g., more stocks or velocity compnents) just means more longer vectors are simulated. In this case, the computational cost grows linearly with added dimensions, whereas with Eulerian methods it grows exponentially. Furthermore, since each path is independent from one another, Lagrangian methods are more compatible with GPUs and High Performance Clusters, which can parallelize computations across many processing units. The primary limitation of Lagrangian models is statistical noise. The standard error of a Motne Carlo analysis is proportional to $1/\sqrt{N}$, where $N$ is the number of simulated paths~\cite{Hull2022}. Therefore, to cut the error in half, four times as many paths are needed, and to reduce the error by a factor of ten, 100 times as many paths are required
 
 \subsection{Constant vs. Variable Coefficients}
+As mentioned previously, the coefficients of the Geometric Brownian Motion and Langevin SDEs have a significant impact on the available solution methods. The constant coefficients of the Geometric Brownian Motion SDE allow for It\^{o}'s lemma to be aplied to $\ln(S)$, which shows that $\ln(S)$ follows a generalized Wiener process, and further that $\ln(S_T)$ is normally distributed. This is significant for two reasons. First, because $\ln(S_t)$ is normally distributed, then $S_t$ must be lognormally distributed. Therefore, the standard equation for the probability density function of a lognormal variable can be used~\cite{Montgomery2011}.
+\begin{equation}
+    f(S_t | t) = \frac{1}{S_t \omega \sqrt{2 \pi}} \exp\left[{- \frac{(\ln(S_t) - \theta)^2}{2 \omega^2}}\right]
+\end{equation}
 
-TBD
+Where $\theta(t) = \ln(S_0) + (r - \sigma^2/2)t$ and $\omega(t) = \sigma \sqrt{t}$ are the mean and standard deviation of $\ln(S)$ respectively, and $t$ is the current time step. Second, it allows for an exact step formula for the SDE to be obtained~\cite{Hull2022}.
+\begin{equation}
+    S(t + \Delta t) = S(t) \cdot \exp\left[\left(r - \frac{1}{2}\sigma^2\right)\Delta t + \sigma\epsilon\sqrt{\Delta t}\right]
+    \label{eq:exact_step}
+\end{equation}
+
+Where $\epsilon$ is a random sample from a normal distribution with a mean of 0 and a standard deviation of 1.0. For the Langevin SDE, because the coefficients $\mathbf{a}$ and $b$ depend on the particle's velocity and position at a given time, the Langevin SDE must be discritized directly:
+\begin{equation}
+    \mathbf{U^*}(t + \Delta t) - \mathbf{U^*}(t) = \mathbf{a}(\mathbf{U^*}, \mathbf{X^*}, t)\,\Delta t + b(\mathbf{X^*}, t)\,\Delta \mathbf{W}
+\end{equation}
+
+Furthermore, the standard equation for the probability density function of a lognormal variable can no longer be utilized, and the PDF must be constructed using simulated particle data.
 
 % ----------------------------------------------------------------------
 % SECTION 07: COMPUTATIONAL EXPERIMENTS AND RESULTS
@@ -320,34 +337,85 @@ TBD
     \label{fig:option_value}
 \end{figure}
 
-\subsection{Results: Monte Carlo Visualization and PDF Transport}
+%\subsection{Results: Monte Carlo Visualization and PDF Transport}
+\subsection{Results: Monte Carlo Visualization}
 
 \begin{figure}[H]
     \centering
-    \begin{minipage}[t]{0.45\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure02_GMB_sample_paths.png}
-        \caption{Geometric Brownian Motion: 30 sample paths with mean and expected return.}
-        \label{fig:loglaw}
-    \end{minipage}
-    \hspace{8pt}
-    \begin{minipage}[t]{0.45\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure03_3d_pdf_evolution.png}
-        \caption{PDF evolution from Monte Carlo particle data}
-        \label{fig:residuals}
-    \end{minipage}
+    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure02_GMB_sample_paths.png}
+    \caption{Geometric Brownian Motion: 30 sample paths with mean and expected return.}
+    \label{fig:sample_paths}
 \end{figure}
 
-\subsection{Results: PDF Transport Continued}
+% \begin{figure}[H]
+%     \centering
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \vspace{0pt}
+%         \centering
+%         \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure02_GMB_sample_paths.png}
+%         \caption{Geometric Brownian Motion: 30 sample paths with mean and expected return.}
+%         \label{fig:sample_paths}
+%     \end{minipage}
+%     \hspace{8pt}
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \vspace{0pt}
+%         \centering
+%         \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure03_3d_pdf_evolution.png}
+%         \caption{PDF evolution from Monte Carlo particle data}
+%         \label{fig:pdf_3d}
+%     \end{minipage}
+% \end{figure}
 
-TBD
+\subsection{Results: PDF Transport}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure03_3d_pdf_evolution.png}
+    \caption{PDF evolution from Monte Carlo particle data}
+    \label{fig:pdf_3d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure04_2D_pdf_slices.png}
+    \caption{PDF Evolution: Monte Carlo histograms vs. log-normal PDF.}
+    \label{fig:pdf_slices}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure06_pdf_heatmap.png}
+    \caption{PDF evolution heatmap with drift path and $\pm 1\sigma$ bounds.}
+    \label{fig:pdf_heatmap}
+\end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \vspace{0pt}
+%         \centering
+%         \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure04_2D_pdf_slices.png}
+%         \caption{PDF Evolution: Monte Carlo histograms vs. log-normal PDF.}
+%         \label{fig:pdf_slices}
+%     \end{minipage}
+%     \hspace{8pt}
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \vspace{0pt}
+%         \centering
+%         \includegraphics[width=\textwidth]{../BSM_Solver/figures/figure06_pdf_heatmap.png}
+%         \caption{PDF evolution heatmap with drift path and $\pm 1\sigma$ bounds.}
+%         \label{fig:pdf_heatmap}
+%     \end{minipage}
+% \end{figure}
 
 \subsection{Results: Monte Carlo Convergence}
 
-TBD
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure05_MC_convergence.png}
+    \caption{Monte Carlo convergence: estimated option value vs. number of simulated paths.}
+    \label{fig:mc_convergence}
+\end{figure}
 
 % ----------------------------------------------------------------------
 % SECTION 08: CONCLUSIONS

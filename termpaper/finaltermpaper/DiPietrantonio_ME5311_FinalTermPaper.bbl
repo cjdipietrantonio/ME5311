@@ -25,6 +25,10 @@
 J.~C. Hull, \emph{Options, Futures, and Other Derivatives}, 10th~ed.\hskip 1em
   plus 0.5em minus 0.4em\relax Boston, MA: Pearson, 2022.
 
+\bibitem{BlackScholes1973}
+F.~Black and M.~Scholes, ``The pricing of options and corporate liabilities,''
+  \emph{Journal of Political Economy}, vol.~81, no.~3, pp. 637--654, 1973.
+
 \bibitem{Merton1973}
 R.~C. Merton, ``Theory of rational option pricing,'' \emph{Bell Journal of
   Economics and Management Science}, vol.~4, no.~1, pp. 141--183, 1973.
@@ -32,10 +36,6 @@ R.~C. Merton, ``Theory of rational option pricing,'' \emph{Bell Journal of
 \bibitem{Pope2000}
 S.~B. Pope, \emph{Turbulent Flows}.\hskip 1em plus 0.5em minus 0.4em\relax
   Cambridge: Cambridge University Press, 2000.
-
-\bibitem{BlackScholes1973}
-F.~Black and M.~Scholes, ``The pricing of options and corporate liabilities,''
-  \emph{Journal of Political Economy}, vol.~81, no.~3, pp. 637--654, 1973.
 
 \bibitem{BaxterRennie1996}
 M.~Baxter and A.~Rennie, \emph{Financial Calculus: An Introduction to

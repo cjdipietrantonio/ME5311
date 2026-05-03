@@ -65,10 +65,9 @@
 % SECTION 01: INTRODUCTION
 % ----------------------------------------------------------------------
 \section{Introduction}
-
 This paper explores the mathematical connection between the Black-Scholes-Merton (BSM) equation for pricing financial derivatives and the transported probability density function (PDF) method employed in computational fluid dynamics (CFD). The central argument is that these two equations, from completely different fields, are derived from stochastic differential equations (SDEs) of the same dift plus diffusion form, and can be solved using the same classes of numerical methods. The BSM equation is derived from the geometric brownian motion SDE, while the transported PDF equation is derived from the generalized Langevin SDE for the velocity of a fluid particle in turbulence. Even though the two equations were developed in separate disciplines, these two equations share a mathematical connection through stochastic calculus.
 
-The paper begins by establishing the financial definitions and background necessary to the understanding of the further sections. Following this, the BSM equatin is derived following the approach outlined by Hull~\cite{Hull2022} and Merton~\cite{Merton1973}. The transporded PDF method is then introduced following the work of Pope~\cite{Pope2000}, and the connection between it and the BSM equation is illustrated through comparison of the underlyinbg SDEs and variable mapping. The paper then outlines the solution methods for the BSM and the transported PDF equation, which include grid-based {Eulerian} and particle-based {Lagrangian} approaches. To demonstrate these solution methods, a Python program was developed that implements three different solution methods for pricing a European call option. The first solution method is simply the analytical solution to the BSM equation. Following this, the solver implements an implicit finite difference scheme (Eulerian approach), and a Monte Carlo simulation (Lagrangian approach). The results are compared to one another, and also used to visualize the transport of the probability density function of the stock price. The latter of which can be directly related to the transported PDF of a the velocity of a fluid particle as obtained by the transported PDF method. The benefits and pitfalls of the different solution approaches are also explored. Finally, the paper concludes by discussing the real-world applications of this cross-disciplinary connection, and how advancements in either quantitative finance or computational fluid dynamics have potential to be utilized by the other.
+The paper begins by establishing the financial definitions and background necessary to the understanding of the further sections. Following this, the BSM equatin is derived following the approach outlined by Hull~\cite{Hull2022} , Black and Scholes~\cite{BlackScholes1973}, and Merton~\cite{Merton1973}. The transporded PDF method is then introduced following the work of Pope~\cite{Pope2000}, and the connection between it and the BSM equation is illustrated through comparison of the underlyinbg SDEs and variable mapping. The paper then outlines the solution methods for the BSM and the transported PDF equation, which include grid-based {Eulerian} and particle-based {Lagrangian} approaches. To demonstrate these solution methods, a Python program was developed that implements three different solution methods for pricing a European call option. The first solution method is simply the analytical solution to the BSM equation. Following this, the solver implements an implicit finite difference scheme (Eulerian approach), and a Monte Carlo simulation (Lagrangian approach). The results are compared to one another, and also used to visualize the transport of the probability density function of the stock price. The latter of which can be directly related to the transported PDF of a the velocity of a fluid particle as obtained by the transported PDF method. The benefits and pitfalls of the different solution approaches are also explored. Finally, the paper concludes by discussing the real-world applications of this cross-disciplinary connection, and how advancements in either quantitative finance or computational fluid dynamics have potential to be utilized by the other.
 
 To begin the comparison of the equations and methods, a foundational understanding of the Black-Scholes-Merton equation is necessary.~\cite{Hull2022}
 
@@ -78,7 +77,6 @@ To begin the comparison of the equations and methods, a foundational understandi
 \section{Financial Derivatives and the Black-Scholes-Merton Equation}
 
 \subsection{Financial Derivatives and Options}
-
 In order to understand the Black-Scholes-Merton equation, a foundational understanding of financial derivatives, specifically options, is required. According to Hull, a derivative is a ``financial instrument whose value depends on (or derives from) the values of other, more basic, underlying variables''~\cite{Hull2022}. A stock option, for example, is a derivatve whose value is dependant on the price of a stock. However, different derivatives can be dependant on almost any variable, even the weather. For this paper, the primary derivatives of interest are options, which are securities that give ``the right to buy or sell an asset, subject to certain conditions, within a specified period of time''~\cite{BlackScholes1973}.
 
 The two major types of options are call and put options. A call option gives the holder the right, but not the obligation, to buy the underlying asset by a certain data for a certain price. A put option gives the holder the right, but not the obligation, to sell the underlying asset by a certain data for a certain price~\cite{Hull2022}. Options can also be further classified by when they can be excercised. American options can be excercised at any time up to the expiration date as specified in the contract, while European options can only be excercised on the expiration date itself~\cite{BlackScholes1973}. The price at which the asset may be bought or sold is refered to as the strike price, $K$, and the expiration date can an also be refrered to as the maturity date, $T$.
@@ -90,10 +88,9 @@ For the remainder of this paper, the focus will be on European call options. The
 Where $S_T$ is the stock price at expiry. From this payoff function one can observe that, if the stock price exceeds the strike price at expiry, the holder profits. However, if the stock price at expiry is below the strike price, the option expires worthless, as the holder is not obligated to execute the option. In this latter scenario, the holder only loses what they paid for the option. The Black-Scholes-Merton equation aims to determine a price for the contract, before its value is known at expiry.
 
 \subsection{The Black-Scholes-Merton Equation}
-
 In deriving their valuation formula, Black and Scholes~\cite{BlackScholes1973} assume an idealized, frictionless market with continuous trading, no transaction costs, constant interest rates, no dividends, unrestricted short selling, and the ability to borrow or lend at the risk-free rate. The option is also assumed to be a European call option. Furthermore, an arbitrage-free market is also assumed, which means that no trading strategy can generate riskless profits. More explicitly, an arbitrage opportunity can be formally defined as “a (self-financing) trading strategy” that starts with zero value and terminates with a positive value. Therefore, a market is arbitrage-free if there are no such arbitrage opportunities~\cite{BaxterRennie1996}.
 
-The assumptions outlined above lead to the derivation of the following second-order linear parabolic Partial Differential Equation (PDE) for the price $V(S,t)$ of a European call option. The same equation was independently derived by Robert C. Merton~\cite{Merton1973} through the use of stochastic calculus, and therefore is commonly referred to as the Black-Scholes-Merton PDE:
+The assumptions outlined above lead to the derivation of the following second-order linear parabolic Partial Differential Equation (PDE) for the price $V(S,t)$ of a European call option. The same equation was independently derived by Robert C. Merton~\cite{Merton1973}. Black, Scholes, and Merton all used stochastic calculus to obtain the equation. Nevertheless, the equation below is commonly referred to as the Black-Scholes-Merton PDE:
 \begin{equation}
     \frac{\partial V}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + rS \frac{\partial V}{\partial S} - rV = 0
     \label{eq:bsm}
@@ -108,12 +105,9 @@ It should also be noted that the structure of Equation~\ref{eq:bsm} can be recog
 % ----------------------------------------------------------------------
 \section{Derivation of the Black-Scholes-Merton Equation}
 
-The use of Stochastic Calculus in the derivation of Equation~\ref{eq:bsm} is crucial to the argument of this paper. Therefore, this section will walk through such derivation as done so by Hull~\cite{Hull2022} and Merton~\cite{Merton1973}.
+The use of Stochastic Calculus in the derivation of Equation~\ref{eq:bsm} is crucial to the argument of this paper. Therefore, this section will walk through such derivation as done so by Hull~\cite{Hull2022}, Black and Scholes~\cite{BlackScholes1973}, and Merton~\cite{Merton1973}.
 
 \subsection{Stochastic Calculus and It\^{o}'s Lemma}
-
-GO TO SHREVE FOR DEFINITION OF STOCHASTIC CALCULUS
-
 Before completing the derivation, it is important to highlight a few concepts from Stochastic Calculus that are used in the derivation. First, it should be noted that Stochastic Calculus is a branch of mathematics built specifically to handle the derivatives and integrals of stochastic processes, which are by definition, ``an equation describing the probabilistic behavior of a stochastic variable''~\cite{Hull2022}. Furthermore, a stochastic variable can be defined as a variable ``whose future is uncertain'', or in other words, random. The first process to consider is the generalzied Wiener process:
 \begin{equation}
     dx = adt + bdz
@@ -132,16 +126,14 @@ It\^{o}'s lemma shows that for a function $G(x, t)$, where $x$ is a stochastic v
 Again, the key difference from ordinary calculus is the presence of the second-order term $\frac{\partial^2 G}{\partial x^2} b^2$~\cite{Hull2022}.
 
 \subsection{The Stock Price Model: Geometric Brownian Motion}
-
 Returning to the topics of this paper, the price of a stock $S$ is modeled as a stochastic process using the following stochastic differential equation:
 \begin{equation}
-    dS = rS\, dt + \sigma S\, dW
+    dS = \mu S\, dt + \sigma S\, dW
     \label{eq:gbm}
 \end{equation}
-where $r$ is the stocks expected rate of return (in this case, the risk-free rate), $\sigma$ is the volatility of the stock price, and $dW$ is a Wiener process (analagous to $dz$)~\cite{Hull2022, Shreve2004}. This model is commonly refered to as geometric Brownian motion. The first term, $rS\, dt$, represents the deterministic drift of the stock's price, and the second term, $\sigma S\, dW$ represents random variance.
+where $\mu$ is the stocks expected rate of return (under risk-neutral valuation, $\mu = r$, the risk-free rate), $\sigma$ is the volatility of the stock price, and $dW$ is a Wiener process (analagous to $dz$)~\cite{Hull2022, Shreve2004}. This model is commonly refered to as geometric Brownian motion. The first term, $rS\, dt$, represents the deterministic drift of the stock's price, and the second term, $\sigma S\, dW$ represents random variance.
 
 \subsection{Applying It\^{o}'s Lemma to the Option Value}
-
 Suppose $V(S, t)$ is the value of a European call option dependant on the price of stock $S$. Given that the price of $S$ is modled using the It\^{o} process above, It\^{o}'s lemma (Equation~\ref{eq:ito_lemma}) can be applied, and the result can be rearranged using Equation~\ref{eq:gbm} to obtain:
 \begin{equation}
     dV = \left(rS\frac{\partial V}{\partial S} + \frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)dt + \frac{\partial V}{\partial S}\sigma S\,dW
@@ -151,7 +143,6 @@ Suppose $V(S, t)$ is the value of a European call option dependant on the price 
 Since the Wiener processes in Equatiion~\ref{eq:gbm} and Equation~\ref{eq:dV} are the same, a portfolion consisting of positions in both the option and the stock can be created such that the Wiener process is eliminated~\cite{Hull2022}.
 
 \subsection{Constructing the Hedged Portfolio}
-
 This portfolio as created by Hull, consists of a short position (selling) in one derivative and a long posiiton (buying) in $\frac{\partial V}{\partial S}$ shares of the underlying stock.
 \begin{equation}
     \Pi = -V + \frac{\partial V}{\partial S} S
@@ -172,10 +163,9 @@ The expressions above for $dV$ (Equation~\ref{eq:dV}) and $dS$ (Equation~\ref{eq
 As expected, the Wiener processes cancel, eliminating randomness fromt the expression.
 
 \subsection{No Arbitrage Condition}
-
 Hull states that because this expression is now free of the randomness induced by the Wiener process, it must be riskless. Therefore, due to the no arbitrage assumption, the portfolio must grow with the risk free rate:
 \begin{equation}
-    d Pi = r\, \Pi\, d t
+    d \Pi = r\, \Pi\, d t
 \end{equation}
 
 Subsituting Equation~\ref{eq:hedged_portfolio} and Equation~\ref{eq:portfolio_change} then yields:
@@ -194,12 +184,10 @@ Then, dividing both sides by $dt$ and rearranging yields the Black-Scholes Merto
 \section{The Transported PDF Method}
 
 \subsection{Statistical Description of Turbulent Flows}
-
 In \textit{Turbulent Flows}, Stephen B. Pope remarks that “in a turbulent flow, the velocity field $U(x,t)$ is random”~\cite{Pope2000}. This means that if one were to repeat the same experiment multiple times under the same set of conditions, a given event may, but need not occur, making the event inherently unpredictable. Although a random variable, such as velocity, can not be predicted, the probability of events (e.g., the velocity is less than 10 m/s) can be used to create a Probability Density Function (PDF) that characterizes the random variable. Formally, the probability of any event can be determined by the Cumulative Distribution Function, and the PDF is defined to be the derivative of the CDF. Therefore, according to Pope, a random variable such as the velocity of a turbulent fluid, is completely characterized by its PDF, which can be thought of as the probability per unit distance in the sample space ~\cite{Pope2000}.
 
 
 \subsection{Eulerian PDF Transport Equation}
-
 The evolution of this Eulerian PDF of velocity in space and time can be represented by a transport equation derived by Pope from the Navier-Stokes equations. The result is the following Eulerian PDF transport equation:
 \begin{equation}
     \frac{\partial f}{\partial t} + V_i \frac{\partial f}{\partial x_i} = - \frac{\partial}{\partial V_i} \left[f \left \langle \frac{DU_i}{Dt} \middle| \mathbf{V} \right \rangle \right]\
@@ -209,7 +197,6 @@ The evolution of this Eulerian PDF of velocity in space and time can be represen
 \noindent Where $f(\mathbf{V}; \mathbf{x}, t)$ is the Eulerian PDF of velocity.
 
 \subsection{The Generalized Langevin Model}
-
 To model the evolution of fluid particle velocities, Pope introduced the generalized Langevin model for a diffusion process. The Langevin equation was originally proposed in 1908 as a stochastic model for the velocity of a microscopic particle undergoing Brownian motion. Pope states that the equation provides a good model for the velocity of a fluid particle in turbulence~\cite{Pope2000}. The generalized Langevin model used to expresses the velocity of a fluid particle is expressed below:
 \begin{equation}
     d\mathbf{U^*}(t) = \mathbf{a}(\mathbf{U^*}(t), \mathbf{X^*}(t), t)\,dt + b(\mathbf{X^*}(t), t)\,d\mathbf{W}
@@ -218,7 +205,6 @@ To model the evolution of fluid particle velocities, Pope introduced the general
 where $\mathbf{a}(\mathbf{U^*}, \mathbf{X^*}, t)$ is the drift coefficient, $b(\mathbf{X^*}, t)$ is the diffusion coefficient, and $d\mathbf{W}$ is a vector-valued Wiener process~\cite{Pope2000}. The drift coefficient effectively describes the direction and speed of the system if no randomness were present, and the diffusion coefficient determines the intensity of the random fluctuations induced by the vector-valued Wiener process~\cite{Pope2000}. According to Pope, the Langevin equation is the simplest stochastic Lagrangian model for a turbulent fluid particle. It should also be noted that The stochastic process $U^*(t)$ is refered to in the text as the Ornstein-Uhlenbeck (OU) process, and although its PDF is already known to evolve by the Fokker-Planck equation~\cite{Pope2000}, Pope still highlights this transition.
 
 \subsection{Derivation of the PDF Transport Equation}
-
 From the Langevin SDE (Equation~\ref{eq:langevin}), It\^{o} calculus can be used to derive the Fokker-Planck equation, which is also known as the forward Kolmogorov equation, and describes the transport of the joint Lagrangian PDF of the particle velocity and position, $ f^{*}_L(\mathbf{V}, \mathbf{x}; t)$. The Fokker-Planck equation can then be divided by the marginal position PDF, $f^{*}_X (\mathbf{x}, t)$ to obtain an expression for the evolution of the conditional PDF of the particle velocity, $f^*\left(\mathbf{V} \middle| \mathbf{x}, t\right)$~\cite{Pope2000}.
 \begin{equation}
     \frac{\partial f^*}{\partial t} + V_i \frac{\partial f^*}{\partial x_i} = - \frac{\partial}{\partial V_i} \left[f^* a_i(\mathbf{V}, \mathbf{x}, t)\right] + \frac{1}{2} b{\left(\mathbf{x}, t\right)}^2 \frac{\partial^2 f^*}{\partial V_i \partial V_i}
@@ -232,7 +218,6 @@ Pope notes that the conditional PDF, $f^*$ is the corresponding representation o
 \section{The Connection Between the BSM Equation and the Transported PDF Method}
 
 \subsection{Structural Equivalence of the SDEs}
-
 Both the Black-Scholes-Merton and Lagrangian PDF Transport equations are both derived from stochastic differential equations of the same drift plus diffusion form. Comparing the geometric Brownian motion SDE from which the BSM equation is derived (Equation~\ref{eq:gbm}):
 \begin{equation*}
     dS = rS\,dt + \sigma S\,dW
@@ -245,7 +230,6 @@ reveals that both equations have the same mathematical structure: deterministic 
 
 
 \subsection{Variable Mapping}
-
 In short, the structural equivalece between the two mathematical frameworks can be summarized through the direct variable mapping:
 \begin{table}[H]
     \centering
@@ -274,7 +258,6 @@ However, a few key distinctions should be made. The most prominent is that the B
 Both the Black-Scholes-Merton and Lagrangian Transported PDF equations can be solved using Eulerian (grid-based) and Lagrangian (particle-based) methods.
 
 \subsection{Eulerian Methods}
-
 The Eulerian approach solves the partial differential equation directly on a fixed grid. While Eulerian methods are efficient in low dimensions, and provide a deterministic solution, they scale poorly to high dimensions. For example, in order to simulate the price of a portfolio of two stocks, if each stocks price axis was discritized using 500 points, the solver would require 250,000 grid locations to cover all possible combinations. The same cocnept can be applied to the transported PDF method for high-dimensional PDFs. This is the exact reason, when refering to the velocity-frequency joint PDF, that Pope states is not feasible, computationally, to represent the joint PDF accurately through a discretization of the seven-dimensional $V$-$\theta$-$x$ space, as is required in finite-difference, finite-volume, and finite-element methods~\cite{Pope2000}. Therefore, the transported PDF equations are modeled using langragian methods.
 
 \subsection{Lagrangian Methods}
@@ -286,6 +269,7 @@ The primary advantage of Lagrangian methods is that they scale well with high di
 As mentioned previously, the coefficients of the Geometric Brownian Motion and Langevin SDEs have a significant impact on the available solution methods. The constant coefficients of the Geometric Brownian Motion SDE allow for It\^{o}'s lemma to be aplied to $\ln(S)$, which shows that $\ln(S)$ follows a generalized Wiener process, and further that $\ln(S_T)$ is normally distributed. This is significant for two reasons. First, because $\ln(S_t)$ is normally distributed, then $S_t$ must be lognormally distributed. Therefore, the standard equation for the probability density function of a lognormal variable can be used~\cite{Montgomery2011}.
 \begin{equation}
     f(S_t | t) = \frac{1}{S_t \omega \sqrt{2 \pi}} \exp\left[{- \frac{(\ln(S_t) - \theta)^2}{2 \omega^2}}\right]
+    \label{eq:analytical_logpdf}
 \end{equation}
 
 Where $\theta(t) = \ln(S_0) + (r - \sigma^2/2)t$ and $\omega(t) = \sigma \sqrt{t}$ are the mean and standard deviation of $\ln(S)$ respectively, and $t$ is the current time step. Second, it allows for an exact step formula for the SDE to be obtained~\cite{Hull2022}.
@@ -306,43 +290,73 @@ Furthermore, the standard equation for the probability density function of a log
 % ----------------------------------------------------------------------
 
 \section{Computational Experiments and Results}
-
-MAIN PLOT ON OWN FIG \\
-MC PATHS \& PDF TRANSPORT (SIDE BY SIDE) \\
-FRONT \& TOP VIEWS OF PDF TRANSPORT (SIDE BY SIDE) \\
-MC ERROR ON OWN FIG
+To further demonstrate the connection between the BSM equation and the transported PDF method, and to explore the Eulerian and Lagrangian solution methods, a Python script was developed that utilizes three methods for the BSM equation.   
 
 \subsection{Problem Description}
-
-TBD
+The script using the followg parameters for all implented solution methods:
+\begin{table}[H]
+    \centering
+    \caption{Parameters used for European call option pricing.}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
+        \midrule
+        Strike price & $K$ & \$100 \\
+        Risk-free rate & $r$ & 5\% \\
+        Volatility & $\sigma$ & 20\% \\
+        Time to expiry & $T$ & 1 year \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \subsection{Analytical Solution}
+The analytical solution to the Black-Scholes formula for a European call option is~\cite{BlackScholes1973}:
+\begin{equation}
+    V = S\,N((d_1) - Ke^{-rT}\,N(d_2))
+\end{equation}
 
-TBD
+where $N$ is the standard normal cumulative distrobution function and:
+\begin{equation}
+    d_1 = \frac{\ln(S/K) + (r + \frac{1}{2}\sigma^2)(T-t)}{\sigma\sqrt{T-t}}, \qquad d_2 = \frac{\ln(S/K) + (r - \frac{1}{2}\sigma^2)(T-t)}{\sigma\sqrt{T-t}}
+\end{equation}
+
+where $t$ is the current time. This formula provides the exact solution and can be used to validate the other numerical methods outlined in this paper.
 
 \subsection{Finite Difference Solver (Eulerian)}
+The BSM PDE (Equation~\ref{eq:bsm}) was discritized using an implicit finite diference scheme. The stock price axis was discretized into a uniform grid with 500 intervals from $S = \$0$ to $S_{\max} = \$500$, and time was discritized into 5000 steps marching backwards from $t = T$ to $t = 0$. Second order central difference stencils were used for the first and second spatial derivatves, and a forward difference was used for the temporal term. 
 
-TBD
+After substituting the stencils above into the PDE, and by writing $S_j$ as $\Delta S$, a trigiagonal system of equations is obtained for each time step. This tridiagonal system has the general form of:
+\begin{equation}
+    a_j V_{j-1}^i + b_j V_j^i + c_j V_{j+1}^i = V_j^{i+1}
+\end{equation}
+where the coefficients $a_j$, $b_j$, and $c_j$ are expressed as:
+\begin{equation}
+    a_j = \frac{\Delta t}{2}\left(rj - \sigma^2 j^2\right), \quad b_j = 1 + \Delta t\left(\sigma^2 j^2 + r\right), \quad c_j = -\frac{\Delta t}{2}\left(\sigma^2 j^2 + rj\right)
+\end{equation}
+
+It should be noted, that since this scheme marches backawards in time, the spatial terms are evaluated at the unknown time step ($i$), therefore this scheme is implicit and unconditionally stable. The terminal condition is the payoff function $V_j^N = \max(j\Delta S - K, 0)$, the boundary condition at the bottom bound of the stock price axis is ($V(0, t) = 0$), and the boundary condition at the top bound of the stock price axis is $V(S_{max}, t) = S_{\max} - Ke^{-r(T-t)}$. For this example, with $S_{max} = \$500$, the strike price $K = \$100$ is roughly 8 standard deviations below the mean of the stock price distribution in log space. Since the probability of this event (the stock price dropping below the strike price) is essentially zero, it is assumed that the option will be exercised at expiry, and the boundary condition $V(S_{max}, t) = S_{\max} - Ke^{-r(T-t)}$ is valid. The tridiagonal system was solved at eachtime step using a banded solver, produycing the option value at each grid point for all time steps.
 
 \subsection{Monte Carlo Solver (Lagrangian)}
-
-TBD
+The Monte Carlo simulation was implemented using the exact step formula for the Geometric Brownian motion SDE (Equation~\ref{eq:exact_step}). 200,000 random paths were simulated to the final time $T$ for 80 stock prices between \$50 and \$200. The value of the option at $t = 0$ can then be obtained using the risk-neautral valuation formula, by discounting the expected (average) payoff at maturity back to the current time step at the risk-free rate~\cite{Hull2022}.
+\begin{equation}
+    V = e^{-rT}\,\hat{E}\left[\max(S_T - K, 0)\right]
+\end{equation}  
 
 \subsection{Results: Option Pricing}
-
+Figure~\ref{fig:option_value} shows the option value $V$  as a function of the current stock price $S$ for all three solution methods. The analytical Black-Scholes formula (solid line), the finite difference solver (req squares), and the Monte Carlo simulation (blue circles with error bars) all produce identical results, reinforcing the argument that Eulerian and Lagrangian solution methods produce consistant, accurate results.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure01_option_value_curve.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure01_option_value_curve.png}
     \caption{European call option value vs.\ stock price: comparison of analytical, eulerian, and lagrangian methods}
     \label{fig:option_value}
 \end{figure}
 
 %\subsection{Results: Monte Carlo Visualization and PDF Transport}
 \subsection{Results: Monte Carlo Visualization}
-
+To visualize the stochastic nature of the Monte Carlo simulation, Figure~\ref{fig:sample_paths} shows 30 individual stock price paths sampled from 100 simulated paths, all starting at $S_0 = \$100$. The difussion of the paths over time demonstrates the effect of volatility. The bold blue line represents the mean of the 100 simulated paths, and the black dashed line represents the theoretircal expected stock price, $E(S_t) = S_0 e^{rt}$~\cite{Hull2022}. As the number of simulated paths increases (and with this the accuracy of the Monte Carlo simulation), the mean converges to this theoretical value.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure02_GMB_sample_paths.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure02_GMB_sample_paths.png}
     \caption{Geometric Brownian Motion: 30 sample paths with mean and expected return.}
     \label{fig:sample_paths}
 \end{figure}
@@ -367,24 +381,30 @@ TBD
 % \end{figure}
 
 \subsection{Results: PDF Transport}
+\label{subsec:pdf_transport}
 
+The data from the Monte Carlo simulation was then used to construct the probability density function of the stock price at each time step. This is the step that reinforces the mapping between Monte Carlo simulations and Lagrangian particle methods. For a turbulent flow, particle paths would be simualted using the Langevin SDE, their velocities (conditioned on position and time) would be recorded at each time step, and the PDF surface would be constructed from the statistics. 
+
+Figure~\ref{fig:pdf_3d} shows the 3D PDF evolution surface for s tock with initial price $S_0 = \$100$. The surface was constructed entirely from Monte Caro particle data, as 200,000 simulated paths were used to create a histogram at selected time steps. The PDF starts as a sharp spike near the initial stock price, then shifts and spreads over time due to drift and diffusion.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure03_3d_pdf_evolution.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure03_3d_pdf_evolution.png}
     \caption{PDF evolution from Monte Carlo particle data}
     \label{fig:pdf_3d}
 \end{figure}
 
+Figure~\ref{fig:pdf_slices} provides a clearer view of the drift and diffusion of the PDF over time. It also further demonstrates the accuracy of the Monte Carlo simulation by comparing its results to the analytical expression for the probability density function of a lognormal variable (Equation~\ref{eq:analytical_logpdf}'). The shaded bars are the PDFs constructed from the Monte Carlo data plotted as histograms, and the solid curves are the analytical lognormal PDFs. Over time, the volatility spreads the distribution of possible stock prices (diffusion), and the drift shifts it to the right (advection). For a turbulent flow, drift can be thought of as where the average velocity trends, and diffusion as the effect of turbulence randomizing the velocity around the mean. 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure04_2D_pdf_slices.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure04_2D_pdf_slices.png}
     \caption{PDF Evolution: Monte Carlo histograms vs. log-normal PDF.}
     \label{fig:pdf_slices}
 \end{figure}
 
+Figure~\ref{fig:pdf_heatmap} shows a top-down heatmap view of the PDF evolution, with the expected stock price $E(S_t) = S_0 e^{rt}$ (white dashed line) and the $\pm 1 \sigma$ bounds (white dotted lines) overlaid. The drift of the PDF is clearly visible, aligning with the expected stock price, which can also be thought as the deterministic dorwth of the stock in the absence of volatility.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure06_pdf_heatmap.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure06_pdf_heatmap.png}
     \caption{PDF evolution heatmap with drift path and $\pm 1\sigma$ bounds.}
     \label{fig:pdf_heatmap}
 \end{figure}
@@ -409,10 +429,10 @@ TBD
 % \end{figure}
 
 \subsection{Results: Monte Carlo Convergence}
-
+Finally, Figure~\ref{fig:mc_convergence} demonstrates the convergance behavior of the Monte Carlo method. The standard error of the estimate produced by the simulation is expressed as $\omega/\sqrt(N)$~\cite{Hull2022}. Where $\omega$ is the standard deviation of the discounted payoffs, and $N$ is the number of simulated paths. With 100 paths, the estimate is noisy because each path has a greater weight. However, by 1,000,000 paths, the estimate approaches the exact value of obtained using the Black-Scholes formula. As mentioned in Section~\ref{sec:solution_methods}, this slow convergance rate is a major limitation of Lagrancien approches.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{../BSM_Solver/figures/figure05_MC_convergence.png}
+    \includegraphics[width=0.75\textwidth]{../BSM_Solver/figures/figure05_MC_convergence.png}
     \caption{Monte Carlo convergence: estimated option value vs. number of simulated paths.}
     \label{fig:mc_convergence}
 \end{figure}
@@ -421,9 +441,18 @@ TBD
 % SECTION 08: CONCLUSIONS
 % ----------------------------------------------------------------------
 \section{Conclusions}
+The contents of this paper and the results of the computational experimants have demonstrated the mathematical connection between the Black-Scholes-Merton equation for pricing financial derivatives, and the transported probability density function method used in computational fluid dynamics. From the material presented in this paper, several conclusions can be drawn.
 
-TBD
+First, the BSM PDE and the Fokker-Plank equation (forward Kolmogorov) are both derived from SDEs of the same drift-diffusion form, establishing a direct mathematical connection between financial derivative pricing and the transported PDF method in CFD.
 
+Second, both Eulerian (finite difference) and Lagrangian (Monte Carlo) methods produce results consistant with not ony eachother, but also analytical solutions. This was validated by the agreement between the numerical results obtained through the experimental Eulerian and Lagrangian solvers andthe exact values obtained using the analytical Black-Scholes pricing formula. 
+
+Third, Monte Carlo particle simulations can reproduce results consistent with analytical probability desnity functions, as demonstrated in Section~\ref{subsec:pdf_transport} and Figure~\ref{fig:pdf_slices}. This is an extremely important conclusion in the case of the transported PDF method, where no analytical probability density function exits.
+
+
+Fourth, in the case of the Black-Scholes-Merton equation, an analytical solution exists for the Geometric Brownian Motion SDE of a stock price which implies that a stocks price at a future time (given its initial price) is lognormally distributed. As a result, the analytical expression for the probabillity densitiy function of a lognormal random variable can be used to obtain the PDF. Therefore, the BSM equation can be used to validate Lagrangian particle methods, because the PDFs generated from the particle methods can be compared with those obtained analytically, as demonstrated with the reslts of the Monte Carlo experiment discussed in this paper.
+
+Finally, advancements in fincncial modeling and computational fluid dynamics are mutually beneficial. The shared mathematical framework illustrated in this paper means that numerical methods, variance reduction techniques, and other solution strategies developed in thefields of quantatative finance and computational fluid dynamics can possibly be utlilized or even directly applied to problems in the other.
 
 % ----------------------------------------------------------------------
 % REFERENCES

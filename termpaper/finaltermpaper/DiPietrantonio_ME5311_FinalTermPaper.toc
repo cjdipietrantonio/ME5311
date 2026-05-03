@@ -23,12 +23,12 @@
 \contentsline {section}{\numberline {VII}Computational Experiments and Results}{8}{section.7}%
 \contentsline {subsection}{\numberline {\mbox {VII-A}}Problem Description}{8}{subsection.7.1}%
 \contentsline {subsection}{\numberline {\mbox {VII-B}}Analytical Solution}{8}{subsection.7.2}%
-\contentsline {subsection}{\numberline {\mbox {VII-C}}Finite Difference Solver (Eulerian)}{8}{subsection.7.3}%
-\contentsline {subsection}{\numberline {\mbox {VII-D}}Monte Carlo Solver (Lagrangian)}{8}{subsection.7.4}%
+\contentsline {subsection}{\numberline {\mbox {VII-C}}Finite Difference Solver (Eulerian)}{9}{subsection.7.3}%
+\contentsline {subsection}{\numberline {\mbox {VII-D}}Monte Carlo Solver (Lagrangian)}{9}{subsection.7.4}%
 \contentsline {subsection}{\numberline {\mbox {VII-E}}Results: Option Pricing}{9}{subsection.7.5}%
-\contentsline {subsection}{\numberline {\mbox {VII-F}}Results: Monte Carlo Visualization}{9}{subsection.7.6}%
-\contentsline {subsection}{\numberline {\mbox {VII-G}}Results: PDF Transport}{10}{subsection.7.7}%
-\contentsline {subsection}{\numberline {\mbox {VII-H}}Results: Monte Carlo Convergence}{12}{subsection.7.8}%
-\contentsline {section}{\numberline {VIII}Conclusions}{12}{section.8}%
-\contentsline {section}{References}{13}{section*.2}%
-\contentsline {section}{Appendix}{14}{section*.3}%
+\contentsline {subsection}{\numberline {\mbox {VII-F}}Results: Monte Carlo Visualization}{10}{subsection.7.6}%
+\contentsline {subsection}{\numberline {\mbox {VII-G}}Results: PDF Transport}{11}{subsection.7.7}%
+\contentsline {subsection}{\numberline {\mbox {VII-H}}Results: Monte Carlo Convergence}{13}{subsection.7.8}%
+\contentsline {section}{\numberline {VIII}Conclusions}{13}{section.8}%
+\contentsline {section}{References}{15}{section*.2}%
+\contentsline {section}{Appendix}{16}{section*.3}%

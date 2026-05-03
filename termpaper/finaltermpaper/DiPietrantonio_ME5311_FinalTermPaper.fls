@@ -251,6 +251,12 @@ INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmrc7t.
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmr8r.tfm
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmb7t.vf
 INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmb8r.tfm
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\ts1ptm.fd
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\ts1ptm.fd
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\ts1ptm.fd
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmr8c.tfm
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmr8c.vf
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmr8c.tfm
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
@@ -258,6 +264,7 @@ INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
 INPUT ..\BSM_Solver\figures\figure01_option_value_curve.png
+INPUT C:\Users\cjdip\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmr8c.vf
 INPUT ..\BSM_Solver\figures\figure02_GMB_sample_paths.png
 INPUT ..\BSM_Solver\figures\figure02_GMB_sample_paths.png
 INPUT ..\BSM_Solver\figures\figure02_GMB_sample_paths.png

@@ -3,6 +3,7 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{Hull2022}
+\citation{BlackScholes1973}
 \citation{Merton1973}
 \citation{Pope2000}
 \citation{Hull2022}
@@ -18,11 +19,12 @@
 \citation{Merton1973}
 \citation{Hull2022}
 \citation{Hull2022}
+\citation{BlackScholes1973}
 \citation{Merton1973}
+\citation{Hull2022}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}The Black-Scholes-Merton Equation}{2}{subsection.2.2}\protected@file@percent }
 \newlabel{eq:bsm}{{2}{2}{The Black-Scholes-Merton Equation}{equation.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Derivation of the Black-Scholes-Merton Equation}{2}{section.3}\protected@file@percent }
-\citation{Hull2022}
 \citation{Hull2022}
 \citation{Hull2022,Shreve2004}
 \citation{Hull2022}
@@ -68,40 +70,47 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Lagrangian Methods}{7}{subsection.6.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Constant vs. Variable Coefficients}{7}{subsection.6.3}\protected@file@percent }
 \citation{Hull2022}
+\citation{BlackScholes1973}
+\newlabel{eq:analytical_logpdf}{{17}{8}{Constant vs. Variable Coefficients}{equation.17}{}}
 \newlabel{eq:exact_step}{{18}{8}{Constant vs. Variable Coefficients}{equation.18}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Computational Experiments and Results}{8}{section.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Problem Description}{8}{subsection.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Parameters used for European call option pricing.}}{8}{table.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Analytical Solution}{8}{subsection.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Finite Difference Solver (Eulerian)}{8}{subsection.7.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-D}}Monte Carlo Solver (Lagrangian)}{8}{subsection.7.4}\protected@file@percent }
+\citation{Hull2022}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Finite Difference Solver (Eulerian)}{9}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-D}}Monte Carlo Solver (Lagrangian)}{9}{subsection.7.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-E}}Results: Option Pricing}{9}{subsection.7.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces European call option value vs.\ stock price: comparison of analytical, eulerian, and lagrangian methods}}{9}{figure.1}\protected@file@percent }
-\newlabel{fig:option_value}{{1}{9}{European call option value vs.\ stock price: comparison of analytical, eulerian, and lagrangian methods}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-F}}Results: Monte Carlo Visualization}{9}{subsection.7.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Geometric Brownian Motion: 30 sample paths with mean and expected return.}}{9}{figure.2}\protected@file@percent }
-\newlabel{fig:sample_paths}{{2}{9}{Geometric Brownian Motion: 30 sample paths with mean and expected return}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-G}}Results: PDF Transport}{10}{subsection.7.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces PDF evolution from Monte Carlo particle data}}{10}{figure.3}\protected@file@percent }
-\newlabel{fig:pdf_3d}{{3}{10}{PDF evolution from Monte Carlo particle data}{figure.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces PDF Evolution: Monte Carlo histograms vs. log-normal PDF.}}{11}{figure.4}\protected@file@percent }
-\newlabel{fig:pdf_slices}{{4}{11}{PDF Evolution: Monte Carlo histograms vs. log-normal PDF}{figure.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces PDF evolution heatmap with drift path and $\pm 1\sigma $ bounds.}}{11}{figure.5}\protected@file@percent }
-\newlabel{fig:pdf_heatmap}{{5}{11}{PDF evolution heatmap with drift path and $\pm 1\sigma $ bounds}{figure.5}{}}
+\citation{Hull2022}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces European call option value vs.\ stock price: comparison of analytical, eulerian, and lagrangian methods}}{10}{figure.1}\protected@file@percent }
+\newlabel{fig:option_value}{{1}{10}{European call option value vs.\ stock price: comparison of analytical, eulerian, and lagrangian methods}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-F}}Results: Monte Carlo Visualization}{10}{subsection.7.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Geometric Brownian Motion: 30 sample paths with mean and expected return.}}{10}{figure.2}\protected@file@percent }
+\newlabel{fig:sample_paths}{{2}{10}{Geometric Brownian Motion: 30 sample paths with mean and expected return}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-G}}Results: PDF Transport}{11}{subsection.7.7}\protected@file@percent }
+\newlabel{subsec:pdf_transport}{{\mbox  {VII-G}}{11}{Results: PDF Transport}{subsection.7.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces PDF evolution from Monte Carlo particle data}}{11}{figure.3}\protected@file@percent }
+\newlabel{fig:pdf_3d}{{3}{11}{PDF evolution from Monte Carlo particle data}{figure.3}{}}
+\citation{Hull2022}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces PDF Evolution: Monte Carlo histograms vs. log-normal PDF.}}{12}{figure.4}\protected@file@percent }
+\newlabel{fig:pdf_slices}{{4}{12}{PDF Evolution: Monte Carlo histograms vs. log-normal PDF}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces PDF evolution heatmap with drift path and $\pm 1\sigma $ bounds.}}{12}{figure.5}\protected@file@percent }
+\newlabel{fig:pdf_heatmap}{{5}{12}{PDF evolution heatmap with drift path and $\pm 1\sigma $ bounds}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-H}}Results: Monte Carlo Convergence}{13}{subsection.7.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Monte Carlo convergence: estimated option value vs. number of simulated paths.}}{13}{figure.6}\protected@file@percent }
+\newlabel{fig:mc_convergence}{{6}{13}{Monte Carlo convergence: estimated option value vs. number of simulated paths}{figure.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusions}{13}{section.8}\protected@file@percent }
 \citation{*}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-H}}Results: Monte Carlo Convergence}{12}{subsection.7.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Monte Carlo convergence: estimated option value vs. number of simulated paths.}}{12}{figure.6}\protected@file@percent }
-\newlabel{fig:mc_convergence}{{6}{12}{Monte Carlo convergence: estimated option value vs. number of simulated paths}{figure.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusions}{12}{section.8}\protected@file@percent }
 \bibstyle{IEEEtran}
 \bibdata{sources}
 \bibcite{Hull2022}{1}
-\bibcite{Merton1973}{2}
-\bibcite{Pope2000}{3}
-\bibcite{BlackScholes1973}{4}
+\bibcite{BlackScholes1973}{2}
+\bibcite{Merton1973}{3}
+\bibcite{Pope2000}{4}
 \bibcite{BaxterRennie1996}{5}
 \bibcite{Shreve2004}{6}
 \bibcite{Montgomery2011}{7}
-\@writefile{toc}{\contentsline {section}{References}{13}{section*.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{Appendix}{14}{section*.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{../BSM\textunderscore solver/bsm\textunderscore solver.py}{14}{lstlisting.-1}\protected@file@percent }
-\gdef \@abspage@last{25}
+\@writefile{toc}{\contentsline {section}{References}{15}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{Appendix}{16}{section*.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{../BSM\textunderscore solver/bsm\textunderscore solver.py}{16}{lstlisting.-1}\protected@file@percent }
+\gdef \@abspage@last{27}

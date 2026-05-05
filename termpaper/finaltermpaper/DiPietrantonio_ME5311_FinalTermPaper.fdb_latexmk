@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex DiPietrantonio_ME5311_FinalTermPaper"] 1777829274.87252 "DiPietrantonio_ME5311_FinalTermPaper.aux" "DiPietrantonio_ME5311_FinalTermPaper.bbl" "DiPietrantonio_ME5311_FinalTermPaper" 1777829278.7747 0
+["bibtex DiPietrantonio_ME5311_FinalTermPaper"] 1777900775.81144 "DiPietrantonio_ME5311_FinalTermPaper.aux" "DiPietrantonio_ME5311_FinalTermPaper.bbl" "DiPietrantonio_ME5311_FinalTermPaper" 1777979142.70842 0
   "./sources.bib" 1776606576 1619 c44091885d3e3eb6cf3987959465578b ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/bibtex/bst/ieeetran/IEEEtran.bst" 1440622569 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
-  "DiPietrantonio_ME5311_FinalTermPaper.aux" 1777829277 9633 bc52919aabb7963538b49a12fc4ddeda "pdflatex"
+  "DiPietrantonio_ME5311_FinalTermPaper.aux" 1777979141 9515 bb9becda92f8a177d2a2ab86945358b3 "pdflatex"
   (generated)
   "DiPietrantonio_ME5311_FinalTermPaper.bbl"
   "DiPietrantonio_ME5311_FinalTermPaper.blg"
   (rewritten before read)
-["pdflatex"] 1777829275.24801 "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/termpaper/finaltermpaper/DiPietrantonio_ME5311_FinalTermPaper.tex" "DiPietrantonio_ME5311_FinalTermPaper.pdf" "DiPietrantonio_ME5311_FinalTermPaper" 1777829278.7754 0
+["pdflatex"] 1777979138.58355 "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/termpaper/finaltermpaper/DiPietrantonio_ME5311_FinalTermPaper.tex" "DiPietrantonio_ME5311_FinalTermPaper.pdf" "DiPietrantonio_ME5311_FinalTermPaper" 1777979142.70914 0
   "../BSM_Solver/figures/figure01_option_value_curve.png" 1777666512 183509 7d6aa4d2ab27c4e01b81d289aafab348 ""
   "../BSM_Solver/figures/figure02_GMB_sample_paths.png" 1777666513 838395 2410bf4d48703244ec6d7fb9c43116ef ""
   "../BSM_Solver/figures/figure03_3d_pdf_evolution.png" 1777666515 411091 c129021d196638940d9f49e96654a21c ""
@@ -87,7 +87,6 @@
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/bitset/bitset.sty" 1575926576 33961 6b5c75130e435b2bfdb9f480a09a39f9 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/gettitlestring/gettitlestring.sty" 1576433666 8371 9d55b8bd010bc717624922fb3477d92e ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/iftex/iftex.sty" 1734114575 7984 7dbb9280f03c0a315425f1b4f35d43ee ""
-  "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/iftex/ifvtex.sty" 1734114575 1057 525c2192b5febbd8c1f662c9468335bb ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/infwarerr/infwarerr.sty" 1575399508 8356 7bbb2c2373aa810be568c29e333da8ed ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/intcalc/intcalc.sty" 1576433764 31769 002a487f55041f8e805cfbf6385ffd97 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/generic/kvdefinekeys/kvdefinekeys.sty" 1576763304 5412 d5a2436094cd7be85769db90f29250a6 ""
@@ -111,8 +110,6 @@
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/epstopdf-pkg/epstopdf-base.sty" 1623003186 13886 d1306dcf79a944f6988e688c1785f9ce ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/etoolbox/etoolbox.sty" 1759409308 46885 8953c67ffba03252c6090aa19568b8ba ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/float/float.sty" 1469023953 6916 16d2656a1984957e674b149555f1ea1d ""
-  "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/geometry/geometry.cfg" 1578053545 1104 7ac475a4e3466b0b43e138e9356bda83 ""
-  "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/geometry/geometry.sty" 1578053545 42759 9cf6c5257b1bc7af01a58859749dd37a ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/graphics-cfg/color.cfg" 1465894292 1213 620bba36b25224fa9b7e1ccb4ecb76fd ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/graphics-cfg/graphics.cfg" 1465894292 1224 978390e9c2234eab29404bc21b268d1e ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/graphics-def/pdftex.def" 1762694372 19626 23e2822b9b2b5005f4c549ca98b9334d ""
@@ -143,14 +140,15 @@
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/refcount/refcount.sty" 1576433952 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/setspace/setspace.sty" 1670403145 22490 8cac309b79a4c53a4ffce4b1b07aead0 ""
+  "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/titlesec/titlesec.sty" 1736608268 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/cjdip/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "DiPietrantonio_ME5311_FinalTermPaper.aux" 1777829277 9633 bc52919aabb7963538b49a12fc4ddeda "pdflatex"
-  "DiPietrantonio_ME5311_FinalTermPaper.bbl" 1777829275 2160 8db7d93eb97030a0cb25519d43cb0e7e "bibtex DiPietrantonio_ME5311_FinalTermPaper"
-  "DiPietrantonio_ME5311_FinalTermPaper.out" 1777829278 7208 54e14966b3df58ace559742595a55da4 "pdflatex"
-  "DiPietrantonio_ME5311_FinalTermPaper.tex" 1777829270 44315 9b85f499e02cef63429f3063dfad63b6 ""
-  "DiPietrantonio_ME5311_FinalTermPaper.toc" 1777829278 3383 5d877ff4c7f3493afd4e44b5023eb745 "pdflatex"
-  "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/termpaper/finaltermpaper/DiPietrantonio_ME5311_FinalTermPaper.tex" 1777829270 44315 9b85f499e02cef63429f3063dfad63b6 ""
+  "DiPietrantonio_ME5311_FinalTermPaper.aux" 1777979141 9515 bb9becda92f8a177d2a2ab86945358b3 "pdflatex"
+  "DiPietrantonio_ME5311_FinalTermPaper.bbl" 1777900776 2160 8db7d93eb97030a0cb25519d43cb0e7e "bibtex DiPietrantonio_ME5311_FinalTermPaper"
+  "DiPietrantonio_ME5311_FinalTermPaper.out" 1777979141 7141 aba3babcbd8115608775d648c5fc6301 "pdflatex"
+  "DiPietrantonio_ME5311_FinalTermPaper.tex" 1777979137 42284 17b80ad7ce887574fa33830f59ea8439 ""
+  "DiPietrantonio_ME5311_FinalTermPaper.toc" 1777979141 3308 63ccbc06055594eef0b7b3a29d417cba "pdflatex"
+  "c:/Users/cjdip/Desktop/Home/School/GraduateSchool/UConn/Spring2026/ME5311/GitHub/ME5311/termpaper/finaltermpaper/DiPietrantonio_ME5311_FinalTermPaper.tex" 1777979137 42284 17b80ad7ce887574fa33830f59ea8439 ""
   (generated)
   "DiPietrantonio_ME5311_FinalTermPaper.aux"
   "DiPietrantonio_ME5311_FinalTermPaper.log"

@@ -1,34 +1,33 @@
 \contentsline {section}{\numberline {I}Introduction}{1}{section.1}%
 \contentsline {section}{\numberline {II}Financial Derivatives and the Black-Scholes-Merton Equation}{1}{section.2}%
 \contentsline {subsection}{\numberline {\mbox {II-A}}Financial Derivatives and Options}{1}{subsection.2.1}%
-\contentsline {subsection}{\numberline {\mbox {II-B}}The Black-Scholes-Merton Equation}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {\mbox {II-B}}The Black-Scholes-Merton Equation}{1}{subsection.2.2}%
 \contentsline {section}{\numberline {III}Derivation of the Black-Scholes-Merton Equation}{2}{section.3}%
-\contentsline {subsection}{\numberline {\mbox {III-A}}Stochastic Calculus and It\^{o}'s Lemma}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {\mbox {III-A}}Stochastic Calculus and It\^{o}'s Lemma}{2}{subsection.3.1}%
 \contentsline {subsection}{\numberline {\mbox {III-B}}The Stock Price Model: Geometric Brownian Motion}{3}{subsection.3.2}%
 \contentsline {subsection}{\numberline {\mbox {III-C}}Applying It\^{o}'s Lemma to the Option Value}{3}{subsection.3.3}%
-\contentsline {subsection}{\numberline {\mbox {III-D}}Constructing the Hedged Portfolio}{4}{subsection.3.4}%
-\contentsline {subsection}{\numberline {\mbox {III-E}}No Arbitrage Condition}{4}{subsection.3.5}%
+\contentsline {subsection}{\numberline {\mbox {III-D}}Constructing the Hedged Portfolio}{3}{subsection.3.4}%
+\contentsline {subsection}{\numberline {\mbox {III-E}}No Arbitrage Condition}{3}{subsection.3.5}%
 \contentsline {section}{\numberline {IV}The Transported PDF Method}{4}{section.4}%
 \contentsline {subsection}{\numberline {\mbox {IV-A}}Statistical Description of Turbulent Flows}{4}{subsection.4.1}%
-\contentsline {subsection}{\numberline {\mbox {IV-B}}Eulerian PDF Transport Equation}{5}{subsection.4.2}%
-\contentsline {subsection}{\numberline {\mbox {IV-C}}The Generalized Langevin Model}{5}{subsection.4.3}%
-\contentsline {subsection}{\numberline {\mbox {IV-D}}Derivation of the PDF Transport Equation}{5}{subsection.4.4}%
-\contentsline {section}{\numberline {V}The Connection Between the BSM Equation and the Transported PDF Method}{6}{section.5}%
-\contentsline {subsection}{\numberline {\mbox {V-A}}Structural Equivalence of the SDEs}{6}{subsection.5.1}%
-\contentsline {subsection}{\numberline {\mbox {V-B}}Variable Mapping}{6}{subsection.5.2}%
-\contentsline {section}{\numberline {VI}Solution Methods}{7}{section.6}%
-\contentsline {subsection}{\numberline {\mbox {VI-A}}Eulerian Methods}{7}{subsection.6.1}%
-\contentsline {subsection}{\numberline {\mbox {VI-B}}Lagrangian Methods}{7}{subsection.6.2}%
-\contentsline {subsection}{\numberline {\mbox {VI-C}}Constant vs. Variable Coefficients}{7}{subsection.6.3}%
-\contentsline {section}{\numberline {VII}Computational Experiments and Results}{8}{section.7}%
-\contentsline {subsection}{\numberline {\mbox {VII-A}}Problem Description}{8}{subsection.7.1}%
-\contentsline {subsection}{\numberline {\mbox {VII-B}}Analytical Solution}{8}{subsection.7.2}%
-\contentsline {subsection}{\numberline {\mbox {VII-C}}Finite Difference Solver (Eulerian)}{9}{subsection.7.3}%
-\contentsline {subsection}{\numberline {\mbox {VII-D}}Monte Carlo Solver (Lagrangian)}{9}{subsection.7.4}%
-\contentsline {subsection}{\numberline {\mbox {VII-E}}Results: Option Pricing}{9}{subsection.7.5}%
-\contentsline {subsection}{\numberline {\mbox {VII-F}}Results: Monte Carlo Visualization}{10}{subsection.7.6}%
-\contentsline {subsection}{\numberline {\mbox {VII-G}}Results: PDF Transport}{11}{subsection.7.7}%
-\contentsline {subsection}{\numberline {\mbox {VII-H}}Results: Monte Carlo Convergence}{13}{subsection.7.8}%
-\contentsline {section}{\numberline {VIII}Conclusions}{13}{section.8}%
-\contentsline {section}{References}{15}{section*.2}%
-\contentsline {section}{Appendix}{16}{section*.3}%
+\contentsline {subsection}{\numberline {\mbox {IV-B}}Eulerian PDF Transport Equation}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {\mbox {IV-C}}The Generalized Langevin Model}{4}{subsection.4.3}%
+\contentsline {subsection}{\numberline {\mbox {IV-D}}Derivation of the PDF Transport Equation}{4}{subsection.4.4}%
+\contentsline {section}{\numberline {V}The Connection Between the BSM Equation and the Transported PDF Method}{5}{section.5}%
+\contentsline {subsection}{\numberline {\mbox {V-A}}Structural Equivalence of the SDEs}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {\mbox {V-B}}Variable Mapping}{5}{subsection.5.2}%
+\contentsline {section}{\numberline {VI}Solution Methods}{5}{section.6}%
+\contentsline {subsection}{\numberline {\mbox {VI-A}}Eulerian Methods}{5}{subsection.6.1}%
+\contentsline {subsection}{\numberline {\mbox {VI-B}}Lagrangian Methods}{6}{subsection.6.2}%
+\contentsline {subsection}{\numberline {\mbox {VI-C}}Constant vs. Variable Coefficients}{6}{subsection.6.3}%
+\contentsline {section}{\numberline {VII}Computational Experiments and Results}{6}{section.7}%
+\contentsline {subsection}{\numberline {\mbox {VII-A}}Problem Description}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {\mbox {VII-B}}Analytical Solution}{7}{subsection.7.2}%
+\contentsline {subsection}{\numberline {\mbox {VII-C}}Finite Difference Solver (Eulerian)}{7}{subsection.7.3}%
+\contentsline {subsection}{\numberline {\mbox {VII-D}}Monte Carlo Solver (Lagrangian)}{7}{subsection.7.4}%
+\contentsline {subsection}{\numberline {\mbox {VII-E}}Results: Option Pricing}{8}{subsection.7.5}%
+\contentsline {subsection}{\numberline {\mbox {VII-F}}Results: Monte Carlo Visualization and PDF Transport}{8}{subsection.7.6}%
+\contentsline {subsection}{\numberline {\mbox {VII-G}}Results: Monte Carlo Convergence}{9}{subsection.7.7}%
+\contentsline {section}{\numberline {VIII}Conclusions}{10}{section.8}%
+\contentsline {section}{References}{11}{section.8}%
+\contentsline {section}{Appendix}{12}{appendix.Appendix.A}%

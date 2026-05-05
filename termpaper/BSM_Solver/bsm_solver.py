@@ -122,7 +122,7 @@ def mc_full_paths(S0, r, sigma, T, N_paths, N_steps):
     """
     Simulate full GBM paths.
 
-    Page 470, Hull (Discritizing SDEs)
+    Page 470, Hull (Discretizing SDEs)
     Note: 
          For this example, we use the more accurate analytical solution for the GBM SDE. For the transported PDF method, we would discretize the SDE itself. 
     Page 471, Hull (Stock price at time step)
@@ -439,7 +439,7 @@ def plot_pdf_slices(S0=100.0, N_sim=200000):
 # ----------------------------------------------------------------------
 # Figure 5: Monte Carlo Convergence
 # ----------------------------------------------------------------------
-def plot_convergance(S0=100.0):
+def plot_convergence(S0=100.0):
     """
     Show how the MC estimate converges as more paths are simulated.
     
@@ -479,7 +479,7 @@ def plot_pdf_heatmap(S0=100.0):
     """
     2D Heatmap: x = stock price, y = time, color = probability density.
 
-    Page 84, Montgomerey, Runger, Hubele (Mean and Varince in Price Space)
+    Page 84, Montgomery, Runger, Hubele (Mean and Variance in Price Space)
     Page 315, Hull (Mean and Variance in log space)
     """
 
@@ -526,7 +526,7 @@ def main():
     print("=" * 120)
     print("BSM Solver - Monte Carlo + Finite Difference + Analytical")
     print("=" * 120)
-    print(fr'Parameters: K=${K}, r={r:.2%}, $\sigma$={sigma:.2%}, T={T} years')
+    print(fr'Parameters: K=${K}, r={r:.2%}, sigma={sigma:.2%}, T={T} years')
     print(f'Monte Carlo: {N_paths:,} paths, {N_steps} time steps')
     print("=" * 120)
 
@@ -536,7 +536,7 @@ def main():
     S_paths, t_arr                 = plot_sample_paths()
     t_snap, S_centers, PDF_mc      = plot_pdf_evolution()
     plot_pdf_slices()
-    plot_convergance()
+    plot_convergence()
     plot_pdf_heatmap()
 
     print("\n" + "=" * 120)

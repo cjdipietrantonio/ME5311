@@ -21,7 +21,7 @@
 \contentsline {subsection}{\numberline {\mbox {VI-B}}Lagrangian Methods}{6}{subsection.6.2}%
 \contentsline {subsection}{\numberline {\mbox {VI-C}}Constant vs. Variable Coefficients}{6}{subsection.6.3}%
 \contentsline {section}{\numberline {VII}Computational Experiments and Results}{6}{section.7}%
-\contentsline {subsection}{\numberline {\mbox {VII-A}}Problem Description}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {\mbox {VII-A}}Problem Description}{7}{subsection.7.1}%
 \contentsline {subsection}{\numberline {\mbox {VII-B}}Analytical Solution}{7}{subsection.7.2}%
 \contentsline {subsection}{\numberline {\mbox {VII-C}}Finite Difference Solver (Eulerian)}{7}{subsection.7.3}%
 \contentsline {subsection}{\numberline {\mbox {VII-D}}Monte Carlo Solver (Lagrangian)}{7}{subsection.7.4}%

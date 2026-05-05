@@ -59,7 +59,7 @@ def bs_call(S, K, r, sigma, T):
     ----------
     S     : current stock price
     K     : strike price
-    r     : risk free rate
+    r     : risk-free rate
     sigma : volatility
     T     : time to expiration
 
@@ -79,7 +79,7 @@ def bs_call(S, K, r, sigma, T):
 # ----------------------------------------------------------------------
 def mc_option_price(S0, K, r, sigma, T, N_paths):
     """
-    Price a European call via Monte Carlo using the exact GBM solution. Instead of stepping through time, we jump diretly to S(T). This works because we only need the terminal stock price to compute the payoff. For the PDF evolution, we must use the full time-steppind version below.
+    Price a European call via Monte Carlo using the exact GBM solution. Instead of stepping through time, we jump directly to S(T). This works because we only need the terminal stock price to compute the payoff. For the PDF evolution, we must use the full time-stepping version below.
 
     Page 217, Hull (Long position European Call option payoff)
     Page 336, Hull (Option expected value discounted at risk-free rate)
@@ -124,13 +124,13 @@ def mc_full_paths(S0, r, sigma, T, N_paths, N_steps):
 
     Page 470, Hull (Discritizing SDEs)
     Note: 
-         - For this example we use the more accurate analytical solution for the GBM SDE. For the transported PDF method, we would discritize the SDE itself. 
+         For this example, we use the more accurate analytical solution for the GBM SDE. For the transported PDF method, we would discretize the SDE itself. 
     Page 471, Hull (Stock price at time step)
     
     Parameters
     ----------
     S0      : starting stock price
-    r       : risk free rate
+    r       : risk-free rate
     sigma   : volatility
     T       : time to expiration
     N_paths : number of simulated paths
@@ -159,22 +159,22 @@ def mc_full_paths(S0, r, sigma, T, N_paths, N_steps):
     return S, t
 
 # ----------------------------------------------------------------------
-# Finite Difference Solver (Eulerian / Grid Based PDE Solver)
+# Finite Difference Solver
 # ----------------------------------------------------------------------
 def fd_bsm(K, r, sigma, T, S_max=500.0, M=500, N_t=5000):
     """
-    Solver the BSM PDE using implicit finite difference method.
+    Solves the BSM PDE using implicit finite difference method.
     
-    This is the Eulerian approach: discritize stock price into a grid and solve the PDE directly at each point. Important to note that we march backwards in time from t = T (expiry) to t=0 (today).
+    This is the Eulerian approach: discretize the stock price into a grid and solve the PDE directly at each point. Important to note that we march backwards in time from t = T (expiry) to t=0 (today).
 
     Parameters
     ----------
     K       : strike price
-    r       : risk free rate
+    r       : risk-free rate
     sigma   : volatility
     T       : time to expiration
     S_max   : upper bound of stock price grid
-    M       : number of spacial intervals 
+    M       : number of spatial intervals 
     N_t     : number of time steps
 
     Returns
@@ -217,10 +217,10 @@ def fd_bsm(K, r, sigma, T, S_max=500.0, M=500, N_t=5000):
 
         rhs[-1] -= c_j[-1] * V_top
 
-        # Solve the Trigiagonal System
+        # Solve the tridiagonal System
         V[1:M] = solve_banded((1, 1), ab, rhs)
 
-        # Apply boundary condtions to full solution array
+        # Apply boundary conditions to full solution array
         V[0] = 0.0
         V[M] = V_top
 
@@ -342,7 +342,7 @@ def plot_pdf_evolution(S0=100.0, N_sim=200000):
     """
     Visualize how the probability density of a stock price evolves over time using Monte Carlo particle data.
     Note:
-         - The exact GBM sol could be used to construct the PDF using the PDF function for a lognormal distribution. However, here the PDF is constructed using MC data, because no PDF function is avalable for the Langevin SDE.
+         - The exact GBM sol could be used to construct the PDF using the PDF function for a lognormal distribution. However, here the PDF is constructed using MC data, because no PDF function is available for the Langevin SDE.
 
     Page 322, Hull (Mean and Standard Deviation of ln ST)
     Page 84, Montgomery, Runger, Hubele
@@ -387,7 +387,7 @@ def plot_pdf_evolution(S0=100.0, N_sim=200000):
 # ----------------------------------------------------------------------
 def plot_pdf_slices(S0=100.0, N_sim=200000):
     """
-    Monte Carlo histograms overlaid with analytical log-normal curves. This deomstrates that the Lagrangian statistics converge to the Eulerian PDF.
+    Monte Carlo histograms overlaid with analytical log-normal curves. This demonstrates that the Lagrangian statistics converge to the Eulerian PDF.
 
     Page 322, Hull (Mean and Standard Deviation of ln ST)
     Page 84, Montgomery, Runger, Hubele
@@ -473,7 +473,7 @@ def plot_convergance(S0=100.0):
     print(f'     Saved:  {out_dir}/figure05_MC_convergence.png')
 
 # ----------------------------------------------------------------------
-# Figure 6: PDF Heatmap 
+# Figure 6: PDF Evolution - Heatmap 
 # ----------------------------------------------------------------------
 def plot_pdf_heatmap(S0=100.0):
     """

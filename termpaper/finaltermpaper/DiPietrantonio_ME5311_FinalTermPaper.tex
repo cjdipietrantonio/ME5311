@@ -126,7 +126,7 @@ where $dz = \epsilon \sqrt{\Delta t}$ is referred to as a Wiener process, and $\
     dx = a(x, t)dt + b(x, t)dz
     \label{eq:ito_process}
 \end{equation}
-In standard calculus, the chain rule can be used to find the derivative or differential of a multivariable function. However, in Stochastic Calculus, one must use It\^{o}'s Lemma to compute the stochastic differential of a function that depends on a stochastic process. Doing so accounts for the fact that second-order terms can not be ignored in the formulation of the differential. This is because the diffusion term in a stochastic process (at least the ones within the scope of this paper) depends on a Wiener Process $dz \sim \sqrt{\Delta t}$, and when squared, this term is on the order of $dt$.
+In standard calculus, the chain rule can be used to find the derivative or differential of a multivariable function. However, in Stochastic Calculus, one must use It\^{o}'s Lemma to compute the stochastic differential of a function that depends on a stochastic process. Doing so accounts for the fact that second-order terms cannot be ignored in the formulation of the differential. This is because the diffusion term in a stochastic process (at least the ones within the scope of this paper) depends on a Wiener Process $dz \sim \sqrt{\Delta t}$, and when squared, this term is on the order of $dt$.
 It\^{o}'s lemma shows that for a function $G(x, t)$, where $x$ is a stochastic variable following an It\^{o} process, the differential of $G$ can be expressed as:
 \begin{equation}
     dG = \frac{\partial G}{\partial x} dx + \frac{\partial G}{\partial t} dt + \frac{1}{2} \frac{\partial^2 G}{\partial x^2} b^2 dt
@@ -193,7 +193,7 @@ Then, dividing both sides by $-dt$ and rearranging yields the Black-Scholes Mert
 \section{The Transported PDF Method}
 
 \subsection{Statistical Description of Turbulent Flows}
-In \textit{Turbulent Flows}, Stephen B. Pope remarks that “in a turbulent flow, the velocity field $U(x,t)$ is random”~\cite{Pope2000}. This means that if one were to repeat the same experiment multiple times under the same set of conditions, a given event may, but need not, occur, making the event inherently unpredictable. Although a random variable, such as velocity, can not be predicted, the probability of events (e.g., the velocity is less than 10 m/s) can be used to create a Probability Density Function (PDF) that characterizes the random variable. Formally, the probability of any event can be determined by the Cumulative Distribution Function (CDF), and the PDF is defined to be the derivative of the CDF. Therefore, according to Pope, a random variable such as the velocity of a turbulent fluid is completely characterized by its PDF, which can be thought of as the probability per unit distance in the sample space~\cite{Pope2000}.
+In \textit{Turbulent Flows}, Stephen B. Pope remarks that “in a turbulent flow, the velocity field $U(x,t)$ is random”~\cite{Pope2000}. This means that if one were to repeat the same experiment multiple times under the same set of conditions, a given event may, but need not, occur, making the event inherently unpredictable. Although a random variable, such as velocity, cannot be predicted, the probability of events (e.g., the velocity is less than 10 m/s) can be used to create a Probability Density Function (PDF) that characterizes the random variable. Formally, the probability of any event can be determined by the Cumulative Distribution Function (CDF), and the PDF is defined to be the derivative of the CDF. Therefore, according to Pope, a random variable such as the velocity of a turbulent fluid is completely characterized by its PDF, which can be thought of as the probability per unit distance in the sample space~\cite{Pope2000}.
 
 
 \subsection{Eulerian PDF Transport Equation}
@@ -203,7 +203,7 @@ The evolution of this Eulerian PDF of velocity in space and time can be represen
     \label{eq:eulerian_pdf}
 \end{equation}
 
-\noindent where $f(\mathbf{V}; \mathbf{x}, t)$ is the Eulerian PDF of velocity.
+where $f(\mathbf{V}; \mathbf{x}, t)$ is the Eulerian PDF of velocity.
 
 \subsection{The Generalized Langevin Model}
 To model the evolution of fluid particle velocities, Pope introduced the generalized Langevin model for a diffusion process. The Langevin equation was originally proposed in 1908 as a stochastic model for the velocity of a microscopic particle undergoing Brownian motion. Pope states that the equation provides a good model for the velocity of a fluid particle in turbulence~\cite{Pope2000}. The generalized Langevin model used to express the velocity of a fluid particle is expressed below:
@@ -239,7 +239,7 @@ In short, the structural equivalence between the two mathematical frameworks can
         \textbf{Quantitative Finance (GBM / BSM)} & \textbf{CFD (Langevin / PDF Transport)} \\
         \midrule
         Stock price, $S$ & Particle velocity, $\mathbf{U^*}$ \\
-        Risk-free rate, $r$ & Drift Coefficient, $\mathbf{a}$ \\
+        Risk-free rate, $r$ & Drift coefficient, $\mathbf{a}$ \\
         Volatility, $\sigma$ & Diffusion coefficient, $b$ \\
         Wiener process, $dW$ & Vector-valued Wiener process, $d\mathbf{W}$ \\
         Monte Carlo simulation & Lagrangian particle method \\
@@ -343,7 +343,7 @@ The Monte Carlo simulation was implemented using the exact step formula for the 
 \end{equation}  
 
 \subsection{Results: Option Pricing}
-Figure~\ref{fig:option_value} shows the option value $V$  as a function of the current stock price $S$ for all three solution methods. The analytical Black-Scholes formula (solid line), the finite difference solver (red squares), and the Monte Carlo simulation (blue circles with error bars) all produce identical results, reinforcing the argument that Eulerian and Lagrangian solution methods produce consistent, accurate results.
+Figure~\ref{fig:option_value} shows the option value $V$ as a function of the current stock price $S$ for all three solution methods. The analytical Black-Scholes formula (solid line), the finite difference solver (red squares), and the Monte Carlo simulation (blue circles with error bars) all produce identical results, reinforcing the argument that Eulerian and Lagrangian solution methods produce consistent, accurate results.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{../BSM_Solver/figures/figure01_option_value_curve.png}

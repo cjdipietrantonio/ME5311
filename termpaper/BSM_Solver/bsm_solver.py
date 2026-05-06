@@ -8,11 +8,10 @@ Black-Scholes-Merton Solver
 ----------------------------------------------------------------------
 
 This script demonstrates three approaches to pricing a European call option:
-    1. Analytical Black-Scholes formula (closed-form solution)
-    2. Monte Carlo simulation (Lagrangian / stochastic particle method)
-    3. Finite Difference (Eulerian / grid-based PDE solver)
+    1. Analytical Black-Scholes formula
+    2. Monte Carlo simulation
+    3. Finite Difference
 
-Methods 2 and 3 are the Lagrangian and Eulerian numerical approaches.
 """
 
 import numpy as np
@@ -31,7 +30,7 @@ r          = 0.05  # Risk-free interest rate (5%)
 sigma      = 0.2   # Volatility 
 T          = 1.0   # Time to expiry (1 year)
 
-# Monte Carlo Settings
+# Monte Carlo settings
 N_paths    = 200000      # Number of simulated paths
 N_steps    = 252         # Time steps (trading days in a year)
 N_S_pts    = 80          # Number of starting prices to evaluate
@@ -387,7 +386,7 @@ def plot_pdf_evolution(S0=100.0, N_sim=200000):
 # ----------------------------------------------------------------------
 def plot_pdf_slices(S0=100.0, N_sim=200000):
     """
-    Monte Carlo histograms overlaid with analytical log-normal curves. This demonstrates that the Lagrangian statistics converge to the Eulerian PDF.
+    Monte Carlo histograms overlaid with analytical log-normal curves.
 
     Page 322, Hull (Mean and Standard Deviation of ln ST)
     Page 84, Montgomery, Runger, Hubele
